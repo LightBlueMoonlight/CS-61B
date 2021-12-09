@@ -12,8 +12,10 @@ import java.util.Random;
  */
 public class Board implements Iterable<Tile> {
     /** Current contents of the board. */
+    //二维数组 表示面板的值
     private Tile[][] values;
     /** Side that the board currently views as north. */
+    //认为是北的那一边
     private Side viewPerspective;
 
     public Board(int size) {
@@ -22,12 +24,14 @@ public class Board implements Iterable<Tile> {
     }
 
     /** Shifts the view of the board such that the board behaves as if side S is north. */
+    //移动电路板的视图，使电路板的行为如同S侧为北
     public void setViewingPerspective(Side s) {
         viewPerspective = s;
     }
 
     /** Create a board where RAWVALUES hold the values of the tiles on the board 
      * (0 is null) with a current score of SCORE and the viewing perspective set to north. */
+    //创建一个板，其中RAWVALUES保存板上瓷砖的值（0为空），当前分数为score，并且查看透视图设置为north*/
     public Board(int[][] rawValues, int score) {
         int size = rawValues.length;
         values = new Tile[size][size];
@@ -85,6 +89,9 @@ public class Board implements Iterable<Tile> {
      *
      * Returns whether or not this move is a merge.
      * */
+    //将平铺放置在列COL、行row处，其中列COL和行
+    //视为相对于当前viewPerspective的坐标。
+    //返回此移动是否为合并。
     public boolean move(int col, int row, Tile tile) {
         int pcol = viewPerspective.col(col, row, size()),
                 prow = viewPerspective.row(col, row, size());
@@ -105,6 +112,7 @@ public class Board implements Iterable<Tile> {
 
     @Override
     /** Returns the board as a string, used for debugging. */
+    //以字符串形式返回电路板，用于调试。
     public String toString() {
         Formatter out = new Formatter();
         out.format("%n[%n");
@@ -122,6 +130,7 @@ public class Board implements Iterable<Tile> {
     }
 
     /** Iterates through teach tile in the board. */
+    //在板中的“教学”互动程序中迭代
     private class AllTileIterator implements Iterator<Tile>, Iterable<Tile> {
         int r, c;
 
