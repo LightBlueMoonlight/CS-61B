@@ -399,7 +399,6 @@ public class Model extends Observable {
                     changed = true;
                     continue;
                 }
-
             }
 
             if(f2 && f3 && board.tile(c,0) ==null && board.tile(c,3) ==null){
