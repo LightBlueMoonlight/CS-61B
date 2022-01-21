@@ -21,7 +21,9 @@ public class StopwatchDemo {
         Stopwatch sw = new Stopwatch();
         int fib41 = fib(41);
         double timeInSeconds = sw.elapsedTime();
+        //第50个斐波那契数是
         System.out.println("The 50th fibonacci number is " + fib41);
+        //计算第41斐波那契数所用的时间     秒
         System.out.println("Time taken to compute 41st fibonacci number: " + timeInSeconds + " seconds.");
     }
 }

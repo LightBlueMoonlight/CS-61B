@@ -12,6 +12,10 @@ package timingtest;
  addLast: The next item we want to add, will go into position size
  getLast: The item we want to return is in position size - 1
  size: The number of items in the list should be size.
+
+addLast：我们要添加的下一个项目将进入位置大小
+getLast:我们要返回的项目的位置大小为 size-1
+大小：列表中的项目数应为size。
 */
 
 public class AList<Item> {
@@ -34,7 +38,7 @@ public class AList<Item> {
     /** Inserts X into the back of the list. */
     public void addLast(Item x) {
         if (size == items.length) {
-            resize(size + 1);
+            resize((int)(size * 1.01));
         }
 
         items[size] = x;
