@@ -28,7 +28,6 @@ public class BuggyAList<Item> {
     private void resize(int capacity) {
         Item[] a = (Item[]) new Object[capacity];
         for (int i = 0; i < size; i += 1) {
-
             a[i] = items[i];
         }
         items = a;
@@ -63,9 +62,9 @@ public class BuggyAList<Item> {
         if ((size < items.length / 4) && (size > 4)) {
             resize(size / 4);
         }
-        Item x = getLast();
         items[size - 1] = null;
         size = size - 1;
+        Item x = getLast();
         return x;
     }
 }

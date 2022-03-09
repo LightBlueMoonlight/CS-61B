@@ -36,21 +36,21 @@ public class TestBuggyAList {
 
     @Test
     public void randomizedTest() {
-        AListNoResizing<Integer> L = new AListNoResizing<>();
+        AListNoResizing<Integer> correct = new AListNoResizing<>();
         BuggyAList<Integer> broken = new BuggyAList<>();
 
-        int N = 1000;
+        int N = 500;
         for (int i = 0; i < N; i += 1) {
             int operationNumber = StdRandom.uniform(0, 4);
             if (operationNumber == 0) {
                 // addLast
                 int randVal = StdRandom.uniform(0, 100);
-                L.addLast(randVal);
+                correct.addLast(randVal);
                 broken.addLast(randVal);
                 System.out.println("addLast(" + randVal + ")");
             } else if (operationNumber == 1) {
                 // size
-                int size = L.size();
+                int size = correct.size();
                 System.out.println("size: " + size);
             }
         }

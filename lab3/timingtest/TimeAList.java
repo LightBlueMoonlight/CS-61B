@@ -25,19 +25,12 @@ public class TimeAList {
         timeAListConstruction();
     }
 
-    private static int fib(int n) {
-        if (n < 0) {
-            return 0;
-        }
-        return n;
-    }
-
     public static void timeAListConstruction() {
         Stopwatch sw = new Stopwatch();
         AList<Integer>  L = new AList<>();
         AList<Double> values = new AList<>();
         for(int n=1000; n <=128000 ; n*=2){
-            L.addLast(fib(n));
+            L.addLast(n);
             double timeInSeconds = sw.elapsedTime();
             values.addLast(timeInSeconds);
         }
