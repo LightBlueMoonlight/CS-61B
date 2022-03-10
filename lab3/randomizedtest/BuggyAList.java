@@ -73,8 +73,8 @@ public class BuggyAList<Item> {
     //从列表后面删除项，然后
     //*返回已删除的项目。
     public Item removeLast() {
-        if ((size < items.length / 4) && (size > 4)) {
-            resize(size / 4);
+        if ((size < items.length % 4) && (size > 4)) {
+            resize(size % 4);
         }
         Item x = getLast();
         items[size - 1] = null;
