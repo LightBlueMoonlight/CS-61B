@@ -35,7 +35,7 @@ public class BuggyAList<Item> {
     //将基础阵列的大小调整为目标容量。
     private void resize(int capacity) {
         Item[] a = (Item[]) new Object[capacity];
-        for (int i = 0; i < size; i += 1) {
+        for (int i = 1; i <= size; i += 1) {
             a[i] = items[i-1];
         }
         items = a;
