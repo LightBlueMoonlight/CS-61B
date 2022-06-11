@@ -1,7 +1,11 @@
 package deque;
-    //LinkedListDeque：双端链表/双向链表
-    public class LinkedListDeque <T>{
-        //私有内部类
+
+import java.util.Iterator;
+
+//LinkedListDeque：双端链表/双向链表
+    public class LinkedListDeque <T> implements Deque<T>{
+
+    //私有内部类
         private  class stuffnode{
             //泛型类，代表调用参数的类型
             private T item;
@@ -116,10 +120,14 @@ package deque;
 
         public T removeFirst() {
             if(size >=1 ) {
+                stuffnode  temp = first;
+                stuf.next.next.pre =stuf;
+                stuf.next=stuf.next.next;
                 T t=first.item;
-                first=first.next;
-                stuf.next=first;
+                first = stuf.next;
                 size--;
+                temp.next = null;
+                temp.pre = null;
                 return t;
             }
                 return null;
@@ -127,9 +135,11 @@ package deque;
 
         public T removeLast() {
             if(size >= 1) {
+                stuffnode temp = last;
+                stuf.pre = stuf.pre.pre;
+                stuf.pre.next = stuf;
                 T t=last.item;
-                last=last.pre;
-                last.next=stuf;
+                last=stuf.pre;
                 size--;
                 return t;
             }
@@ -137,9 +147,6 @@ package deque;
         }
 
         public T get(int index) {
-            if(index>size || index < size){
-                return null;
-            }
             int t=0;
             stuffnode a = first;
             while(a!=stuf) {
@@ -154,20 +161,86 @@ package deque;
 
         //递归get
         public T getRecursive(int index){
-            if(index>size || index < size){
+            if(size==0){
                 return null;
             }
-            int a =0;
-            int b =a++;
-            if(index == 0){
-                return stuf.next.item;
-            }else if(index == b){
-                return stuf.item;
-            }else{
-                for(int j =0;j <=index;j++){
+            for(int j =0;j <=index;j++){
+                    if(index == j){
+                        return stuf.next.item;
+                    }
                     stuf=stuf.next;
                 }
                 return getRecursive(index);
             }
+
+    public Iterator<T> iterator(){
+        return new ArrayIterator();
+    }
+
+    private class ArrayIterator implements Iterator<T>{
+        private int wizPos;
+        public ArrayIterator() {
+            wizPos=0;
         }
+
+        public boolean hasNext() {
+            return wizPos < size;
+        }
+
+        public T next(){
+            T returnItem = stuf.next.item;
+            stuf.next = stuf.next.next;
+            wizPos += 1;
+            return returnItem;
+        }
+    }
+
+        @Override
+        public boolean equals(Object other){
+            if(other==null){
+                return false;
+            }
+
+            if(this == other){
+                return true;
+            }
+
+            if(other instanceof LinkedListDeque){
+                LinkedListDeque<T> o =(LinkedListDeque<T>) other;
+                if (o.size !=this.size){
+                    return false;
+                }
+                for(int i=0;i<o.size;i++){
+                    if(!o.get(i).equals(this.get(i))) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public static void main(String[] args) {
+            LinkedListDeque<String> lld1 = new LinkedListDeque();
+            lld1.addFirst(null);
+            lld1.addFirst(null);
+            //lld1.addFirst("2");
+            System.out.println("kais");
+            LinkedListDeque<String> lld2 = new LinkedListDeque();
+            lld2.addFirst("0");
+            lld2.addFirst("1");
+            if (lld1.equals(lld2)){
+                System.out.println("相等");
+            }
+
+
+            //System.out.println(lld1.get(3));
+            //System.out.println(lld1.getRecursive(3));
+            //Iterator  seer = lld1.iterator();
+            //Iterator<Integer> seer = lld1.iterator();
+//            while (seer.hasNext()){
+//                System.out.println(seer.next());
+//            }
+
+        }
+        
     }
