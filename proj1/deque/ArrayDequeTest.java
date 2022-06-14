@@ -81,11 +81,11 @@ public class ArrayDequeTest {
     @Test
     public void testBigDequeRemoveFrist() {
         ArrayDeque<Integer> arrayDeque = new ArrayDeque<>();
-        for (int i = 0; i < 15000; i++) {
+        for (int i = 0; i < 17; i++) {
             arrayDeque.addFirst(i);
         }
 
-        for (int i = 0; i < 15000; i++) {
+        for (int i = 0; i < 17; i++) {
             arrayDeque.removeFirst();
         }
         assertTrue("lld1 should be empty upon initialization", arrayDeque.isEmpty());

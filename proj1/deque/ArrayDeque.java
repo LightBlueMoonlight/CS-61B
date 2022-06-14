@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     //构造一个泛型数组
     private T[] items;
     //数组前面的标志位 类似哨兵的pre
@@ -11,8 +11,6 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
     private int end;
     //数组整体的长度
     private int size;
-    private int start;
-    private int last;
     //数组使用率/负载系数
     private double ratio;
     //头节点计数器
@@ -27,9 +25,7 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
         begin = items.length - 1;
         size = 0;
         ratio = 0;
-        start = 0;
-        last = 0;
-        end = items.length;
+        end = 0;
         //首部添加超出原始的值，如原来是100,现在要添加到101,s1=101
         s1 = 0;
         //末尾添加超出原始的值，如原来是100,现在要添加到101,s2=101
@@ -38,10 +34,10 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
 
 
     public void addLast(T item) {
-        if (last <= begin && last < items.length) {
-            items[last] = item;
+        if (end <= begin && end < items.length) {
+            items[end] = item;
             size++;
-            last++;
+            end++;
             ratio = size / items.length;
             s2++;
         } else {
@@ -49,52 +45,43 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
             T[] a = (T[]) new Object[items.length * 2];
             if (s2 > 0) {
                 //对原来数组中的值进行copy到新的数组a中
-                System.arraycopy(items, start, a, 0, s2);
+                System.arraycopy(items, 0, a, 0, s2);
             }
-            if (begin < items.length - 1) {
-                System.arraycopy(items, begin + 1, a, a.length - s1, s1);
+            if (s1 > 0) {
+                //对原来数组中的值进行copy到新的数组a中
+                System.arraycopy(items, s2, a, items.length + s2, s1);
             }
             items = a;
-            end = items.length;
-            start = 0;
-            last = s2;
+            items[end] = item;
+            end++;
             begin = items.length - s1 - 1;
-            //将添加的值放到数组的末尾
-            items[last] = item;
-            last++;
             size = size + 1;
+            ratio = size / items.length;
             s2++;
         }
     }
 
     public void addFirst(T item) {
-        if (begin >= 0 && begin >= last) {
+        if (begin >= 0 && begin >= end) {
             items[begin] = item;
             begin--;
             size++;
             s1++;
-            ratio = (double) size / items.length;
+            ratio = size / items.length;
         } else {
             T[] a = (T[]) new Object[items.length * 2];
             if (s2 > 0) {
-                System.arraycopy(items, start, a, 0, s2);
+                System.arraycopy(items, 0, a, 0, s2);
             }
-
             if (s1 > 0) {
-                System.arraycopy(items, begin + 1, a, a.length - s1, s1);
+                System.arraycopy(items, s2, a, items.length + s2, s1);
             }
             items = a;
-            end = items.length;
             begin = items.length - s1 - 1;
-
-            if (begin >= 0 && begin < items.length) {
-                items[begin] = item;
-                begin--;
-            }
-            start = 0;
-            last = s2;
+            items[begin] = item;
+            begin--;
             size = size + 1;
-            ratio = (double) size / items.length;
+            ratio = size / items.length;
             s1++;
         }
     }
@@ -105,21 +92,24 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
         if (s2 > 0) {
             s2--;
             size--;
-            last--;
-            d = items[last];
+            end--;
+            d = items[end];
+            items[end] = null;
             ratio = (double) size / items.length;
             //数组使用率小于25% 就将数组的长度减少，大于16是因为只考虑扩容之后的情况
-            if (ratio < 0.25 && items.length > 16) {
+            if (ratio < 0.25 && items.length >= 16) {
                 recycle();
             }
             return d;
-        } else if (s1 > 0) {
-            s1--;
-            end--;
+        } else if (s1 > 0 && s2 == 0) {
             size--;
-            d = items[end];
+            s1--;
+            begin++;
+            d = items[items.length - 1];
+            System.arraycopy(items, begin, items, begin + 1, s1);
             ratio = (double) size / items.length;
-            if (ratio < 0.25 && items.length > 16) {
+            items[begin] = null;
+            if (ratio < 0.25 && items.length >= 16) {
                 recycle();
             }
             return d;
@@ -128,26 +118,27 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
         }
     }
 
-    private int c;
-
     public T removeFirst() {
         if (s1 > 0) {
             s1--;
             size--;
+            d = items[begin + 1];
+            items[begin + 1] = null;
             begin++;
-            d = items[begin];
             ratio = (double) size / items.length;
             if (ratio < 0.25 && items.length > 16) {
                 recycle();
             }
             return d;
-        } else if (s2 > 0) {
+        } else if (s2 > 0 && s1 == 0) {
             s2--;
-            d = items[start];
-            start = start + 1;
+            d = items[0];
+            System.arraycopy(items, 1, items, 0, s2);
+            end--;
+            items[end] = null;
             size--;
             ratio = (double) size / items.length;
-            if (ratio < 0.25 && items.length > 16) {
+            if (ratio < 0.25 && items.length >= 16) {
                 recycle();
             }
             return d;
@@ -157,32 +148,29 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
     private void recycle() {
         if (size > 0) {
             T[] a = (T[]) new Object[size];
-            if (s1 > 0){
-                System.arraycopy(items, begin + 1, a, 0, s1);}
-            if (s2 > 0){
-                System.arraycopy(items, start, a, s1, s2);}
+            if (s1 > 0) {
+                System.arraycopy(items, begin + 1, a, s2, s1);
+
+            }
+            if (s2 > 0) {
+                System.arraycopy(items, 0, a, 0, s2);
+
+            }
             items = a;
-            s2 = size;
-            s1 = 0;
-            begin = items.length - 1;
-            end = items.length;
-            start = 0;
-            last = s2;
+            begin = items.length - s1 - 1;
+            end = 0;
+
         } else {
             T[] a = (T[]) new Object[8];
-
-            //if(begin+1<=items.length-1)
-            if (s1 > 0){
-                System.arraycopy(items, begin + 1, a, 0, s1);}
-            if (s2 > 0){
-                System.arraycopy(items, start, a, s1, s2);}
+            if (s1 > 0) {
+                System.arraycopy(items, begin + 1, a, s2, s1 - 1);
+            }
+            if (s2 > 0) {
+                System.arraycopy(items, 0, a, 0, s2);
+            }
             items = a;
-            s2 = size;
-            s1 = 0;
-            begin = items.length - 1;
-            end = items.length;
-            start = 0;
-            last = s2;
+            begin = items.length - 1 - s2;
+            end = items.length - s1;
         }
     }
 
@@ -191,20 +179,23 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
     }
 
     public T get(int index) {
-        if (index < s1){
-            return items[begin + index + 1];}
-        if (index >= s1 && index < size){
-            return items[start + (index - s1)];}
-        else return null;
+        if (index < s1) {
+            return items[begin + index + 1];
+        }
+        if (index >= s1 && index < size) {
+            return items[index - s1];
+        } else return null;
     }
 
     public void printDeque() {
 
-        for (int i = begin + 1; i < end; i++) {
+        for (int n = 0; 0 < s1; n++) {
+            int i = begin;
+            begin++;
             System.out.print(items[i]);
             System.out.print(' ');
         }
-        for (int j = start; j < last; j++) {
+        for (int j = 0; j < s2; j--) {
             System.out.print(items[j]);
             System.out.print(' ');
         }
@@ -215,51 +206,54 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
         return size == 0;
     }
 
-    public Iterator<T> iterator(){
+    public Iterator<T> iterator() {
         return new ArrayIterator();
     }
 
-    private class ArrayIterator implements Iterator<T>{
+    private class ArrayIterator implements Iterator<T> {
         private int wizPos;
+
         public ArrayIterator() {
-            wizPos=0;
+            wizPos = 0;
         }
 
         public boolean hasNext() {
             return wizPos < size;
         }
 
-        public T next(){
-            if(wizPos >= size){
+        public T next() {
+            if (wizPos >= size) {
                 return null;
             }
-            int returnItrm =0;
-            if (wizPos < s1){
-                items[returnItrm] = items[begin + wizPos + 1];}
-            if (wizPos >= s1 && wizPos < size){
-                items[returnItrm] = items[start + (wizPos - s1)];}
+            int returnItrm = 0;
+            if (wizPos < s1) {
+                items[returnItrm] = items[begin + 1 + wizPos];
+            }
+            if (wizPos >= s1 && wizPos < size) {
+                items[returnItrm] = items[end + (wizPos - s2 - s1)];
+            }
             wizPos += 1;
             return items[returnItrm];
         }
     }
 
     @Override
-    public boolean equals(Object other){
-        if(other==null){
+    public boolean equals(Object other) {
+        if (other == null) {
             return false;
         }
 
-        if(this == other){
+        if (this == other) {
             return true;
         }
 
-        if(other instanceof ArrayDeque){
-            ArrayDeque<T> o =(ArrayDeque<T>) other;
-            if (o.size !=this.size){
+        if (other instanceof ArrayDeque) {
+            ArrayDeque<T> o = (ArrayDeque<T>) other;
+            if (o.size != this.size) {
                 return false;
             }
-            for(int i=0;i<o.size;i++){
-                if(!o.get(i).equals(this.get(i)) ){
+            for (int i = 0; i < o.size; i++) {
+                if (!o.get(i).equals(this.get(i))) {
                     return false;
                 }
             }
@@ -267,30 +261,4 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
         return true;
     }
 
-    public static void main(String[] args) {
-        ArrayDeque<String> lld1 = new ArrayDeque<String>();
-        ArrayDeque<String> lld2 = new ArrayDeque<String>();
-//        lld1.addFirst("1");
-//        lld1.addFirst("2");
-//        lld2.addFirst("1");
-//        lld2.addFirst("2");
-
-
-
-        for (int i = 0; i <= 10000; i++) {
-            lld1.addFirst(String.valueOf(i));
-            lld2.addFirst(String.valueOf(i));
-        }
-
-        if(lld1.equals(lld2)){
-            System.out.println("相等");
-        }
-//        lld1.removeLast();
-
-//        Iterator<Integer> seer = lld1.iterator();
-//        while (seer.hasNext()){
-//            int n = seer.next();
-//            System.out.println(n);
-//        }
-    }
 }

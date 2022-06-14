@@ -21,7 +21,7 @@ public class GuitarString {
         //       Your should initially fill your buffer array with zeros.
         //创建一个容量=SR/频率的缓冲区。你需要将此除法运算的结果转换为int。For更好的准确性，使用数学。强制转换前的round（）函数。您应该首先用零填充缓冲区数组。
         double capacity = Math.round(SR/frequency);
-        buffer = new LinkedListDeque<>();
+        //buffer = new LinkedListDeque<>();
         for (int i = 0; i < capacity; i++) {
             buffer.addFirst((double) 0);
         }
