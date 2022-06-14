@@ -1,20 +1,18 @@
 package deque;
-
 import java.util.Iterator;
-
 //LinkedListDeque：双端链表/双向链表
 public class LinkedListDeque<T> implements Deque<T> {
     //私有内部类
-    private class stuffnode {
+    private class Stuffnode {
         //泛型类，代表调用参数的类型
         private T item;
         //previous 前一位
-        private stuffnode pre;
+        private Stuffnode pre;
         //next 后一位
-        private stuffnode next;
+        private Stuffnode next;
 
         //构造方法
-        private stuffnode(T x) {
+        private Stuffnode(T x) {
             item = x;
         }
     }
@@ -22,11 +20,11 @@ public class LinkedListDeque<T> implements Deque<T> {
     //默认长度是1
     private int size = 1;
     //哨兵
-    private stuffnode stuf;
+    private Stuffnode stuf;
 
     //构造方法，当LinkedListDeque被new成对象时对方法里的变量进行声明
     private LinkedListDeque(T x) {
-        stuffnode temp = new stuffnode(x);
+        Stuffnode temp = new Stuffnode(x);
         stuf.next = temp;
         stuf.pre = temp;
         size = 1;
@@ -34,13 +32,13 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     //无参构造
     public LinkedListDeque() {
-        stuf = new stuffnode(null);
+        stuf = new Stuffnode(null);
         size = 0;
     }
 
     public void addFirst(T x) {
         if (size == 0) {
-            stuffnode newStuffnode = new stuffnode(x);
+            Stuffnode newStuffnode = new Stuffnode(x);
             stuf.next = newStuffnode;
             stuf.pre = newStuffnode;
             newStuffnode.pre = stuf;
@@ -48,7 +46,7 @@ public class LinkedListDeque<T> implements Deque<T> {
             size++;
         } else {
             size++;
-            stuffnode newStuffnode = new stuffnode(x);
+            Stuffnode newStuffnode = new Stuffnode(x);
             stuf.next.pre = newStuffnode;
             newStuffnode.next = stuf.next;
             newStuffnode.pre = stuf;
@@ -58,14 +56,14 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     public void addLast(T x) {
         if (size == 0) {
-            stuffnode newStuffnode = new stuffnode(x);
+            Stuffnode newStuffnode = new Stuffnode(x);
             stuf.next = newStuffnode;
             stuf.pre = newStuffnode;
             newStuffnode.pre = stuf;
             newStuffnode.next = stuf;
             size++;
         } else {
-            stuffnode newStuffnode = new stuffnode(x);
+            Stuffnode newStuffnode = new Stuffnode(x);
             stuf.pre.next = newStuffnode;
             newStuffnode.pre = stuf.pre;
             newStuffnode.next = stuf;
@@ -100,7 +98,7 @@ public class LinkedListDeque<T> implements Deque<T> {
             return null;
         }
         int t = 0;
-        stuffnode a = stuf.next;
+        Stuffnode a = stuf.next;
         while (a != stuf) {
             if (index == t) {
                 return a.item;
@@ -113,7 +111,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     public T removeFirst() {
         if (size >= 1) {
-            stuffnode temp = stuf.next;
+            Stuffnode temp = stuf.next;
             T t = stuf.next.item;
             stuf.next.next.pre = stuf;
             stuf.next = stuf.next.next;
@@ -127,7 +125,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     public T removeLast() {
         if (size >= 1) {
-            stuffnode temp = stuf.pre;
+            Stuffnode temp = stuf.pre;
             T t = stuf.pre.item;
             stuf.pre = stuf.pre.pre;
             stuf.pre.next = stuf;
@@ -161,7 +159,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     private class ArrayIterator implements Iterator<T> {
         private int wizPos;
 
-        public ArrayIterator() {
+         ArrayIterator() {
             wizPos = 0;
         }
 

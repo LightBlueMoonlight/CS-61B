@@ -20,7 +20,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
 
     //无参构造,创建一个空列表
-    public ArrayDeque() {
+     ArrayDeque() {
         items = (T[]) new Object[8];
         begin = items.length - 1;
         size = 0;
@@ -142,7 +142,9 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
                 recycle();
             }
             return d;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     private void recycle() {
@@ -184,11 +186,12 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         if (index >= s1 && index < size) {
             return items[index - s1];
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     public void printDeque() {
-
         for (int n = 0; 0 < s1; n++) {
             int i = begin;
             begin++;
@@ -213,7 +216,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private class ArrayIterator implements Iterator<T> {
         private int wizPos;
 
-        public ArrayIterator() {
+        ArrayIterator() {
             wizPos = 0;
         }
 

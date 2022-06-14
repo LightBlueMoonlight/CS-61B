@@ -1,19 +1,19 @@
 package deque;
 
 public interface Deque<T> {
-    public void addFirst(T item);
+    void addFirst(T item);
 
-    public void addLast(T item);
+    void addLast(T item);
 
-    public boolean isEmpty();
+    boolean isEmpty();
 
-    public T removeLast();
+    T removeLast();
 
-    public T removeFirst();
+    T removeFirst();
 
-    public int size();
+    int size();
 
-    public void printDeque();
+    void printDeque();
 
-    public T get(int index);
+    T get(int index);
 }
