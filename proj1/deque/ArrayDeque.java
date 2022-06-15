@@ -32,7 +32,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         s2 = 0;
     }
 
-
+    @Override
     public void addLast(T item) {
         if (end <= begin && end < items.length) {
             items[end] = item;
@@ -60,7 +60,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             s2++;
         }
     }
-
+    @Override
     public void addFirst(T item) {
         if (begin >= 0 && begin >= end) {
             items[begin] = item;
@@ -87,7 +87,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     private T d;
-
+    @Override
     public T removeLast() {
         if (s2 > 0) {
             s2--;
@@ -117,7 +117,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return null;
         }
     }
-
+    @Override
     public T removeFirst() {
         if (s1 > 0) {
             s1--;
@@ -175,11 +175,11 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             end = items.length - s1;
         }
     }
-
+    @Override
     public int size() {
         return size;
     }
-
+    @Override
     public T get(int index) {
         if (index < s1) {
             return items[begin + index + 1];
@@ -204,7 +204,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         System.out.print("\n");
     }
-
+    @Override
     public boolean isEmpty() {
         return size == 0;
     }

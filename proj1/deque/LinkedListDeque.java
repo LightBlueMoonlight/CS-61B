@@ -1,8 +1,7 @@
 package deque;
-
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Deque<T> {
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     //私有内部类
     private class Stuffnode {
         //泛型类，代表调用参数的类型
@@ -37,6 +36,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         size = 0;
     }
 
+    @Override
     public void addFirst(T x) {
         if (size == 0) {
             Stuffnode newStuffnode = new Stuffnode(x);
@@ -54,7 +54,7 @@ public class LinkedListDeque<T> implements Deque<T> {
             stuf.next = newStuffnode;
         }
     }
-
+    @Override
     public void addLast(T x) {
         if (size == 0) {
             Stuffnode newStuffnode = new Stuffnode(x);
@@ -72,14 +72,14 @@ public class LinkedListDeque<T> implements Deque<T> {
             size++;
         }
     }
-
+    @Override
     public boolean isEmpty() {
         if (size == 0) {
             return true;
         }
         return false;
     }
-
+    @Override
     public int size() {
         return size;
     }
@@ -109,7 +109,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
         return null;
     }
-
+    @Override
     public T removeFirst() {
         if (size >= 1) {
             Stuffnode temp = stuf.next;
@@ -123,7 +123,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
         return null;
     }
-
+    @Override
     public T removeLast() {
         if (size >= 1) {
             Stuffnode temp = stuf.pre;
@@ -171,7 +171,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         public T next() {
             T returnItem = stuf.next.item;
             stuf.next = stuf.next.next;
-            wizPos += 1;
+            wizPos ++;
             return returnItem;
         }
     }
