@@ -152,7 +152,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     private void recycle() {
         if (size > 0) {
-            T[] a = (T[]) new Object[items.length/4];
+            T[] a = (T[]) new Object[items.length / 4];
             if (s1 > 0) {
                 System.arraycopy(items, begin + 1, a, s2, s1);
 
@@ -269,5 +269,4 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         return true;
     }
-
 }

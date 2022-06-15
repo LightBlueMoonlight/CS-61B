@@ -76,6 +76,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
+    @Override
     public boolean isEmpty() {
         if (size == 0) {
             return true;
@@ -206,21 +207,5 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             }
         }
         return true;
-    }
-
-    public static void main(String[] args) {
-        LinkedListDeque ll = new LinkedListDeque();
-        ll.addFirst(0);
-        ll.addLast(1);
-        ll.addLast(2);
-        ll.addFirst(3);
-        ll.removeLast();
-        ll.removeFirst();
-        ll.addLast(6);
-        ll.addLast(7);
-        ll.addLast(8);
-        ll.getRecursive(1);
-        System.out.println(ll.removeFirst());
-
     }
 }

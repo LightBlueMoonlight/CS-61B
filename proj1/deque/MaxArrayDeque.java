@@ -36,6 +36,4 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
         }
         return this.get(maxDex);
     }
-
-
 }
