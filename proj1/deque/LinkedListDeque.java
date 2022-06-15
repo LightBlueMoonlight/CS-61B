@@ -1,4 +1,6 @@
+
 package deque;
+
 import java.util.Iterator;
 
 public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
@@ -54,6 +56,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             stuf.next = newStuffnode;
         }
     }
+
     @Override
     public void addLast(T x) {
         if (size == 0) {
@@ -72,13 +75,14 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             size++;
         }
     }
-    @Override
+
     public boolean isEmpty() {
         if (size == 0) {
             return true;
         }
         return false;
     }
+
     @Override
     public int size() {
         return size;
@@ -109,6 +113,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
         return null;
     }
+
     @Override
     public T removeFirst() {
         if (size >= 1) {
@@ -123,6 +128,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
         return null;
     }
+
     @Override
     public T removeLast() {
         if (size >= 1) {
@@ -144,11 +150,13 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         if (size == 0) {
             return null;
         }
+        T t = stuf.next.item;
+        Stuffnode a = stuf.next;
         for (int j = 0; j <= index; j++) {
             if (index == j) {
-                return stuf.next.item;
+                return t;
             }
-            stuf = stuf.next;
+            t = a.next.item;
         }
         return getRecursive(index);
     }
@@ -171,7 +179,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         public T next() {
             T returnItem = stuf.next.item;
             stuf.next = stuf.next.next;
-            wizPos ++;
+            wizPos++;
             return returnItem;
         }
     }
@@ -200,4 +208,19 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         return true;
     }
 
+    public static void main(String[] args) {
+        LinkedListDeque ll = new LinkedListDeque();
+        ll.addFirst(0);
+        ll.addLast(1);
+        ll.addLast(2);
+        ll.addFirst(3);
+        ll.removeLast();
+        ll.removeFirst();
+        ll.addLast(6);
+        ll.addLast(7);
+        ll.addLast(8);
+        ll.getRecursive(1);
+        System.out.println(ll.removeFirst());
+
+    }
 }

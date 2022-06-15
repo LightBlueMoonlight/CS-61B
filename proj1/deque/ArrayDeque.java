@@ -60,6 +60,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             s2++;
         }
     }
+
     @Override
     public void addFirst(T item) {
         if (begin >= 0 && begin >= end) {
@@ -87,6 +88,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     private T d;
+
     @Override
     public T removeLast() {
         if (s2 > 0) {
@@ -117,6 +119,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return null;
         }
     }
+
     @Override
     public T removeFirst() {
         if (s1 > 0) {
@@ -149,7 +152,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     private void recycle() {
         if (size > 0) {
-            T[] a = (T[]) new Object[size];
+            T[] a = (T[]) new Object[items.length/4];
             if (s1 > 0) {
                 System.arraycopy(items, begin + 1, a, s2, s1);
 
@@ -175,10 +178,12 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             end = items.length - s1;
         }
     }
+
     @Override
     public int size() {
         return size;
     }
+
     @Override
     public T get(int index) {
         if (index < s1) {
@@ -204,6 +209,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         System.out.print("\n");
     }
+
     @Override
     public boolean isEmpty() {
         return size == 0;
