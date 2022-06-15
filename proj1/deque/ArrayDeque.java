@@ -120,22 +120,24 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
+    private T c;
+
     @Override
     public T removeFirst() {
         if (s1 > 0) {
             s1--;
             size--;
-            d = items[begin + 1];
-            items[begin + 1] = null;
             begin++;
+            c = items[begin];
+            items[begin] = null;
             ratio = (double) size / items.length;
             if (ratio < 0.25 && items.length > 16) {
                 recycle();
             }
-            return d;
+            return c;
         } else if (s2 > 0 && s1 == 0) {
             s2--;
-            d = items[0];
+            c = items[0];
             System.arraycopy(items, 1, items, 0, s2);
             end--;
             items[end] = null;
@@ -144,7 +146,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             if (ratio < 0.25 && items.length >= 16) {
                 recycle();
             }
-            return d;
+            return c;
         } else {
             return null;
         }

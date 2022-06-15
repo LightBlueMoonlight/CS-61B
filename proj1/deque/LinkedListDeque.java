@@ -151,12 +151,13 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         if (size == 0) {
             return null;
         }
-        T t = stuf.next.item;
-        Stuffnode a = stuf.next;
+        Stuffnode a = stuf;
+        T t = a.next.item;
         for (int j = 0; j <= index; j++) {
             if (index == j) {
                 return t;
             }
+            a = a.next;
             t = a.next.item;
         }
         return getRecursive(index);
@@ -195,7 +196,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             return true;
         }
 
-        if (other instanceof LinkedListDeque) {
+        if (other instanceof Deque) {
             LinkedListDeque<T> o = (LinkedListDeque<T>) other;
             if (o.size != this.size) {
                 return false;
