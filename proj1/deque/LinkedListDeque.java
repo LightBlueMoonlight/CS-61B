@@ -1,6 +1,7 @@
 package deque;
+
 import java.util.Iterator;
-//LinkedListDeque：双端链表/双向链表
+
 public class LinkedListDeque<T> implements Deque<T> {
     //私有内部类
     private class Stuffnode {
@@ -159,7 +160,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     private class ArrayIterator implements Iterator<T> {
         private int wizPos;
 
-         ArrayIterator() {
+        ArrayIterator() {
             wizPos = 0;
         }
 

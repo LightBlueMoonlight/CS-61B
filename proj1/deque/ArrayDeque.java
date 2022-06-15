@@ -20,7 +20,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
 
     //无参构造,创建一个空列表
-     ArrayDeque() {
+    public ArrayDeque() {
         items = (T[]) new Object[8];
         begin = items.length - 1;
         size = 0;
