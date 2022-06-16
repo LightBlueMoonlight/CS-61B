@@ -99,7 +99,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             items[end] = null;
             ratio = (double) size / items.length;
             //数组使用率小于25% 就将数组的长度减少，大于16是因为只考虑扩容之后的情况
-            if (ratio < 0.25 && items.length >= 16) {
+            if (ratio < 0.25 && items.length > 16) {
                 recycle();
             }
             return d;
@@ -111,7 +111,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             System.arraycopy(items, begin, items, begin + 1, s1);
             ratio = (double) size / items.length;
             items[begin] = null;
-            if (ratio < 0.25 && items.length >= 16) {
+            if (ratio < 0.25 && items.length > 16) {
                 recycle();
             }
             return d;
@@ -143,7 +143,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             items[end] = null;
             size--;
             ratio = (double) size / items.length;
-            if (ratio < 0.25 && items.length >= 16) {
+            if (ratio < 0.25 && items.length > 16) {
                 recycle();
             }
             return c;

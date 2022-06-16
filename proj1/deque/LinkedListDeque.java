@@ -78,10 +78,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
     @Override
     public boolean isEmpty() {
-        if (size == 0) {
-            return true;
-        }
-        return false;
+        return size == 0;
     }
 
     @Override
@@ -196,7 +193,11 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             return true;
         }
 
-        if (other instanceof Deque) {
+        if (this instanceof Deque) {
+            return false;
+        }
+
+        if (other instanceof LinkedListDeque) {
             LinkedListDeque<T> o = (LinkedListDeque<T>) other;
             if (o.size != this.size) {
                 return false;
