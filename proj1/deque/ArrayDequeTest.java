@@ -53,11 +53,12 @@ public class ArrayDequeTest {
     @Test
     public void testRemoveFirst() {
         ArrayDeque<Integer> arrayDeque = new ArrayDeque<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             arrayDeque.addFirst(i);
+            arrayDeque.addLast(i);
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             arrayDeque.removeFirst();
         }
         assertTrue("lld1 should be empty upon initialization", arrayDeque.isEmpty());

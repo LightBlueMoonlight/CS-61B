@@ -165,7 +165,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             }
             items = a;
             begin = items.length - s1 - 1;
-            end = 0;
+            end = s2;
 
         } else {
             T[] a = (T[]) new Object[8];
