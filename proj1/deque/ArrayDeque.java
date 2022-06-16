@@ -212,11 +212,6 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         System.out.print("\n");
     }
 
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
     public Iterator<T> iterator() {
         return new ArrayIterator();
     }
@@ -233,18 +228,19 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
 
         public T next() {
+            T[] returnValue = items;
             if (wizPos >= size) {
                 return null;
             }
             int returnItrm = 0;
             if (wizPos < s1) {
-                items[returnItrm] = items[begin + 1 + wizPos];
+                returnValue[returnItrm] = returnValue[begin + 1 + wizPos];
             }
             if (wizPos >= s1 && wizPos < size) {
-                items[returnItrm] = items[end + (wizPos - s2 - s1)];
+                returnValue[returnItrm] = returnValue[end + (wizPos - s2 - s1)];
             }
             wizPos += 1;
-            return items[returnItrm];
+            return returnValue[returnItrm];
         }
     }
 
@@ -254,16 +250,16 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return false;
         }
 
-        if (this == other) {
+        if (other == this) {
             return true;
         }
 
-        if (other instanceof ArrayDeque) {
-            ArrayDeque<T> o = (ArrayDeque<T>) other;
-            if (o.size != this.size) {
+        if (other instanceof Deque) {
+            Deque o = (Deque) other;
+            if (o.size() != size) {
                 return false;
             }
-            for (int i = 0; i < o.size; i++) {
+            for (int i = 0; i < o.size(); i++) {
                 if (!o.get(i).equals(this.get(i))) {
                     return false;
                 }
