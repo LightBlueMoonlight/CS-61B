@@ -136,13 +136,13 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             }
             return c;
         } else if (s2 > 0 && s1 == 0) {
+            size--;
             s2--;
+            end--;
             c = items[0];
             System.arraycopy(items, 1, items, 0, s2);
-            end--;
-            items[end] = null;
-            size--;
             ratio = (double) size / items.length;
+            items[end] = null;
             if (ratio < 0.25 && items.length > 16) {
                 recycle();
             }
