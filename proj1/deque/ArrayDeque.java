@@ -199,13 +199,15 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     public void printDeque() {
-        for (int n = 0; 0 < s1; n++) {
-            int i = begin;
-            begin++;
+        int i = begin;
+        int j = begin;
+        for (int n = 0; n < s1; n++) {
+            i++;
             System.out.print(items[i]);
             System.out.print(' ');
         }
-        for (int j = 0; j < s2; j--) {
+        for (int m = 0; j < s2; m++) {
+            j--;
             System.out.print(items[j]);
             System.out.print(' ');
         }
@@ -234,10 +236,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             }
             int returnItrm = 0;
             if (wizPos < s1) {
-                returnValue[returnItrm] = returnValue[begin + 1 + wizPos];
+                return items[begin + wizPos + 1];
             }
             if (wizPos >= s1 && wizPos < size) {
-                returnValue[returnItrm] = returnValue[end + (wizPos - s2 - s1)];
+                return items[wizPos - s1];
             }
             wizPos += 1;
             return returnValue[returnItrm];
@@ -266,5 +268,23 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             }
         }
         return true;
+    }
+
+    public static void main(String[] args) {
+        ArrayDeque<Integer> arrayDeque = new ArrayDeque<>();
+        for (int i = 0; i < 8; i++) {
+            arrayDeque.addFirst(i);
+            arrayDeque.addLast(i);
+        }
+
+        for (int i = 0; i < 28; i++) {
+            System.out.println(arrayDeque.removeFirst());
+        }
+
+        for (int i = 0; i < 10; i++) {
+            arrayDeque.addFirst(i);
+            arrayDeque.addLast(i);
+        }
+
     }
 }
