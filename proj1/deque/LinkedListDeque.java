@@ -12,7 +12,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         private Stuffnode pre;
         //next 后一位
         private Stuffnode next;
-
         //构造方法
         private Stuffnode(T x) {
             item = x;
