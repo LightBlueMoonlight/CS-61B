@@ -160,21 +160,16 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     private class ArrayIterator implements Iterator<T> {
-        private int wizPos;
-        private Stuffnode p;
+        private int wizPos = 0;
 
-        ArrayIterator() {
-            wizPos = 0;
-            p = stuf.next;
-        }
-
+        @Override
         public boolean hasNext() {
             return wizPos < size;
         }
 
+        @Override
         public T next() {
-            T returnItem = stuf.next.item;
-            p = p.next;
+            T returnItem = get(wizPos);
             wizPos++;
             return returnItem;
         }
