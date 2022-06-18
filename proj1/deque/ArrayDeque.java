@@ -190,6 +190,9 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     @Override
     public T get(int index) {
+        if (index < 0 || index > size - 1) {
+            return null;
+        }
         if (index < s1) {
             return items[begin + index + 1];
         }

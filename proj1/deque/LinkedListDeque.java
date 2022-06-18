@@ -92,7 +92,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
     @Override
     public T get(int index) {
-        if (size == 0) {
+        if (index < 0 || index > size - 1) {
             return null;
         }
         int t = 0;
@@ -140,7 +140,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
     //递归get
     public T getRecursive(int index) {
-        if (size == 0) {
+        if (index < 0 || index > size - 1) {
             return null;
         }
         Stuffnode a = stuf;
@@ -161,9 +161,11 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
     private class ArrayIterator implements Iterator<T> {
         private int wizPos;
+        private Stuffnode p;
 
         ArrayIterator() {
             wizPos = 0;
+            p = stuf.next;
         }
 
         public boolean hasNext() {
@@ -172,7 +174,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
         public T next() {
             T returnItem = stuf.next.item;
-            stuf.next = stuf.next.next;
+            p = p.next;
             wizPos++;
             return returnItem;
         }
@@ -202,7 +204,8 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
                     return false;
                 }
             }
+            return true;
         }
-        return true;
+        return false;
     }
 }
