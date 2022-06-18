@@ -12,6 +12,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         private Stuffnode pre;
         //next 后一位
         private Stuffnode next;
+
         //构造方法
         private Stuffnode(T x) {
             item = x;
@@ -188,11 +189,15 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
 
         if (other instanceof Deque) {
-            ArrayDeque<?> o = (ArrayDeque<?>) other;
+            Deque o = (Deque) other;
             if (o.size() != size) {
                 return false;
             }
             for (int i = 0; i < o.size(); i++) {
+                if (o.get(i) == null) {
+                    continue;
+                }
+
                 if (!o.get(i).equals(this.get(i))) {
                     return false;
                 }

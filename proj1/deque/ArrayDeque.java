@@ -124,11 +124,13 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     @Override
     public T removeFirst() {
-        if (s1 > 0) {
+        if (s1 > 0 && s1 <= size) {
             s1--;
             size--;
             begin++;
-            c = items[begin];
+            if (items[begin] != null) {
+                c = items[begin];
+            }
             items[begin] = null;
             ratio = (double) size / items.length;
             if (ratio < 0.25 && items.length > 16) {
@@ -156,7 +158,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (size > 0) {
             T[] a = (T[]) new Object[items.length / 4];
             if (s1 > 0) {
-                System.arraycopy(items, begin + 1, a, s2, s1);
+                System.arraycopy(items, begin + 1, a, a.length - s1, s1);
 
             }
             if (s2 > 0) {
@@ -247,11 +249,15 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
 
         if (other instanceof Deque) {
-            ArrayDeque<?> o = (ArrayDeque<?>) other;
+            Deque o = (Deque) other;
             if (o.size() != size) {
                 return false;
             }
             for (int i = 0; i < o.size(); i++) {
+                if (o.get(i) == null) {
+                    continue;
+                }
+
                 if (!o.get(i).equals(this.get(i))) {
                     return false;
                 }
