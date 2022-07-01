@@ -29,6 +29,9 @@ class Utils {
     /** Return the entire contents of FILE as a byte array.  FILE must
      *  be a normal file.  Throws IllegalArgumentException
      *  in case of problems. */
+    /**以字节数组的形式返回文件的全部内容。文件必须
+     *是普通文件。抛出IllegalArgumentException
+     *如果出现问题*/
     static byte[] readContents(File file) {
         if (!file.isFile()) {
             throw new IllegalArgumentException("must be a normal file");
@@ -43,6 +46,9 @@ class Utils {
     /** Return the entire contents of FILE as a String.  FILE must
      *  be a normal file.  Throws IllegalArgumentException
      *  in case of problems. */
+    /**以字符串形式返回文件的全部内容。文件必须
+     *是普通文件。抛出IllegalArgumentException
+     *如果出现问题*/
     static String readContentsAsString(File file) {
         return new String(readContents(file), StandardCharsets.UTF_8);
     }
@@ -51,6 +57,10 @@ class Utils {
      *  creating or overwriting it as needed.  Each object in CONTENTS may be
      *  either a String or a byte array.  Throws IllegalArgumentException
      *  in case of problems. */
+    /**将内容中的字节连接到文件的结果写入，
+     *根据需要创建或覆盖它。内容中的每个对象可能是
+     *字符串或字节数组。抛出IllegalArgumentException
+     *如果出现问题*/
     static void writeContents(File file, Object... contents) {
         try {
             if (file.isDirectory()) {
@@ -74,6 +84,8 @@ class Utils {
 
     /** Return an object of type T read from FILE, casting it to EXPECTEDCLASS.
      *  Throws IllegalArgumentException in case of problems. */
+    /**返回从文件读取的T类型的对象，将其强制转换为EXPECTEDCLASS。
+     *出现问题时引发IllegalArgumentException*/
     static <T extends Serializable> T readObject(File file,
                                                  Class<T> expectedClass) {
         try {
@@ -89,31 +101,39 @@ class Utils {
     }
 
     /** Write OBJ to FILE. */
+    /**将OBJ写入文件*/
     static void writeObject(File file, Serializable obj) {
         writeContents(file, serialize(obj));
     }
 
 
     /* OTHER FILE UTILITIES */
-
     /** Return the concatentation of FIRST and OTHERS into a File designator,
-     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
+     *  analogous to the {@link java.nio.file.Paths#get(String, String[])}
      *  method. */
-    static File join(String first, String... others) {
+    /*其他文件实用程序*/
+    /**将FIRST和OTHERS的浓度返回到文件指示符中，
+     *类似于{@link java.nio.file.Paths#get（String，String[]）}
+     *方法*/
+    public static File join(String first, String... others) {
         return Paths.get(first, others).toFile();
     }
 
     /** Return the concatentation of FIRST and OTHERS into a File designator,
-     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
+     *  analogous to the {@link java.nio.file.Paths#get(String, String[])}
      *  method. */
-    static File join(File first, String... others) {
+    /**将FIRST和OTHERS的浓度返回到文件指示符中，
+     *类似于{@link java.nio.file.Paths#get（String，String[]）}
+     *方法*/
+    public static File join(File first, String... others) {
         return Paths.get(first.getPath(), others).toFile();
     }
 
 
     /* SERIALIZATION UTILITIES */
-
     /** Returns a byte array containing the serialized contents of OBJ. */
+    /*序列化实用程序*/
+    /**返回包含OBJ序列化内容的字节数组*/
     static byte[] serialize(Serializable obj) {
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -138,6 +158,15 @@ class Utils {
      *     Refer to the spec for more information.
      * @param message message to print
      */
+    /**
+     *打印出消息并退出，错误代码为1。
+     *注：
+     *Gitlet中错误/退出代码的功能不同
+     *因此，不要将此作为参考。
+     *有关更多信息，请参阅规范。
+     *@要打印的参数消息消息
+
+     */
     public static void exitWithError(String message) {
         if (message != null && !message.equals("")) {
             System.out.println(message);
@@ -147,6 +176,8 @@ class Utils {
 
     /** Return a RuntimeException whose message is composed from MSG and ARGS as
      *  for the String.format method. */
+    /**返回RuntimeException，其消息由MSG和ARGS组成，如下所示
+     *对于字符串。格式方法*/
     static RuntimeException error(String msg, Object... args) {
         return new RuntimeException(String.format(msg, args));
     }
