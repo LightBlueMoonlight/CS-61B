@@ -31,7 +31,7 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
     //是否包含当前key
     public boolean containsKey(K key) {
         //根不存在或当前值为空之间返回
-        if( root.key == null || key == null){
+        if( root == null || key == null){
             return false;
         }
         //当前值等于根节点
@@ -47,7 +47,7 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
     }
 
     public V get(K key) {
-        if(key == null){
+        if(key == null || root == null){
             return null;
         }
         if(key.equals(root.key)){
