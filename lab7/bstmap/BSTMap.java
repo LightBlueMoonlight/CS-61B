@@ -40,8 +40,14 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
         }
         //当前值大于根节点，走右子节点比较
         if (key.compareTo(root.key) > 0){
+            if(root.right.key == null){
+                return false;
+            }
             return containsKey(root.right.key);
         }else{
+            if(root.left.key == null){
+                return false;
+            }
             return containsKey(root.left.key);
         }
     }
