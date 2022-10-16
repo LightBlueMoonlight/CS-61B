@@ -14,7 +14,7 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
         public V value;
         //左节点
         public Node left;
-        //右系欸但
+        //右节点
         public Node right;
         //有参构造
         public Node(K k, V v) {
@@ -23,6 +23,7 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
         }
     }
 
+    //清楚所有节点
     public void clear() {
         root = null;
         size = 0;
@@ -43,14 +44,17 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
         } else if (cmp > 0) {
             return containsKey(node.right, key);
         }
+        // key=node.key
         return true;
     }
 
+    //获取key对于的value
     public V get(K key) {
         return get(root, key);
     }
 
     private V get(Node node, K key) {
+        //不存在根节点
         if (node == null) {
             return null;
         }
@@ -60,6 +64,7 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
         } else if (cmp > 0) {
             return get(node.right, key);
         }
+        // key=node.key
         return node.value;
     }
 
@@ -73,6 +78,7 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
     }
 
     private Node put(Node root, K key, V value) {
+        //没有根节点，将当前key和value生成一个新节点
         if(root == null){
             return new Node(key,value);
         }
@@ -93,15 +99,18 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
     }
 
     private void addKeys(Node node, Set<K> set) {
+
         if (node == null) {
             return;
         }
+        System.out.println(node.key);
         set.add(node.key);
         addKeys(node.left, set);
         addKeys(node.right, set);
     }
 
     public V remove(K key) {
+        //存在才删除
         if (containsKey(key)) {
             V targetValue = get(key);
             root = remove(root, key);
@@ -158,5 +167,25 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
         printInOrder(node.left);
         System.out.println(node.key.toString() + " -> " + node.value.toString());
         printInOrder(node.right);
+    }
+
+    public static void main(String[] args) {
+        BSTMap<String, String> a = new BSTMap<String, String>();
+        a.put("1","1");
+        a.put("2","2");
+        a.put("3","3");
+        a.put("4","4");
+        a.put("5","5");
+        a.put("6","6");
+        a.put("7","7");
+        a.put("8","8");
+        a.put("9","9");
+        a.put("10","10");
+        a.put("11","11");
+        a.put("12","12");
+        a.put("13","13");
+        a.put("14","14");
+        a.put("15","15");
+        a.keySet();
     }
 }
