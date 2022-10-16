@@ -30,39 +30,37 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V>{
 
     //是否包含当前key
     public boolean containsKey(K key) {
-        //根不存在或当前值为空之间返回
-        if( root == null || key == null){
+            return containsKey(root,key);
+        }
+
+    private boolean containsKey(Node node, K key) {
+        if (node == null) {
             return false;
         }
-        //当前值等于根节点
-        if (root.key == key){
-            return true;
+        int cmp = key.compareTo(node.key);
+        if (cmp < 0) {
+            return containsKey(node.left, key);
+        } else if (cmp > 0) {
+            return containsKey(node.right, key);
         }
-        //当前值大于根节点，走右子节点比较
-        if (key.compareTo(root.key) > 0){
-            if(root.right.key == null){
-                return false;
-            }
-            return containsKey(root.right.key);
-        }else{
-            if(root.left.key == null){
-                return false;
-            }
-            return containsKey(root.left.key);
-        }
+        return true;
     }
 
     public V get(K key) {
-        if(key == null || root == null){
+        return get(root, key);
+    }
+
+    private V get(Node node, K key) {
+        if (node == null) {
             return null;
         }
-        if(key.equals(root.key)){
-            return root.value;
-        }else if (key.compareTo(root.key) < 0) {
-            return get(root.left.key);
-        }else{
-            return get(root.right.key);
+        int cmp = key.compareTo(node.key);
+        if (cmp < 0) {
+            return get(node.left, key);
+        } else if (cmp > 0) {
+            return get(node.right, key);
         }
+        return node.value;
     }
 
     public int size() {
