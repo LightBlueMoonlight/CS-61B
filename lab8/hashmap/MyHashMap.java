@@ -35,14 +35,6 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         }
     }
 
-    public void forEach(Consumer<? super K> action) {
-
-    }
-
-    public Spliterator<K> spliterator() {
-        return null;
-    }
-
     @Override
     public void clear() {
         size =0;
@@ -52,12 +44,17 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public boolean containsKey(K key) {
-        return get(key)!=null;
+        return getNode(key)!=null;
     }
 
     //元素的key的hash值对数组长度取模，获取到存储数组下标的位置
     private int getBucketIndex(K key){
-        return key.hashCode() % buckets.length;
+        return getBucketIndex(key,buckets);
+    }
+
+    private int getBucketIndex(K key, Collection<Node>[] table) {
+        int keyHashcode = key.hashCode();
+        return Math.floorMod(keyHashcode, table.length);
     }
 
     @Override
@@ -111,7 +108,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         Iterator<Node> nodeIterator = new MyHashMapNodeIterator();
         while (nodeIterator.hasNext()) {
             Node node = nodeIterator.next();
-            int bucketIndex = node.key.hashCode() % newBuckets.length;
+            int bucketIndex = getBucketIndex(node.key, newBuckets);
             newBuckets[bucketIndex].add(node);
         }
         buckets = newBuckets;
@@ -238,7 +235,4 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         }
         return table;
     }
-
-
-
 }
