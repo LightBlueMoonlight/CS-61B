@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import static gitlet.Utils.*;
  *TODO:在这里描述这个类的其他内容是个好主意
  *在高水平上。
  */
-public class Repository {
+public class Repository implements Serializable {
 
     /**当前工作目录*/
     public static final File CWD = new File(System.getProperty("user.dir"));
@@ -51,6 +52,7 @@ public class Repository {
             String id = Utils.sha1(initCommit);
             //文件名是算出commit的id
             File saveFile = Utils.join(INIT_COMMIT, id);
+            saveFile.mkdir();
             //对象都通过序列化写入到objects文件夹中，每个对象对应一个文件，文件名即为40位的对象ID。
             Utils.writeObject(saveFile,initCommit);
         }
