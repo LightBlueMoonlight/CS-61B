@@ -29,7 +29,7 @@ import java.io.File;
  */
 public class DumpObj {
 
-    /** Deserialize and apply dump to the contents of each of the files
+    /** Deserialize and apply dump to the contents of each of the files反序列化并将转储应用于每个文件的内容
      *  in FILES. */
     public static void main(String... files) {
         for (String fileName : files) {

@@ -6,6 +6,6 @@ import java.io.Serializable;
  *  @author P. N. Hilfinger
  */
 interface Dumpable extends Serializable {
-    /** Print useful information about this object on System.out. */
+    /** 在System.out上打印有关此对象的有用信息。 */
     void dump();
 }
