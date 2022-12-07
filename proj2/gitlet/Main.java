@@ -24,14 +24,14 @@ public class Main {
         Object text;
         switch(firstArg) {
             case "init":
+                validateNumArgs( args, 1);
                 Repository.setInit();
 //                validateNumArgs("story", args, 2);
 //                text = args[1];
 //                CapersRepository.writeStory(text);
                 break;
             case "add":
-                // TODO: handle the `add [filename]` command处理“add[filename]”命令
-                validateNumArgs("story", args, 2);
+                validateNumArgs(args, 2);
                 text = args[1];
                 Repository.setAdd(text);
                 break;
@@ -45,16 +45,14 @@ public class Main {
             case "find":
                 break;
             default:
-            Utils.message("No command with that name exists.");
-            System.exit(0);
+                NotherUtils.message("No command with that name exists.");
                 break;
         }
     }
 
-    public static void validateNumArgs(String cmd, String[] args, int n) {
+    public static void validateNumArgs(String[] args, int n) {
         if (args.length != n) {
-            throw new RuntimeException(
-                    String.format("Invalid number of arguments for: %s.", cmd));
+            NotherUtils.message("Incorrect operands.");
         }
     }
 }
