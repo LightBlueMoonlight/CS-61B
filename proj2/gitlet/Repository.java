@@ -62,11 +62,11 @@ public class Repository implements Serializable {
         HEAD.mkdir();
         //stage   #保存暂存区信息，在执行git init 的时候，这个文件还没有
         Commit initCommit = new Commit();
-        initCommit.makeCommitFile();
-        //在HEAD目录记录initCommit的CommitID
-        Utils.writeObject(HEAD, initCommit.getCommitID());
-        //创建默认的master分支
-        makeBranch(MASTER,initCommit.getCommitID());
+//        initCommit.makeCommitFile();
+//        //在HEAD目录记录initCommit的CommitID
+//        Utils.writeObject(HEAD, initCommit.getCommitID());
+//        //创建默认的master分支
+//        makeBranch(MASTER,initCommit.getCommitID());
 
     }
 
