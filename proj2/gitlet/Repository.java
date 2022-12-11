@@ -47,7 +47,8 @@ public class Repository implements Serializable {
     public static void setInit() {
         //如果当前目录下没有存储库就创建.gitlet,有就报错
         if (GITLET_DIR.exists()) {
-            NotherUtils.message("A Gitlet version-control system already exists in the current directory.");
+            Utils.message("A Gitlet version-control system already exists in the current directory.");
+            System.exit(0);
         }
         //创建.gitlet目录
         GITLET_DIR.mkdir();

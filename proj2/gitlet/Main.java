@@ -10,24 +10,16 @@ public class Main {
      */
     public static void main(String[] args) {
         if(args == null){
-            NotherUtils.message("Please enter a command.");
+            Utils.message("Please enter a command.");
+            System.exit(0);
         }
 
-//        if (args.length > 1){
-//            Utils.message("Incorrect operands.");
-//            System.exit(0);
-//        }
-        //checkout -- [file name]
-        //checkout [commit id] -- [file name]
         String firstArg = args[0];
         String text;
         switch(firstArg) {
             case "init":
                 validateNumArgs( args, 1);
                 Repository.setInit();
-//                validateNumArgs("story", args, 2);
-//                text = args[1];
-//                CapersRepository.writeStory(text);
                 break;
             case "add":
                 Repository.checkDir();
@@ -60,7 +52,8 @@ public class Main {
 
     public static void validateNumArgs(String[] args, int n) {
         if (args.length != n) {
-            NotherUtils.message("Incorrect operands.");
+            Utils.message("Incorrect operands.");
+            System.exit(0);
         }
     }
 }
