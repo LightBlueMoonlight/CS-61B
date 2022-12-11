@@ -10,8 +10,7 @@ public class Main {
      */
     public static void main(String[] args) {
         if(args == null){
-            Utils.message("Please enter a command.");
-            System.exit(0);
+            NotherUtils.message("Please enter a command.");
         }
 
 //        if (args.length > 1){
@@ -21,7 +20,7 @@ public class Main {
         //checkout -- [file name]
         //checkout [commit id] -- [file name]
         String firstArg = args[0];
-        Object text;
+        String text;
         switch(firstArg) {
             case "init":
                 validateNumArgs( args, 1);
@@ -31,14 +30,23 @@ public class Main {
 //                CapersRepository.writeStory(text);
                 break;
             case "add":
+                Repository.checkDir();
                 validateNumArgs(args, 2);
                 text = args[1];
                 Repository.setAdd(text);
                 break;
-            // TODO: FILL THE REST IN把剩下的填满
             case "commit":
+                Repository.checkDir();
+                validateNumArgs(args, 2);
+                text = args[1];
+                if (text.length()==0){
+                    NotherUtils.message("No command with that name exists.");
+                }
+                Repository.setCommit(text);
                 break;
             case "log":
+                Repository.checkDir();
+                validateNumArgs(args, 1);
                 break;
             case "rm":
                 break;

@@ -3,25 +3,12 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import static gitlet.Utils.*;
 
-// TODO: any imports you need here
 
-/**
- * Represents a gitlet repository.
- * TODO: It's a good idea to give a description here of what else this Class
- * does at a high level.
- *
- * @author TODO
- */
-
-/**
- * 表示gitlet存储库。
- * TODO:在这里描述这个类的其他内容是个好主意
- * 在高水平上。
- */
 public class Repository implements Serializable {
 
     /**
@@ -29,7 +16,6 @@ public class Repository implements Serializable {
      */
     public static final File CWD = new File(System.getProperty("user.dir"));
 
-    /** The .gitlet directory. */
     /**
      * .gitlet目录
      */
@@ -37,19 +23,15 @@ public class Repository implements Serializable {
 
     public static final File OBJECTS = join(GITLET_DIR, "objects");
 
-    public static final File STAGE = join(GITLET_DIR, "stage");
-
     public static final File REFS = join(GITLET_DIR, "refs");
+
+    public static final File HEADS = join(REFS, "heads");
 
     public static final File HEAD = join(GITLET_DIR, "HEAD");
 
-    public static final File ADDSTAGE = join(GITLET_DIR, "addstage");
+    public static final File ADD_STAGE = join(GITLET_DIR, "addstage");
 
-    public static final File REMOVESSTAGE = join(GITLET_DIR, "removestage");
-
-    public static final File INIT_COMMIT = join(".objects", "initCommit");
-
-
+    private static final String MASTER = "master";
     /*
      *   .gitlet
      *      |--objects
@@ -73,55 +55,115 @@ public class Repository implements Serializable {
         OBJECTS.mkdir();
         //创建refs目录
         REFS.mkdir();
+        //在refs目录下创建heads目录
+        HEADS.mkdir();
+        //HEAD文件记录的是当前指向的Commit的ID
+        HEAD.mkdir();
         //stage   #保存暂存区信息，在执行git init 的时候，这个文件还没有
         Commit initCommit = new Commit();
+        initCommit.makeCommitFile();
+        //在HEAD目录记录initCommit的CommitID
+        Utils.writeObject(HEAD, initCommit.getCommitID());
+        //创建默认的master分支
+        makeBranch(MASTER,initCommit.getCommitID());
+
     }
-//    {
-//        //代替parent和blobID
-//        List<String> blackList = new ArrayList<>();
-//        //initCommit的parent和blobId应该是空的,不能为null，sha1方法会报错
-//        Commit initCommit = new Commit("Init Commit", blackList, blackList);
-//        //通过commit对象算出commit的id
-//        String id = Utils.sha1(initCommit);
-//        //文件名是算出commit的id
-//        File saveFile = Utils.join(INIT_COMMIT, id);
-//        saveFile.mkdir();
-//        //对象都通过序列化写入到objects文件夹中，每个对象对应一个文件，文件名即为40位的对象ID。
-//        Utils.writeObject(saveFile, initCommit);
-//    }
 
-    //添加操作
-    public static void setAdd(Object Object) {
-        //判断加入的是否文件
-        if (Object instanceof File) {
-            //需要判断是否有.gitlet
-            List<String> fileList = Utils.plainFilenamesIn(CWD);
-            if (fileList == null || !fileList.contains(".gitlet")) {
-                if (fileList == null || !fileList.contains("index")) {
+    //在heads文件夹内存有多个文件，每个文件的名字即为分支名字
+    /*
+     *      |--refs
+     *          |--heads
+     *               |--master
+     *               |--61abc
+     */
+    private static void makeBranch(String branchName,String commitId) {
+        //创建branchName的分支，将指向的commitId写入
+        File newBranch = join(HEADS, branchName);
+        Utils.writeObject(newBranch,commitId);
+    }
 
-                }
-
-                if (fileList.contains("index")) {
-                    //将内容加入index 判断是否存在
-                    Utils.sha1();
-                }
-            } else {
-                //操作数不正确。
-                Utils.message("Incorrect operands.");
-                System.exit(0);
-            }
-
+    /**
+     * 添加操作
+     * add操作会将所有未存储的文件以blob的形式存起来
+     * 注意，所有static标签标记的变量都不会被存储，所以声明变量时不要加static
+     * 除此之外，所有存储起来的文件名以及对应的blobID都要写入到addstage中，以便于下次commit的时候读取
+     * @param
+     */
+    public static void setAdd(String addFile) {
+        File newFile = new File(addFile);
+        //判断添加的文件是否存在工作目录中，不存在则报错
+        if (!newFile.exists()) {
+            NotherUtils.message("File does not exist.");
         }
-
-        //设置暂存区
-//        public static void stage (Object Object){
-//            //算出要进入暂存区的文件hash值
-//            String hashKey = Utils.sha1(Object);
-//            //判断暂存区的文件是否包含这个文件
-//            List<String> fileList = Utils.plainFilenamesIn("index");
-//            if (!fileList.contains(hashKey)) {
-//                //添加暂存区，同时要放入objects
-//            }
-//        }
+        //判断添加暂存区是否存在，不存在就创建
+        if (!ADD_STAGE.exists()) {
+            //创建addStage文件目录
+            ADD_STAGE.mkdir();
+        }
+        //直接创建bolb文件
+        Blob blob = new Blob(newFile);
+        //objects不包含add的文件，则将add文件写入
+        containsBlob(OBJECTS, blob);
+        //addStatge不包含add的文件，则将add文件写入
+        containsBlob(ADD_STAGE, blob);
     }
+
+    /*
+     *   .gitlet
+     *      |--objects
+     *      |--HEAD
+     *   a.txt
+     */
+    //检查运行的命令是否在.gitlet目录同级下运行，比如a.txt就和.gitlet是同级.或者是在.gitlet下运行
+    public static void checkDir(){
+        if (!GITLET_DIR.exists()) {
+            NotherUtils.message("Not in an initialized Gitlet directory.");
+        }
+    }
+
+    //判断目录下是否包含bilb文件，不包含则创建
+    public static void containsBlob(File fileName, Blob blob){
+        List<String> list = Utils.plainFilenamesIn(fileName);
+        String bolbString = Utils.readContentsAsString(blob.getFileName());
+        if (!list.contains(bolbString)){
+            blob.makeBlobFile();
+        }
+    }
+
+    //comit时的操作
+    public static void setCommit(String message) {
+        //查看添加暂存区下目录
+        List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
+        //查看删除暂存区下目录
+        List<String> removeStageList = Utils.plainFilenamesIn(ADD_STAGE);
+        //判断暂存区是否存在，或为空
+        if ((!ADD_STAGE.exists() || addStageList.size()==0)) {
+            //报错
+            NotherUtils.message("No changes added to the commit.");
+        }
+        //获取head目录下的master的分支
+        List<String> headList = Utils.plainFilenamesIn(HEAD);
+
+        //遍历addStage,将blob的文件名和blobId做出hashMap进行映射
+        Map<String, String> tracked = new HashMap<>();
+        for (String addStageFile : addStageList){
+            File addFile = new File(addStageFile);
+            //创建bolb文件
+            Blob blob = new Blob(addFile);
+            //将addFile的全部内容作为字符串返回。
+            String addFileString = Utils.readContentsAsString(blob.getBlobSaveFileName());
+            tracked.put(Blob.getBlobId(blob.getBlobSaveFileName()),addFileString);
+        }
+        //清空addStage
+        addStageList.removeAll(addStageList);
+        //遍历addStage,将blob的文件名和blobId做出hashMap进行映射
+        File masterFile = new File(HEAD.getPath()+MASTER);
+        String addFileString = Utils.readContentsAsString(masterFile);
+        List<String> commitIdParent = new ArrayList<>();
+        commitIdParent.add(addFileString);
+        //创建新的commit
+        Commit newCommit = new Commit(message,commitIdParent,tracked);
+        //commit成功后要删除暂存区中的文件
+    }
+
 }

@@ -40,7 +40,7 @@ public class Commit implements Serializable {
         this.parent = parent;
         this.tracked = tracked;
         id = commitId();
-        file = Utils.join(Repository.GITLET_DIR,id);
+        file = Utils.join(Repository.OBJECTS,id);
     }
     
     public Commit(){
@@ -49,13 +49,32 @@ public class Commit implements Serializable {
         parent = new ArrayList<>();
         tracked = new HashMap<>();
         id = commitId();
-        file = Utils.join(Repository.GITLET_DIR,id);
+        file = Utils.join(Repository.OBJECTS,id);
+    }
+
+    public String getCommitID(){
+        return id;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+    public String getDate(){
+        return getTimestamp();
+    }
+
+    public List<String> getParent(){
+        return parent;
+    }
+
+    public Map<String, String> getTracked(){
+        return tracked;
     }
 
 
-
     //根据commit对象算出他的commitId
-    private String commitId() {
+    public String commitId() {
         return Utils.sha1(getTimestamp(),message,parent.toString(),tracked.toString());
     }
 
@@ -67,8 +86,9 @@ public class Commit implements Serializable {
     }
 
     //创建commit文件
-    public void makeCommitFile(File file) {
+    public void makeCommitFile() {
         //获取文件的上层目录
+        //返回该文件的父目录的抽象路径名；如果该路径名未命名父目录，则返回null 例如当前文件名为C:\\test.txt  返回C:\
         File dir = file.getParentFile();
         Utils.writeObject(dir, this);
     }

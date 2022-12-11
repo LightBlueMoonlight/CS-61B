@@ -227,6 +227,7 @@ class Utils {
 
 
     static File join(File first, String... others) {
+        //file.getPath返回此抽象路径名的路径名字符串形式  例如当前文件的文件名为 test.txt  返回test.txt
         return Paths.get(first.getPath(), others).toFile();
     }
 
