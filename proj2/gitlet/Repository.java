@@ -27,8 +27,6 @@ public class Repository implements Serializable {
 
     public static final File HEADS = join(REFS, "heads");
 
-    public static final File MASTERFILE = join(HEADS, "master");
-
     public static final File HEAD = join(GITLET_DIR, "HEAD");
 
     public static final File ADD_STAGE = join(GITLET_DIR, "addstage");
@@ -74,10 +72,8 @@ public class Repository implements Serializable {
      *               |--61abc
      */
     private static void makeBranch(String branch ,String commit) {
-        File file = new File(branch);
-        Utils.writeObject(file,commit);
-        //在refs目录下创建heads目录 并将分支写入
-        Utils.writeObject(HEADS,file.getPath());
+        File MASTERFILE = join(HEADS, branch);
+        Utils.writeObject(MASTERFILE,commit);
     }
 
     /**
