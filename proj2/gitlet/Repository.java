@@ -60,10 +60,8 @@ public class Repository implements Serializable {
         //创建refs目录
         REFS.mkdir();
         //stage   #保存暂存区信息，在执行git init 的时候，这个文件还没有
-
         ////创建默认的master分支 在HEAD目录记录master分支
         Commit initCommit = new Commit();
-        initCommit.makeCommitFile();
         Utils.writeObject(HEAD, initCommit.getCommitID());
         makeBranch(MASTER,initCommit.getCommitID());
     }
