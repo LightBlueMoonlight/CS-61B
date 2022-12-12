@@ -64,7 +64,7 @@ public class Repository implements Serializable {
         Commit initCommit = new Commit();
 //        initCommit.makeCommitFile();
 //        //在HEAD目录记录initCommit的CommitID
-        Utils.writeObject(HEAD, initCommit.getCommitID());
+        //Utils.writeObject(HEAD, initCommit.getCommitID());
 //        //创建默认的master分支
         makeBranch(HEADS,MASTER);
 
