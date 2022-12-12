@@ -79,7 +79,7 @@ public class Repository implements Serializable {
         File file = new File(branch);
         Utils.writeObject(file,commit);
         //在refs目录下创建heads目录 并将分支写入
-        Utils.writeObject(HEADS,file);
+        Utils.writeObject(HEADS,file.getPath());
     }
 
     /**
