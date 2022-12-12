@@ -32,6 +32,8 @@ public class Repository implements Serializable {
     public static final File ADD_STAGE = join(GITLET_DIR, "addstage");
 
     private static final String MASTER = "master";
+
+    private static final String HEAD_BRANCH_REF_PREFIX = "ref: refs/heads/";
     /*
      *   .gitlet
      *      |--objects
@@ -66,7 +68,7 @@ public class Repository implements Serializable {
 //        //在HEAD目录记录initCommit的CommitID
 //        Utils.writeObject(HEAD, initCommit.getCommitID());
 //        //创建默认的master分支
-//        makeBranch(MASTER,initCommit.getCommitID());
+        makeBranch(MASTER);
 
     }
 
@@ -77,10 +79,8 @@ public class Repository implements Serializable {
      *               |--master
      *               |--61abc
      */
-    private static void makeBranch(String branchName,String commitId) {
-        //创建branchName的分支，将指向的commitId写入
-        File newBranch = join(HEADS, branchName);
-        Utils.writeObject(newBranch,commitId);
+    private static void makeBranch(String branchName) {
+        Utils.writeObject(HEAD,HEAD_BRANCH_REF_PREFIX+branchName);
     }
 
     /**
