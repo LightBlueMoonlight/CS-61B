@@ -51,17 +51,17 @@ public class Repository implements Serializable {
             Utils.message("A Gitlet version-control system already exists in the current directory.");
             System.exit(0);
         }
-        ////创建默认的master分支 在HEAD目录记录master分支
-        Commit initCommit = new Commit();
-        Utils.writeObject(HEAD, initCommit.getCommitID());
-        makeBranch(MASTER,initCommit.getCommitID());
         //创建.gitlet目录
         GITLET_DIR.mkdir();
         //创建objects目录 用来存储commit和blob
         OBJECTS.mkdir();
         //创建refs目录
         REFS.mkdir();
-        HEAD.mkdir();
+        ////创建默认的master分支 在HEAD目录记录master分支
+        Commit initCommit = new Commit();
+        Utils.writeObject(HEAD, initCommit.getCommitID());
+        makeBranch(MASTER,initCommit.getCommitID());
+
 
     }
 
@@ -74,7 +74,8 @@ public class Repository implements Serializable {
      */
     private static void makeBranch(String branch ,String commit) {
         File MASTERFILE = join(HEADS, branch);
-        Utils.writeObject(MASTERFILE,commit);
+        File dir = MASTERFILE.getParentFile();
+        Utils.writeObject(dir,commit);
     }
 
     /**
