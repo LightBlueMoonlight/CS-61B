@@ -138,7 +138,7 @@ class Utils {
         try {
             if (file.isDirectory()) {
                 throw
-                    new IllegalArgumentException("cannot overwrite directory");
+                    new IllegalArgumentException("cannot overwrite directory"+":"+file.getPath());
             }
             BufferedOutputStream str =
                 new BufferedOutputStream(Files.newOutputStream(file.toPath()));
