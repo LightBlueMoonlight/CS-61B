@@ -51,17 +51,18 @@ public class Repository implements Serializable {
             Utils.message("A Gitlet version-control system already exists in the current directory.");
             System.exit(0);
         }
+        ////创建默认的master分支 在HEAD目录记录master分支
+        Commit initCommit = new Commit();
+        Utils.writeObject(HEAD, initCommit.getCommitID());
+        makeBranch(MASTER,initCommit.getCommitID());
         //创建.gitlet目录
         GITLET_DIR.mkdir();
         //创建objects目录 用来存储commit和blob
         OBJECTS.mkdir();
         //创建refs目录
         REFS.mkdir();
-        //stage   #保存暂存区信息，在执行git init 的时候，这个文件还没有
-        ////创建默认的master分支 在HEAD目录记录master分支
-        Commit initCommit = new Commit();
-        Utils.writeObject(HEAD, initCommit.getCommitID());
-        makeBranch(MASTER,initCommit.getCommitID());
+        HEAD.mkdir();
+
     }
 
     //在heads文件夹内存有多个文件，每个文件的名字即为分支名字
