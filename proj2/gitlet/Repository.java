@@ -27,6 +27,8 @@ public class Repository implements Serializable {
 
     public static final File HEADS = join(REFS, "heads");
 
+    public static final File MASTERFILE = join(HEADS, "master");
+
     public static final File HEAD = join(GITLET_DIR, "HEAD");
 
     public static final File ADD_STAGE = join(GITLET_DIR, "addstage");
@@ -58,11 +60,10 @@ public class Repository implements Serializable {
         //创建refs目录
         REFS.mkdir();
         //stage   #保存暂存区信息，在执行git init 的时候，这个文件还没有
-
-
+        String initCommitId = makeBranch();
         ////创建默认的master分支 在HEAD目录记录master分支
-        Utils.writeObject(HEAD, initCommit.getCommitID());
-        makeBranch();
+        Utils.writeObject(HEAD, initCommitId);
+
     }
 
     //在heads文件夹内存有多个文件，每个文件的名字即为分支名字
@@ -72,12 +73,13 @@ public class Repository implements Serializable {
      *               |--master
      *               |--61abc
      */
-    private static void makeBranch() {
+    private static String makeBranch() {
         Commit initCommit = new Commit();
         initCommit.makeCommitFile();
         File branchFile = join(HEADS, MASTER);
         //在refs目录下创建heads目录
         Utils.writeObject(branchFile,initCommit.commitId());
+        return initCommit.commitId();
     }
 
     /**
