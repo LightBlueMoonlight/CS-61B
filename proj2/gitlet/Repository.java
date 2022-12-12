@@ -73,9 +73,8 @@ public class Repository implements Serializable {
      *               |--61abc
      */
     private static void makeBranch(String branch ,String commit) {
-        File MASTERFILE = join(HEADS, branch);
-        File dir = MASTERFILE.getParentFile();
-        Utils.writeObject(dir,commit);
+        File MASTERFILE = join("heads", branch);
+        Utils.writeObject(MASTERFILE,commit);
     }
 
     /**
