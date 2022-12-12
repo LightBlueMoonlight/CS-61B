@@ -84,6 +84,9 @@ public class Commit implements Serializable {
         //获取文件的上层目录
         //返回该文件的父目录的抽象路径名；如果该路径名未命名父目录，则返回null 例如当前文件名为C:\\test.txt  返回C:\
         File dir = file.getParentFile();
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
         Utils.writeObject(dir, this);
     }
 

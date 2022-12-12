@@ -57,14 +57,12 @@ public class Repository implements Serializable {
         OBJECTS.mkdir();
         //创建refs目录
         REFS.mkdir();
-
         //stage   #保存暂存区信息，在执行git init 的时候，这个文件还没有
-        Commit initCommit = new Commit();
-//        initCommit.makeCommitFile();
-//        //在HEAD目录记录initCommit的CommitID
+
+
+        ////创建默认的master分支 在HEAD目录记录master分支
         Utils.writeObject(HEAD, initCommit.getCommitID());
-//        //创建默认的master分支
-        makeBranch(MASTER);
+        makeBranch();
     }
 
     //在heads文件夹内存有多个文件，每个文件的名字即为分支名字
@@ -74,9 +72,12 @@ public class Repository implements Serializable {
      *               |--master
      *               |--61abc
      */
-    private static void makeBranch(String branchName) {
+    private static void makeBranch() {
+        Commit initCommit = new Commit();
+        initCommit.makeCommitFile();
+        File branchFile = join(HEADS, MASTER);
         //在refs目录下创建heads目录
-        Utils.writeObject(HEADS,branchName);
+        Utils.writeObject(branchFile,initCommit.commitId());
     }
 
     /**
