@@ -57,8 +57,7 @@ public class Repository implements Serializable {
         OBJECTS.mkdir();
         //创建refs目录
         REFS.mkdir();
-        //在refs目录下创建heads目录
-        HEADS.mkdir();
+
         //HEAD文件记录的是当前指向的Commit的ID
         HEAD.mkdir();
         //stage   #保存暂存区信息，在执行git init 的时候，这个文件还没有
@@ -67,7 +66,7 @@ public class Repository implements Serializable {
 //        //在HEAD目录记录initCommit的CommitID
         Utils.writeObject(HEAD, initCommit.getCommitID());
 //        //创建默认的master分支
-        makeBranch(HEADS.getPath(),MASTER);
+        makeBranch(HEADS,MASTER);
 
     }
 
@@ -78,8 +77,10 @@ public class Repository implements Serializable {
      *               |--master
      *               |--61abc
      */
-    private static void makeBranch(String path,String branchName) {
-        Utils.writeObject(HEADS,path+branchName);
+    private static void makeBranch(File file,String branchName) {
+        //在refs目录下创建heads目录
+        file.mkdir();
+        Utils.writeObject(HEADS,file.getPath()+branchName);
     }
 
     /**
