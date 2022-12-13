@@ -8,6 +8,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static gitlet.Utils.join;
+import static gitlet.Utils.readObject;
+
 public class Commit implements Serializable {
     /**
      * List all instance variables of the Commit class here with a useful
@@ -46,6 +49,10 @@ public class Commit implements Serializable {
         file = Utils.join(Repository.OBJECTS,id);
     }
 
+    public File getFile(){
+        return file;
+    }
+
     public String getCommitID(){
         return id;
     }
@@ -79,15 +86,13 @@ public class Commit implements Serializable {
         return dateFormat.format(date);
     }
 
-    //创建commit文件
-    public void makeCommitFile() {
-        //获取文件的上层目录
-        //返回该文件的父目录的抽象路径名；如果该路径名未命名父目录，则返回null 例如当前文件名为C:\\test.txt  返回C:\
-        File dir = file.getParentFile();
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-        Utils.writeObject(dir, this);
+    //根据commitId生成commit文件
+    public static Commit fromFile(String id) {
+        return readObject(getObjectFile(id), Commit.class);
+    }
+
+    public static File getObjectFile(String id) {
+        return join(Repository.OBJECTS, id);
     }
 
 }

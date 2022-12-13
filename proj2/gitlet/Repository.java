@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,10 +58,14 @@ public class Repository implements Serializable {
         OBJECTS.mkdir();
         //创建refs目录
         REFS.mkdir();
+        HEADS.mkdir();
         ////创建默认的master分支 在HEAD目录记录master分支
         Commit initCommit = new Commit();
-        Utils.writeObject(HEAD, initCommit.getCommitID());
+        createNewFile(initCommit.getFile());
+        //CommitID存储在master分支下
         makeBranch(MASTER,initCommit.getCommitID());
+        //HEAD存储master的分支名
+        Utils.writeObject(HEAD, initCommit.getCommitID());
 
 
     }
@@ -72,10 +77,29 @@ public class Repository implements Serializable {
      *               |--master
      *               |--61abc
      */
-    private static void makeBranch(String branch ,String commit) {
-        File MASTERFILE = join(HEADS, branch);
-        //尝试
-        Utils.writeContents(MASTERFILE,commit);
+    private static void makeBranch(String branch ,String commit)  {
+        File masterFile = join(HEADS, branch);
+        if(masterFile.exists()){
+            restrictedDelete(masterFile);
+            createNewFile(masterFile);
+            //尝试
+            Utils.writeContents(masterFile,commit);
+
+        }else{
+            createNewFile(masterFile);
+            //尝试
+            Utils.writeContents(masterFile,commit);
+        }
+
+
+    }
+
+    public static void createNewFile(File newFile){
+        try{
+            newFile.createNewFile();
+        } catch (IOException | ClassCastException excp) {
+            throw new IllegalArgumentException(excp.getMessage()+":"+newFile.getPath());
+        }
     }
 
     /**
@@ -120,9 +144,10 @@ public class Repository implements Serializable {
     //判断目录下是否包含bilb文件，不包含则创建
     public static void containsBlob(File fileName, Blob blob){
         List<String> list = Utils.plainFilenamesIn(fileName);
-        String bolbString = Utils.readContentsAsString(blob.getFileName());
+        String bolbString = Utils.readContentsAsString(blob.getBlobSaveFileName());
         if (!list.contains(bolbString)){
-            blob.makeBlobFile();
+            File blobFile = Utils.join(fileName,blob.getBlobSaveFileName().getPath());
+            createNewFile(blobFile);
         }
     }
 
@@ -130,36 +155,37 @@ public class Repository implements Serializable {
     public static void setCommit(String message) {
         //查看添加暂存区下目录
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        //查看删除暂存区下目录
-        List<String> removeStageList = Utils.plainFilenamesIn(ADD_STAGE);
         //判断暂存区是否存在，或为空
         if ((!ADD_STAGE.exists() || addStageList.size()==0)) {
             //报错
             NotherUtils.message("No changes added to the commit.");
         }
-        //获取head目录下的master的分支
-        List<String> headList = Utils.plainFilenamesIn(HEAD);
-
         //遍历addStage,将blob的文件名和blobId做出hashMap进行映射
         Map<String, String> tracked = new HashMap<>();
+        //将HEAD全部内容作为字符串返回。其实也就是前一个返回
+        String headString = Utils.readContentsAsString(HEAD);
+        //读取object里的commit的文件的内容
+        //File f = join(OBJECTS, headString);
+
         for (String addStageFile : addStageList){
-            File addFile = new File(addStageFile);
+            File addFile = join(ADD_STAGE, addStageFile);
             //创建bolb文件
             Blob blob = new Blob(addFile);
-            //将addFile的全部内容作为字符串返回。
-            String addFileString = Utils.readContentsAsString(blob.getBlobSaveFileName());
-            tracked.put(Blob.getBlobId(blob.getBlobSaveFileName()),addFileString);
+            //将blobId和相对
+            tracked.put(Blob.getBlobId(blob.getBlobSaveFileName()),blob.getBlobSaveFileName().getPath());
+            //删除addStage下的暂存文件
+            restrictedDelete(addFile);
         }
-        //清空addStage
-        addStageList.removeAll(addStageList);
-        //遍历addStage,将blob的文件名和blobId做出hashMap进行映射
-        File masterFile = new File(HEAD.getPath()+MASTER);
-        String addFileString = Utils.readContentsAsString(masterFile);
-        List<String> commitIdParent = new ArrayList<>();
-        commitIdParent.add(addFileString);
+        String addFileString = Utils.readContentsAsString(HEAD);
+        //读取父commit
+        Commit parentCommit = Commit.fromFile(addFileString);
         //创建新的commit
-        Commit newCommit = new Commit(message,commitIdParent,tracked);
+        Commit newCommit = new Commit(message,parentCommit.getParent(),tracked);
+        //将新生成的commitId在写入head
+        Utils.writeObject(HEAD, newCommit.getCommitID());
         //commit成功后要删除暂存区中的文件
+        makeBranch(MASTER,newCommit.getCommitID());
+        makeBranch("HEAD",newCommit.getCommitID());
     }
 
 }

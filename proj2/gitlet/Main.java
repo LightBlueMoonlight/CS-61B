@@ -9,7 +9,7 @@ public class Main {
      */
     public static void main(String[] args) {
         if(args == null){
-            Utils.message("Please enter a command.");
+            gitlet.Utils.message("Please enter a command.");
             System.exit(0);
         }
 
@@ -31,7 +31,7 @@ public class Main {
                 validateNumArgs(args, 2);
                 text = args[1];
                 if (text.length()==0){
-                    NotherUtils.message("No command with that name exists.");
+                    NotherUtils.message("Please enter a commit message.");
                 }
                 Repository.setCommit(text);
                 break;
