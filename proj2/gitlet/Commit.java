@@ -21,62 +21,64 @@ public class Commit implements Serializable {
      * *变量。我们为“message”提供了一个示例。
      */
 
-    /** The message of this Commit. */
-    private String message;//提交信息
-    private String id;//commit对象的ID
-    private List<String> parent;//父提交
-    private Date date;//提交日期
-    //private List<String> blobID;//文件id
-    private  File file;//用SHA1 生成的id创建新的commit文件
-    private  Map<String, String> tracked;//跟踪的文件以文件路径为关键字，SHA1 id为值进行映射。  =blobID？
+    /**
+     * The message of this Commit.
+     */
+    private String message; //提交信息
+    private String id; //commit对象的ID
+    private List<String> parent; //父提交
+    private Date date; //提交日期
+    //private List<String> blobID; //文件id
+    private File file;//用SHA1 生成的id创建新的commit文件
+    private Map<String, String> tracked;//跟踪的文件以文件路径为关键字，SHA1 id为值进行映射。  =blobID？
 
 
-    public Commit(String message, List<String> parent, Map<String, String> tracked){
+    public Commit(String message, List<String> parent, Map<String, String> tracked) {
         date = new Date();
         this.message = message;
         this.parent = parent;
         this.tracked = tracked;
         id = commitId();
-        file = Utils.join(Repository.OBJECTS,id);
+        file = Utils.join(Repository.COMMIT, id);
     }
-    
-    public Commit(){
+
+    public Commit() {
         date = new Date(0);
         message = "initial commit";
         parent = new ArrayList<>();
         tracked = new HashMap<>();
         id = commitId();
-        file = Utils.join(Repository.OBJECTS,id);
+        file = Utils.join(Repository.COMMIT, id);
     }
 
-    public File getFile(){
+    public File getFile() {
         return file;
     }
 
-    public String getCommitID(){
+    public String getCommitID() {
         return id;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 
-    public String getDate(){
+    public String getDate() {
         return getTimestamp();
     }
 
-    public List<String> getParent(){
+    public List<String> getParent() {
         return parent;
     }
 
-    public Map<String, String> getTracked(){
+    public Map<String, String> getTracked() {
         return tracked;
     }
 
 
     //根据commit对象算出他的commitId
     public String commitId() {
-        return Utils.sha1(getTimestamp(),message,parent.toString(),tracked.toString());
+        return Utils.sha1(getTimestamp(), message, parent.toString(), tracked.toString());
     }
 
     //Gradescope指定日期格式
@@ -92,7 +94,7 @@ public class Commit implements Serializable {
     }
 
     public static File getObjectFile(String id) {
-        return join(Repository.OBJECTS, id);
+        return join(Repository.COMMIT, id);
     }
 
 }

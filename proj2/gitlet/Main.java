@@ -1,23 +1,27 @@
 package gitlet;
-/** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+
+/**
+ * Driver class for Gitlet, a subset of the Git version-control system.
+ *
+ * @author TODO
  */
 public class Main {
 
-    /** Usage: java gitlet.Main ARGS, where ARGS contains
-     *  <COMMAND> <OPERAND1> <OPERAND2> ... 
+    /**
+     * Usage: java gitlet.Main ARGS, where ARGS contains
+     * <COMMAND> <OPERAND1> <OPERAND2> ...
      */
     public static void main(String[] args) {
-        if(args == null){
+        if (args == null) {
             gitlet.Utils.message("Please enter a command.");
             System.exit(0);
         }
 
         String firstArg = args[0];
         String text;
-        switch(firstArg) {
+        switch (firstArg) {
             case "init":
-                validateNumArgs( args, 1);
+                validateNumArgs(args, 1);
                 Repository.setInit();
                 break;
             case "add":
@@ -30,7 +34,7 @@ public class Main {
                 Repository.checkDir();
                 validateNumArgs(args, 2);
                 text = args[1];
-                if (text.length()==0){
+                if (text.length() == 0) {
                     NotherUtils.message("Please enter a commit message.");
                 }
                 Repository.setCommit(text);
@@ -38,10 +42,20 @@ public class Main {
             case "log":
                 Repository.checkDir();
                 validateNumArgs(args, 1);
+                Repository.setLog();
                 break;
             case "rm":
+                Repository.checkDir();
+                validateNumArgs(args, 2);
+                text = args[1];
+                Repository.setRM(text);
                 break;
             case "find":
+                break;
+            case "global-log":
+                Repository.checkDir();
+                validateNumArgs(args, 1);
+                Repository.setGlobalLog();
                 break;
             default:
                 NotherUtils.message("No command with that name exists.");
