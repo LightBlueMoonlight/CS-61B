@@ -101,9 +101,7 @@ public class Repository implements Serializable {
 
     public static void createNewFile(File newFile) {
         try {
-            System.out.println("newFile:"+newFile.getPath());
             newFile.createNewFile();
-            System.out.println("newFile2:"+newFile.getPath());
         } catch (IOException | ClassCastException excp) {
             throw new IllegalArgumentException(excp.getMessage() + ":" + newFile.getPath());
         }
