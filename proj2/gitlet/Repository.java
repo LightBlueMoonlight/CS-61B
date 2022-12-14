@@ -60,6 +60,7 @@ public class Repository implements Serializable {
         GITLET_DIR.mkdir();
         //创建objects目录 用来存储commit和blob
         OBJECTS.mkdir();
+        COMMIT.mkdir();
         //创建refs目录
         REFS.mkdir();
         HEADS.mkdir();
