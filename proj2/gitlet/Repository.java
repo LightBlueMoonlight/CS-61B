@@ -159,7 +159,7 @@ public class Repository implements Serializable {
         String bolbString = Blob.getBlobId(blob.getBlobSaveFileName());
         System.out.println("bolbString:"+bolbString);
         if (!list.contains(bolbString)) {
-            File blobFile = Utils.join(fileName, blob.getBlobSaveFileName().getPath());
+            File blobFile = Utils.join(fileName,bolbString);
             System.out.println("blobFile:"+blobFile);
             createNewFile(blobFile);
         }
