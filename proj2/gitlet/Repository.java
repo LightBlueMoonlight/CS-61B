@@ -149,14 +149,14 @@ public class Repository implements Serializable {
 
     //判断目录下是否包含bilb文件，不包含则创建
     public static void containsBlob(File fileName, Blob blob) {
+        if (!fileName.exists()){
+            fileName.mkdir();
+        }
         List<String> list = Utils.plainFilenamesIn(fileName);
         createNewFile(blob.getBlobSaveFileName());
-        String bolbString = Utils.readContentsAsString(blob.getBlobSaveFileName());
+        String bolbString = Blob.getBlobId(blob.getBlobSaveFileName());
         if (!list.contains(bolbString)) {
             File blobFile = Utils.join(fileName, blob.getBlobSaveFileName().getPath());
-            if (!fileName.exists()){
-                fileName.mkdir();
-            }
             createNewFile(blobFile);
         }
     }
