@@ -152,15 +152,11 @@ public class Repository implements Serializable {
         if (!fileName.exists()){
             fileName.mkdir();
         }
-        System.out.println("fileName:"+fileName);
         List<String> list = Utils.plainFilenamesIn(fileName);
-        System.out.println("list:"+list);
         createNewFile(blob.getBlobSaveFileName());
         String bolbString = Blob.getBlobId(blob.getBlobSaveFileName());
-        System.out.println("bolbString:"+bolbString);
         if (!list.contains(bolbString)) {
             File blobFile = Utils.join(fileName,bolbString);
-            System.out.println("blobFile:"+blobFile);
             createNewFile(blobFile);
         }
     }
