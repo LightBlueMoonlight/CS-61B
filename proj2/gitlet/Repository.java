@@ -101,7 +101,9 @@ public class Repository implements Serializable {
 
     public static void createNewFile(File newFile) {
         try {
+            System.out.println("newFile:"+newFile.getPath());
             newFile.createNewFile();
+            System.out.println("newFile2:"+newFile.getPath());
         } catch (IOException | ClassCastException excp) {
             throw new IllegalArgumentException(excp.getMessage() + ":" + newFile.getPath());
         }
@@ -152,11 +154,15 @@ public class Repository implements Serializable {
         if (!fileName.exists()){
             fileName.mkdir();
         }
+        System.out.println("fileName:"+fileName);
         List<String> list = Utils.plainFilenamesIn(fileName);
+        System.out.println("list:"+list);
         createNewFile(blob.getBlobSaveFileName());
         String bolbString = Blob.getBlobId(blob.getBlobSaveFileName());
+        System.out.println("bolbString:"+bolbString);
         if (!list.contains(bolbString)) {
             File blobFile = Utils.join(fileName, blob.getBlobSaveFileName().getPath());
+            System.out.println("blobFile:"+blobFile);
             createNewFile(blobFile);
         }
     }

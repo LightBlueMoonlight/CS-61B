@@ -8,7 +8,7 @@ public class Blob implements Serializable {
     private byte[] bytes; //文件内容
     private File fileName; //存储的文件
     private String filePath; //存储文件的文件路径
-    private File blobSaveFileName;//blob文件的文件名
+    private File blobSaveFileName; //blob文件的文件名
 
     //构造函数
     public Blob(File file) {
