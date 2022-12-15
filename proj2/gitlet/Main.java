@@ -51,11 +51,21 @@ public class Main {
                 Repository.setRM(text);
                 break;
             case "find":
+                Repository.checkDir();
+                validateNumArgs(args, 2);
+                text = args[1];
+                Repository.setFind(text);
                 break;
             case "global-log":
                 Repository.checkDir();
                 validateNumArgs(args, 1);
                 Repository.setGlobalLog();
+                break;
+            case "branch":
+                Repository.checkDir();
+                validateNumArgs(args, 2);
+                text = args[1];
+                Repository.setBranch(text);
                 break;
             default:
                 NotherUtils.message("No command with that name exists.");

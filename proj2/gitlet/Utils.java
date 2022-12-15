@@ -110,6 +110,7 @@ class Utils {
             throw new IllegalArgumentException("must be a normal file");
         }
         try {
+            System.out.println(file.getPath());
             return Files.readAllBytes(file.toPath());
         } catch (IOException excp) {
             throw new IllegalArgumentException(excp.getMessage());

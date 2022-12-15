@@ -2,6 +2,11 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import static gitlet.Utils.join;
+import static gitlet.Utils.readObject;
 
 public class Blob implements Serializable {
     private String id; //blobId
@@ -16,7 +21,7 @@ public class Blob implements Serializable {
         this.filePath = file.getPath();
         this.bytes = Utils.readContents(file);
         this.id = Utils.sha1(filePath, bytes);
-        this.blobSaveFileName = Utils.join(Repository.OBJECTS, id);
+        this.blobSaveFileName = Utils.join(Repository.BLOB, id);
     }
 
     //算出调用文件的blobid
@@ -35,10 +40,21 @@ public class Blob implements Serializable {
         return fileName;
     }
 
-    public void makeBlobFile() {
-        //获取文件的上层目录
-        //返回该文件的父目录的抽象路径名；如果该路径名未命名父目录，则返回null 例如当前文件名为C:\\test.txt  返回C:\
-        File dir = blobSaveFileName.getParentFile();
-        Utils.writeContents(dir, this);
+    //根据commitId生成commit文件
+    public static Blob fromFile(String id) {
+        return readObject(getObjectFile(id), Blob.class);
     }
+
+    public static File getObjectFile(String id) {
+        return join(Repository.BLOB, id);
+    }
+
+    public static Map pathToBlobID(Blob blob) {
+        Map<String, String> pathToBlobID = new HashMap<>();
+        pathToBlobID.put(blob.filePath,blob.id);
+        return pathToBlobID;
+    }
+
+
+
 }
