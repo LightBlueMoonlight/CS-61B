@@ -22,6 +22,7 @@ public class Blob implements Serializable {
     //算出调用文件的blobid
     public static String getBlobId(File file) {
         String filePath2 = file.getPath();
+        Repository.createNewFile(file);
         byte[] bytes2 = Utils.readContents(file);
         return Utils.sha1(filePath2, bytes2);
     }

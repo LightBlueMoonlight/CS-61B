@@ -12,11 +12,11 @@ public class Main {
      * <COMMAND> <OPERAND1> <OPERAND2> ...
      */
     public static void main(String[] args) {
-        if (args == null) {
+        if (args == null || args.length == 0) {
             gitlet.Utils.message("Please enter a command.");
             System.exit(0);
         }
-        validateNumArgs(args, 1);
+
         String firstArg = args[0];
         String text;
         switch (firstArg) {
