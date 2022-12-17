@@ -121,6 +121,12 @@ public class Repository implements Serializable {
         createNewFile(blob.getBlobSaveFileName());
         //读取HEADcommit
         String headFileString = Utils.readContentsAsString(HEAD);
+        List<String> objList = Utils.plainFilenamesIn(OBJECTS);
+        List<String> COMMITList = Utils.plainFilenamesIn(COMMIT);
+
+        System.out.println("objList:" + objList);
+        System.out.println("COMMITList:" + COMMITList);
+
         Commit parentCommit = Commit.fromFile(headFileString);
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
         if (!parentCommit.getTracked().containsKey(blob.getId())){
@@ -155,8 +161,7 @@ public class Repository implements Serializable {
 
         //获取目录下所有文件名
         List<String> list = Utils.plainFilenamesIn(fileName);
-        List<String> objList = Utils.plainFilenamesIn(OBJECTS);
-        System.out.println("objList:" + objList);
+
         System.out.println(fileName.getPath() + ":" + list);
         //要在blob目录中创建文件
         createNewFile(blob.getBlobSaveFileName());
