@@ -166,6 +166,9 @@ class Utils {
         try {
             System.out.println("进来：" + file.getPath());
             System.out.println("进来父：" + file.getParentFile());
+            if(file != null){
+                System.out.println("不为null" );
+            }
             ObjectInputStream in =
                 new ObjectInputStream(new FileInputStream(file));
             System.out.println("空1" );

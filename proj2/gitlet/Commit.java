@@ -95,9 +95,6 @@ public class Commit implements Serializable {
 
     public static File getObjectFile(String id) {
         File fileCommit = join(Repository.COMMIT, id);
-        System.out.println("parentpath:" + fileCommit.getParentFile());
-        System.out.println("path:" + fileCommit.getPath());
-        Repository.createNewFile(fileCommit);
         return fileCommit;
     }
 
