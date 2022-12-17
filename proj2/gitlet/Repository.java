@@ -66,6 +66,7 @@ public class Repository implements Serializable {
         //创建refs目录
         REFS.mkdir();
         HEADS.mkdir();
+        HEAD.mkdir();
         ////创建默认的master分支 在HEAD目录记录master分支
         Commit initCommit = new Commit();
         createNewFile(initCommit.getFile());
