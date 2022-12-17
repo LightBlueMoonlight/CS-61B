@@ -72,6 +72,7 @@ public class Repository implements Serializable {
         //CommitID存储在master分支下
         makeBranch(MASTER, initCommit.getCommitID());
         //HEAD存储master的分支名
+        System.out.println("initcommit:"+initCommit.getCommitID());
         Utils.writeObject(HEAD, initCommit.getCommitID());
 //        makeBranch("61b", initCommit.getCommitID());
 //        List<String> list = Utils.plainFilenamesIn(HEADS);
@@ -89,6 +90,8 @@ public class Repository implements Serializable {
         File masterFile = join(HEADS, branch);
         if (!masterFile.exists()) {
             createNewFile(masterFile);
+            String headFileString = Utils.readContentsAsString(masterFile);
+            System.out.println("master:"+ headFileString);
             //尝试
             Utils.writeContents(masterFile, commit);
         }
