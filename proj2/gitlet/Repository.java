@@ -168,8 +168,8 @@ public class Repository implements Serializable {
         //查看删除暂存区下目录
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         //判断暂存区是否存在，或为空
-        if ((!ADD_STAGE.exists() || addStageList.size() == 0)
-                && (REMOVE_STAGE.exists() || removeStageList.size() == 0)) {
+        if ((!ADD_STAGE.exists() || addStageList == null)
+                && (!REMOVE_STAGE.exists() || removeStageList == null)) {
             //报错
             NotherUtils.message("No changes added to the commit.");
         }
@@ -208,7 +208,7 @@ public class Repository implements Serializable {
         parentCommitList.add(headString);
         //创建新的commit
         Commit newCommit = new Commit(message, parentCommitList, tracked);
-        createNewFile( newCommit.getFile());
+
         //将新生成的commitId在写入head
         Utils.writeObject(HEAD, newCommit.getCommitID());
     }

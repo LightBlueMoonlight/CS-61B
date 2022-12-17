@@ -46,7 +46,9 @@ public class Blob implements Serializable {
     }
 
     public static File getObjectFile(String id) {
-        return join(Repository.BLOB, id);
+        File fileBlob = join(Repository.BLOB, id);
+        Repository.createNewFile(fileBlob);
+        return fileBlob;
     }
 
     public static Map pathToBlobID(Blob blob) {
