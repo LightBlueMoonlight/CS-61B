@@ -74,10 +74,13 @@ public class Repository implements Serializable {
         makeBranch(MASTER, initCommit.getCommitID());
         //HEAD存储master的分支名
         System.out.println("initcommit:"+initCommit.getCommitID());
-        Utils.writeContents(HEAD, initCommit.getCommitID());
-
+        Utils.writeContents(HEAD, "master");
         String headFileString = Utils.readContentsAsString(HEAD);
+
+        File REFS  = join(GITLET_DIR, headFileString);
+        String COMMITID = Utils.readContentsAsString(REFS);
         System.out.println("HEAD:"+ headFileString);
+        System.out.println("COMMITID" + COMMITID);
 
 //        makeBranch("61b", initCommit.getCommitID());
 //        List<String> list = Utils.plainFilenamesIn(HEADS);
