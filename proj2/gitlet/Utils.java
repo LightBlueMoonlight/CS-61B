@@ -199,7 +199,7 @@ class Utils {
     /** Returns a list of the names of all plain files in the directory DIR, in
      *  lexicographic order as Java Strings.  Returns null if DIR does
      *  not denote a directory. */
-    /**返回目录DIR中所有普通文件的名称列表
+    /**返回目录DIR中所有普通文件的名称列表 只返回文件不返回目录
      *字典顺序为Java字符串。如果DIR为空，则返回null
      *不表示目录*/
     static List<String> plainFilenamesIn(File dir) {

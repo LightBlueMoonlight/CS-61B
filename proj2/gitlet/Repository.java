@@ -121,10 +121,8 @@ public class Repository implements Serializable {
         createNewFile(blob.getBlobSaveFileName());
         //读取HEADcommit
         String headFileString = Utils.readContentsAsString(HEAD);
-        List<String> objList = Utils.plainFilenamesIn(OBJECTS);
+        System.out.println("HEAD:" + headFileString);
         List<String> COMMITList = Utils.plainFilenamesIn(COMMIT);
-
-        System.out.println("objList:" + objList);
         System.out.println("COMMITList:" + COMMITList);
 
         Commit parentCommit = Commit.fromFile(headFileString);
