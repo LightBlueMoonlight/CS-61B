@@ -72,8 +72,7 @@ public class Repository implements Serializable {
         //CommitID存储在master分支下
         makeBranch(MASTER, initCommit.getCommitID());
         //HEAD存储master的分支名
-        Utils.writeContents(HEAD, "master");
-        String headFileString = Utils.readContentsAsString(HEAD);
+        Utils.writeContents(HEAD, MASTER);
     }
 
     //在heads文件夹内存有多个文件，每个文件的名字即为分支名字
@@ -89,8 +88,6 @@ public class Repository implements Serializable {
             createNewFile(masterFile);
             //尝试
             Utils.writeContents(masterFile, commit);
-            String headFileString = Utils.readContentsAsString(masterFile);
-            System.out.println("master:"+ headFileString);
         }
     }
 
@@ -125,7 +122,6 @@ public class Repository implements Serializable {
         List<String> COMMITList = Utils.plainFilenamesIn(COMMIT);
         System.out.println("COMMITList:" + COMMITList);
         File headFileStringF  = join(HEADS, headFileString);
-
         String headFileString2 = Utils.readContentsAsString(headFileStringF);
         System.out.println("headFileString2:" + COMMITList);
         Commit parentCommit = Commit.fromFile(headFileString2);
