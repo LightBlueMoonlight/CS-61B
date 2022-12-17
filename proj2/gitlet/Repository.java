@@ -3,13 +3,10 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import static gitlet.Utils.*;
-
 
 public class Repository implements Serializable {
 
@@ -36,6 +33,7 @@ public class Repository implements Serializable {
     public static final File HEAD = join(GITLET_DIR, "HEAD");
 
     public static final File ADD_STAGE = join(GITLET_DIR, "addStage");
+
     public static final File REMOVE_STAGE = join(GITLET_DIR, "removeStage");
 
     private static final String MASTER = "master";
@@ -124,7 +122,7 @@ public class Repository implements Serializable {
         }
 
         //objects不包含add的文件，则将add文件写入
-        containsBlob(OBJECTS, newFile);
+        containsBlob(BLOB, newFile);
         //addStatge不包含add的文件，则将add文件写入
         containsBlob(ADD_STAGE, newFile);
     }

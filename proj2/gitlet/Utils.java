@@ -167,11 +167,8 @@ class Utils {
             System.out.println("进来父：" + file.getParentFile());
             ObjectInputStream in =
                 new ObjectInputStream(new FileInputStream(file));
-            System.out.println("进来父1：" + file.getParentFile());
             T result = expectedClass.cast(in.readObject());
-            System.out.println("进来父2：" + file.getParentFile());
             in.close();
-            System.out.println("进来父3：" + file.getParentFile());
             return result;
         } catch (IOException | ClassCastException
                  | ClassNotFoundException excp) {
