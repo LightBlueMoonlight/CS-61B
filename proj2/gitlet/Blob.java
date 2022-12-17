@@ -20,8 +20,16 @@ public class Blob implements Serializable {
         this.fileName = file;
         this.filePath = file.getPath();
         this.bytes = Utils.readContents(file);
-        this.id = Utils.sha1(filePath, bytes);
+        this.id = blobId();
         this.blobSaveFileName = Utils.join(Repository.BLOB, id);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String blobId() {
+        return Utils.sha1(filePath, bytes);
     }
 
     //算出调用文件的blobid

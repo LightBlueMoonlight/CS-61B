@@ -128,6 +128,7 @@ public class Repository implements Serializable {
 
         //addStatge不包含add的文件，则将add文件写入
         containsBlob(ADD_STAGE, blob);
+        System.out.println("调用结束");
     }
 
     /*
@@ -154,13 +155,13 @@ public class Repository implements Serializable {
         System.out.println(fileName.getPath() + ":" + list);
         //要在blob目录中创建文件
         createNewFile(blob.getBlobSaveFileName());
-        System.out.println("2:" + blob.getBlobSaveFileName().getPath());
-        String bolbString = Blob.getBlobId(blob.getBlobSaveFileName());
+        String bolbString = blob.getId();
         System.out.println("bolbString:"+bolbString);
         if (!list.contains(bolbString)) {
             File saveFile = Utils.join(fileName, bolbString);
             createNewFile(saveFile);
-            System.out.println(fileName.getPath() + "<<<<<:" + list);
+            List<String> list2 = Utils.plainFilenamesIn(fileName);
+            System.out.println(fileName.getPath() + "<<<<<:" + list2);
         }
     }
 
