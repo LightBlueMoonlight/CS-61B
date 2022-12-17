@@ -74,9 +74,9 @@ public class Repository implements Serializable {
         makeBranch(MASTER, initCommit.getCommitID());
         //HEAD存储master的分支名
         Utils.writeObject(HEAD, initCommit.getCommitID());
-        makeBranch("61b", initCommit.getCommitID());
-        List<String> list = Utils.plainFilenamesIn(HEADS);
-        System.out.println(list);
+//        makeBranch("61b", initCommit.getCommitID());
+//        List<String> list = Utils.plainFilenamesIn(HEADS);
+//        System.out.println(list);
     }
 
     //在heads文件夹内存有多个文件，每个文件的名字即为分支名字
