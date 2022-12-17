@@ -163,6 +163,7 @@ class Utils {
     static <T extends Serializable> T readObject(File file,
                                                  Class<T> expectedClass) {
         try {
+            System.out.println("进来："+ file.getPath());
             ObjectInputStream in =
                 new ObjectInputStream(new FileInputStream(file));
             T result = expectedClass.cast(in.readObject());

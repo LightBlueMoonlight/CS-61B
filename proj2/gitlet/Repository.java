@@ -152,7 +152,6 @@ public class Repository implements Serializable {
         String bolbString = Blob.getBlobId(blob);
         //根据blobid直接创建bolb文件
         Blob blobFile = Blob.fromFile(bolbString);
-        createNewFile(blobFile.getBlobSaveFileName());
         //要在blob目录中创建文件
         createNewFile(blobFile.getBlobSaveFileName());
         if (!list.contains(bolbString)) {
