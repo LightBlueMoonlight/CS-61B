@@ -53,7 +53,8 @@ public class Repository implements Serializable {
     public static void setInit() {
         //如果当前目录下没有存储库就创建.gitlet,有就报错
         if (GITLET_DIR.exists()) {
-            Utils.message("A Gitlet version-control system already exists in the current directory.");
+            Utils.message("A Gitlet version-control system already exists " +
+                    "in the current directory.");
             System.exit(0);
         }
         //创建.gitlet目录
@@ -149,7 +150,7 @@ public class Repository implements Serializable {
         List<String> list = Utils.plainFilenamesIn(fileName);
         String bolbString = Blob.getBlobId(blob);
         //根据blobid直接创建bolb文件
-        Blob blobFile = Blob.fromFile(bolbString);
+        Blob blobFile = new Blob(blob);
         //要在blob目录中创建文件
         createNewFile(blobFile.getBlobSaveFileName());
         if (!list.contains(bolbString)) {
@@ -196,11 +197,11 @@ public class Repository implements Serializable {
                 File removeFile = join(REMOVE_STAGE, str);
                 //创建bolb文件
                 String bolbString = Blob.getBlobId(removeFile);
-                    parentCommit.getTracked().remove(bolbString);
+                parentCommit.getTracked().remove(bolbString);
                 //删除addStage下的暂存文件
                 Utils.restrictedDelete(removeFile);
-                }
             }
+        }
         List<String> parentCommitList = parentCommit.getParent();
         parentCommitList.add(headString);
         //创建新的commit
@@ -261,7 +262,8 @@ public class Repository implements Serializable {
         if (parentCommit.getParent().size() == 2) {
             Commit parentCommit2 = Commit.fromFile(parentCommit.getParent().get(1));
             //Merge:”后面的两个十六进制数字由第一个和第二个父项的提交 ID 的前七位组成
-            System.out.printf("Merge: " + parentCommit.commitId().substring(0, 7) + " " + parentCommit2.commitId().substring(0, 7));
+            System.out.printf("Merge: " + parentCommit.commitId().substring(0, 7) + " " +
+                    parentCommit2.commitId().substring(0, 7));
         }
         System.out.printf("Date: " + parentCommit.getDate());
         System.out.printf(parentCommit.getMessage());
@@ -285,12 +287,12 @@ public class Repository implements Serializable {
         boolean flg = true;
         for (String str : commitList) {
             Commit parentCommit = Commit.fromFile(str);
-            if (message.equals(parentCommit.getMessage())){
+            if (message.equals(parentCommit.getMessage())) {
                 Utils.message(parentCommit.commitId());
                 flg = false;
             }
         }
-        if (flg){
+        if (flg) {
             Utils.message("Found no commit with that message.");
         }
     }
@@ -298,7 +300,7 @@ public class Repository implements Serializable {
     public static void setBranch(String branch) {
         //如果具有给定名称的分支已经存在，则打印错误消息A branch with that name already exists.
         List<String> branchList = Utils.plainFilenamesIn(HEADS);
-        if (branchList.contains(branch)){
+        if (branchList.contains(branch)) {
             NotherUtils.message("A branch with that name already exists.");
         }
 /**
@@ -308,7 +310,7 @@ public class Repository implements Serializable {
         //创建bolb文件
         Blob blob = new Blob(addFile);
         //将blobId和相对
-        tracked.put(Blob.getBlobId(blob.getBlobSaveFileName()), blob.getBlobSaveFileName().getPath());
+        tracked.put(Blob.getBlobId(blob.getBlobSaveFileName()), blob.getBlobSaveFileName().getPath()
         //创建新的commit
         Commit newCommit = new Commit(message, parentCommit.getParent(), tracked);
         //读取父commit
