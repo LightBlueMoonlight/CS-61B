@@ -116,11 +116,6 @@ public class Repository implements Serializable {
         if (!newFile.exists()) {
             NotherUtils.message("File does not exist.");
         }
-        //判断添加暂存区是否存在，不存在就创建
-        if (!ADD_STAGE.exists()) {
-            //创建addStage文件目录
-            ADD_STAGE.mkdir();
-        }
         //直接创建bolb文件
         Blob blob = new Blob(newFile);
         createNewFile(blob.getBlobSaveFileName());
@@ -129,6 +124,7 @@ public class Repository implements Serializable {
         Commit parentCommit = Commit.fromFile(headFileString);
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
         if (!parentCommit.getTracked().containsKey(blob.getId())){
+            System.out.println("进来了吗");
             //addStatge不包含add的文件，则将add文件写入
             containsBlob(ADD_STAGE, blob);
         }
