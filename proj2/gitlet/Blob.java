@@ -49,6 +49,7 @@ public class Blob implements Serializable {
         File fileBlob = join(Repository.BLOB, id);
         Repository.createNewFile(fileBlob);
         System.out.println("看看："+fileBlob.getPath());
+        System.out.println("看看父："+fileBlob.getParentFile());
         return fileBlob;
     }
 

@@ -164,6 +164,7 @@ class Utils {
                                                  Class<T> expectedClass) {
         try {
             System.out.println("进来："+ file.getPath());
+            System.out.println("进来父："+ file.getParentFile());
             ObjectInputStream in =
                 new ObjectInputStream(new FileInputStream(file));
             T result = expectedClass.cast(in.readObject());
