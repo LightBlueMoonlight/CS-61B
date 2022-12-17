@@ -121,12 +121,13 @@ public class Repository implements Serializable {
             //创建addStage文件目录
             ADD_STAGE.mkdir();
         }
-
+        //直接创建bolb文件
+        Blob blob = new Blob(newFile);
         //blob不包含add的文件，则将add文件写入
-        containsBlob(OBJECTS, newFile);
+        containsBlob(BLOB, blob);
 
         //addStatge不包含add的文件，则将add文件写入
-        containsBlob(ADD_STAGE, newFile);
+        containsBlob(ADD_STAGE, blob);
     }
 
     /*
@@ -143,21 +144,19 @@ public class Repository implements Serializable {
     }
 
     //判断目录下是否包含bilb文件，不包含则创建
-    public static void containsBlob(File fileName, File blob) {
+    public static void containsBlob(File fileName, Blob blob) {
         if (!fileName.exists()) {
             fileName.mkdir();
         }
+
         //获取目录下所有文件名
         List<String> list = Utils.plainFilenamesIn(fileName);
         System.out.println(fileName.getPath() + ":" + list);
-        String bolbString = Blob.getBlobId(blob);
-        System.out.println("1:" + bolbString);
-        //根据blobid直接创建bolb文件
-        Blob blobFile = new Blob(blob);
         //要在blob目录中创建文件
-        createNewFile(blobFile.getBlobSaveFileName());
-        System.out.println("2:" + blobFile.getBlobSaveFileName().getPath());
-
+        createNewFile(blob.getBlobSaveFileName());
+        System.out.println("2:" + blob.getBlobSaveFileName().getPath());
+        String bolbString = Blob.getBlobId(blob.getBlobSaveFileName());
+        System.out.println("bolbString:"+bolbString);
         if (!list.contains(bolbString)) {
             File saveFile = Utils.join(fileName, bolbString);
             createNewFile(saveFile);
