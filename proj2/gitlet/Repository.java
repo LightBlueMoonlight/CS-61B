@@ -74,7 +74,8 @@ public class Repository implements Serializable {
         makeBranch(MASTER, initCommit.getCommitID());
         //HEAD存储master的分支名
         System.out.println("initcommit:"+initCommit.getCommitID());
-        Utils.writeObject(HEAD, initCommit.getCommitID());
+        File file = Utils.join(HEAD, initCommit.getCommitID());
+        createNewFile(file);
         String headFileString = Utils.readContentsAsString(HEAD);
         System.out.println("HEAD:"+ headFileString);
 
