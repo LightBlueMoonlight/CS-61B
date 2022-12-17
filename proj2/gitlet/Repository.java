@@ -224,6 +224,7 @@ public class Repository implements Serializable {
             //创建removeStage文件目录
             REMOVE_STAGE.mkdir();
         }
+        Blob blob = new Blob(newFile);
         //获取bolbId
         String bolbString = Blob.getBlobId(newFile);
         List<String> list = Utils.plainFilenamesIn(ADD_STAGE);
@@ -245,7 +246,7 @@ public class Repository implements Serializable {
         }
         //如果文件被当前commit跟踪，则将其存入stage for removal区域。如果该文件存在于工作目录中，就将其删除
         if (flg2) {
-            containsBlob(REMOVE_STAGE, newFile);
+            containsBlob(REMOVE_STAGE, blob);
             File file = new File(CWD.getPath() + newFile.getPath());
             if (file.exists()) {
                 Utils.restrictedDelete(file);
