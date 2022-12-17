@@ -122,8 +122,8 @@ public class Repository implements Serializable {
             ADD_STAGE.mkdir();
         }
 
-        //objects不包含add的文件，则将add文件写入
-        containsBlob(BLOB, newFile);
+        //blob不包含add的文件，则将add文件写入
+        containsBlob(OBJECTS, newFile);
 
         //addStatge不包含add的文件，则将add文件写入
         containsBlob(ADD_STAGE, newFile);
@@ -161,6 +161,7 @@ public class Repository implements Serializable {
         if (!list.contains(bolbString)) {
             File saveFile = Utils.join(fileName, bolbString);
             createNewFile(saveFile);
+            System.out.println(fileName.getPath() + "<<<<<:" + list);
         }
     }
 
