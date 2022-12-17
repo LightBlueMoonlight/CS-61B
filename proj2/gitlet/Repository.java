@@ -155,7 +155,7 @@ public class Repository implements Serializable {
         //要在blob目录中创建文件
         createNewFile(blobFile.getBlobSaveFileName());
         if (!list.contains(bolbString)) {
-            File saveFile = Utils.join(fileName,bolbString);
+            File saveFile = Utils.join(fileName, bolbString);
             createNewFile(saveFile);
         }
     }
@@ -179,10 +179,10 @@ public class Repository implements Serializable {
             String bolbString = Blob.getBlobId(addFile);
             //根据blobid直接创建bolb文件
             Blob blobFile = Blob.fromFile(bolbString);
-            Map<String,String> map = Blob.pathToBlobID(blobFile);
+            Map<String, String> map = Blob.pathToBlobID(blobFile);
             //将blobId和相对
-            for(String key: map.keySet()) {
-                tracked.put(key,map.get(key));
+            for (String key: map.keySet()) {
+                tracked.put(key, map.get(key));
                 break;
             }
             //删除addStage下的暂存文件
