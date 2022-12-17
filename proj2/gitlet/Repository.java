@@ -76,7 +76,7 @@ public class Repository implements Serializable {
         Utils.writeContents(HEAD, "master");
         String headFileString = Utils.readContentsAsString(HEAD);
 
-        File REFS  = join(GITLET_DIR, headFileString);
+        File REFS  = join(HEADS, headFileString);
         String COMMITID = Utils.readContentsAsString(REFS);
         System.out.println("HEAD:"+ headFileString);
         System.out.println("COMMITID" + COMMITID);
