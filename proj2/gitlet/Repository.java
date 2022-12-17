@@ -53,8 +53,8 @@ public class Repository implements Serializable {
     public static void setInit() {
         //如果当前目录下没有存储库就创建.gitlet,有就报错
         if (GITLET_DIR.exists()) {
-            Utils.message("A Gitlet version-control system already exists " +
-                    "in the current directory.");
+            Utils.message("A Gitlet version-control system already exists "
+                    + "in the current directory.");
             System.exit(0);
         }
         //创建.gitlet目录
@@ -124,6 +124,7 @@ public class Repository implements Serializable {
 
         //objects不包含add的文件，则将add文件写入
         containsBlob(BLOB, newFile);
+
         //addStatge不包含add的文件，则将add文件写入
         containsBlob(ADD_STAGE, newFile);
     }
@@ -148,11 +149,15 @@ public class Repository implements Serializable {
         }
         //获取目录下所有文件名
         List<String> list = Utils.plainFilenamesIn(fileName);
+        System.out.println(fileName.getPath() + ":" + list);
         String bolbString = Blob.getBlobId(blob);
+        System.out.println("1:" + bolbString);
         //根据blobid直接创建bolb文件
         Blob blobFile = new Blob(blob);
         //要在blob目录中创建文件
         createNewFile(blobFile.getBlobSaveFileName());
+        System.out.println("2:" + blobFile.getBlobSaveFileName().getPath());
+
         if (!list.contains(bolbString)) {
             File saveFile = Utils.join(fileName, bolbString);
             createNewFile(saveFile);
@@ -262,8 +267,8 @@ public class Repository implements Serializable {
         if (parentCommit.getParent().size() == 2) {
             Commit parentCommit2 = Commit.fromFile(parentCommit.getParent().get(1));
             //Merge:”后面的两个十六进制数字由第一个和第二个父项的提交 ID 的前七位组成
-            System.out.printf("Merge: " + parentCommit.commitId().substring(0, 7) + " " +
-                    parentCommit2.commitId().substring(0, 7));
+            System.out.printf("Merge: " + parentCommit.commitId().substring(0, 7) + " "
+                    + parentCommit2.commitId().substring(0, 7));
         }
         System.out.printf("Date: " + parentCommit.getDate());
         System.out.printf(parentCommit.getMessage());
