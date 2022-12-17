@@ -123,11 +123,18 @@ public class Repository implements Serializable {
         }
         //直接创建bolb文件
         Blob blob = new Blob(newFile);
-        //blob不包含add的文件，则将add文件写入
-        containsBlob(BLOB, blob);
+        createNewFile(blob.getBlobSaveFileName());
+        //读取HEADcommit
+        String headFileString = Utils.readContentsAsString(HEAD);
+        Commit parentCommit = Commit.fromFile(headFileString);
+        //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
+        if (!parentCommit.getTracked().containsKey(blob.getId())){
+            //addStatge不包含add的文件，则将add文件写入
+            containsBlob(ADD_STAGE, blob);
+        }
 
-        //addStatge不包含add的文件，则将add文件写入
-        containsBlob(ADD_STAGE, blob);
+
+
         System.out.println("调用结束");
     }
 
@@ -152,6 +159,8 @@ public class Repository implements Serializable {
 
         //获取目录下所有文件名
         List<String> list = Utils.plainFilenamesIn(fileName);
+        List<String> objList = Utils.plainFilenamesIn(OBJECTS);
+        System.out.println("objList:" + objList);
         System.out.println(fileName.getPath() + ":" + list);
         //要在blob目录中创建文件
         createNewFile(blob.getBlobSaveFileName());

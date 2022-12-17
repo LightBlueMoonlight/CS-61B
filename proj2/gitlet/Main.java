@@ -32,7 +32,9 @@ public class Main {
                 break;
             case "commit":
                 Repository.checkDir();
-                validateNumArgs(args, 2);
+                if(args.length == 1){
+                    NotherUtils.message("Please enter a commit message.");
+                }
                 text = args[1];
                 if (text.length() == 0) {
                     NotherUtils.message("Please enter a commit message.");
