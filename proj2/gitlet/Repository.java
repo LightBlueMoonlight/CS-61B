@@ -3,7 +3,7 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,7 +144,7 @@ public class Repository implements Serializable {
 
     //判断目录下是否包含bilb文件，不包含则创建
     public static void containsBlob(File fileName, File blob) {
-        if (!fileName.exists()){
+        if (!fileName.exists()) {
             fileName.mkdir();
         }
         //获取目录下所有文件名
@@ -152,6 +152,7 @@ public class Repository implements Serializable {
         String bolbString = Blob.getBlobId(blob);
         //根据blobid直接创建bolb文件
         Blob blobFile = Blob.fromFile(bolbString);
+        createNewFile(blobFile.getBlobSaveFileName());
         //要在blob目录中创建文件
         createNewFile(blobFile.getBlobSaveFileName());
         if (!list.contains(bolbString)) {
@@ -167,7 +168,8 @@ public class Repository implements Serializable {
         //查看删除暂存区下目录
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         //判断暂存区是否存在，或为空
-        if ((!ADD_STAGE.exists() || addStageList.size() == 0) && (REMOVE_STAGE.exists() || removeStageList.size()==0)) {
+        if ((!ADD_STAGE.exists() || addStageList.size() == 0)
+                && (REMOVE_STAGE.exists() || removeStageList.size() == 0)) {
             //报错
             NotherUtils.message("No changes added to the commit.");
         }
@@ -180,7 +182,7 @@ public class Repository implements Serializable {
             Blob blobFile = Blob.fromFile(bolbString);
             Map<String,String> map = Blob.pathToBlobID(blobFile);
             //将blobId和相对
-            for(String key: map.keySet()){
+            for(String key: map.keySet()) {
                 tracked.put(key,map.get(key));
                 break;
             }

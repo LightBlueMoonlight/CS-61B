@@ -1,6 +1,6 @@
 package gitlet;
 
-// TODO: any imports you need here
+
 
 import java.io.File;
 import java.io.Serializable;
@@ -29,8 +29,8 @@ public class Commit implements Serializable {
     private List<String> parent; //父提交
     private Date date; //提交日期
     //private List<String> blobID; //文件id
-    private File file;//用SHA1 生成的id创建新的commit文件
-    private Map<String, String> tracked;//跟踪的文件以文件路径为关键字，SHA1 id为值进行映射。  =blobID？
+    private File file; //用SHA1 生成的id创建新的commit文件
+    private Map<String, String> tracked; //跟踪的文件以文件路径为关键字，SHA1 id为值进行映射。  =blobID？
 
 
     public Commit(String message, List<String> parent, Map<String, String> tracked) {
