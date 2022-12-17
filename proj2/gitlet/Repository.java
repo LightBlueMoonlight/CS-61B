@@ -72,18 +72,8 @@ public class Repository implements Serializable {
         //CommitID存储在master分支下
         makeBranch(MASTER, initCommit.getCommitID());
         //HEAD存储master的分支名
-        System.out.println("initcommit:"+initCommit.getCommitID());
         Utils.writeContents(HEAD, "master");
         String headFileString = Utils.readContentsAsString(HEAD);
-
-        File REFS  = join(HEADS, headFileString);
-        String COMMITID = Utils.readContentsAsString(REFS);
-        System.out.println("HEAD:"+ headFileString);
-        System.out.println("COMMITID" + COMMITID);
-
-//        makeBranch("61b", initCommit.getCommitID());
-//        List<String> list = Utils.plainFilenamesIn(HEADS);
-//        System.out.println(list);
     }
 
     //在heads文件夹内存有多个文件，每个文件的名字即为分支名字
@@ -134,8 +124,11 @@ public class Repository implements Serializable {
         System.out.println("HEAD:" + headFileString);
         List<String> COMMITList = Utils.plainFilenamesIn(COMMIT);
         System.out.println("COMMITList:" + COMMITList);
+        File headFileStringF  = join(HEADS, headFileString);
 
-        Commit parentCommit = Commit.fromFile(headFileString);
+        String headFileString2 = Utils.readContentsAsString(headFileStringF);
+        System.out.println("headFileString2:" + COMMITList);
+        Commit parentCommit = Commit.fromFile(headFileString2);
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
         if (!parentCommit.getTracked().containsKey(blob.getId())){
             System.out.println("进来了吗");
