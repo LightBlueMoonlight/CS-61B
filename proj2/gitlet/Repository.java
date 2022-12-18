@@ -96,7 +96,7 @@ public class Repository implements Serializable {
         try {
             File fileParent = newFile.getParentFile();
             if (!fileParent.exists()){
-                fileParent.mkdirs();
+                fileParent.mkdir();
             }
             newFile.createNewFile();
         } catch (IOException | ClassCastException excp) {
@@ -135,7 +135,18 @@ public class Repository implements Serializable {
         System.out.println("headBranchText:" + headBranchText);
         //当前分支下会存放未提交前的commit，同样用commit的父目录与commit做一个拼接，读取commit文件下的内容
         //String commitFile =
-        File commitFile = join(HEADS, headFileString,headBranchText);
+        File commitFile = join(headBranch,headBranchText);
+        if(commitFile.isDirectory()){
+            System.out.println("是目录");
+        }
+
+        if(commitFile.isFile()){
+            System.out.println("是文件");
+        }
+
+        if(commitFile.exists()){
+            System.out.println("存在");
+        }
         createNewFile(commitFile);
         //读取commit文件的内容
         String commitFileText = Utils.readContentsAsString(commitFile);
