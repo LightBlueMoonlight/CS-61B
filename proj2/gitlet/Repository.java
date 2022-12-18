@@ -129,6 +129,7 @@ public class Repository implements Serializable {
         String headFileString3 = Utils.readContentsAsString(ff);
         System.out.println("headFileString3:" + headFileString3);
         File ff2 = join(ff.getPath(), headFileString3);
+        createNewFile(ff2);
         String ff2FileString = Utils.readContentsAsString(ff2);
         System.out.println("ff2FileString:" + ff2FileString);
         Commit parentCommit = Commit.fromFile(headFileString3);
