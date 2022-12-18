@@ -162,6 +162,14 @@ class Utils {
      *出现问题时抛出IllegalArgumentException*/
     static <T extends Serializable> T readObject(File file,
                                                  Class<T> expectedClass) {
+        if (file.exists()){
+            System.out.println("file.exists");
+        }
+        if (file.isFile()){
+            System.out.println("file.isFile");
+        }
+        System.out.println(file.getParentFile());
+        System.out.println(file.getPath());
         try {
             ObjectInputStream in =
                 new ObjectInputStream(new FileInputStream(file));
