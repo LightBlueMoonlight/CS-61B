@@ -8,8 +8,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static gitlet.Utils.join;
-import static gitlet.Utils.readObject;
+import static gitlet.Utils.*;
 
 public class Commit implements Serializable {
     /**
@@ -49,7 +48,7 @@ public class Commit implements Serializable {
         tracked = new HashMap<>();
         id = commitId();
         file = Utils.join(Repository.COMMIT, id);
-        saveCommit();
+        save();
     }
 
     public File getFile() {
@@ -99,8 +98,23 @@ public class Commit implements Serializable {
     }
 
     public void saveCommit() {
+        Utils.serialize(file);
         Utils.writeObject(file, id);
         Repository.createNewFile(file);
+    }
+
+    public void save() {
+        saveObjectFile(file, this);
+    }
+
+    public static void saveObjectFile(File file, Serializable obj) {
+        File dir = file.getParentFile();
+        if (!dir.exists()) {
+            if (!dir.mkdir()) {
+                throw new IllegalArgumentException(String.format("mkdir: %s: Failed to create.", dir.getPath()));
+            }
+        }
+        writeObject(file, obj);
     }
 
 }
