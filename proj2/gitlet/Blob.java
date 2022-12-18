@@ -5,8 +5,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import static gitlet.Utils.join;
-import static gitlet.Utils.readObject;
+import static gitlet.Utils.*;
 
 public class Blob implements Serializable {
     private String id; //blobId
@@ -22,13 +21,28 @@ public class Blob implements Serializable {
         this.bytes = Utils.readContents(file);
         this.id = blobId();
         this.blobSaveFileName = Utils.join(Repository.BLOB, id);
-        saveBlob();
+        save();
     }
 
     public void saveBlob() {
         Utils.writeObject(blobSaveFileName, id);
         Repository.createNewFile(blobSaveFileName);
     }
+
+    public void save() {
+        saveObjectFile(blobSaveFileName, this);
+    }
+
+    public static void saveObjectFile(File file, Serializable obj) {
+        File dir = file.getParentFile();
+        if (!dir.exists()) {
+            if (!dir.mkdir()) {
+                throw new IllegalArgumentException(String.format("mkdir: %s: Failed to create.", dir.getPath()));
+            }
+        }
+        writeObject(file, obj);
+    }
+
 
     public String getId() {
         return id;

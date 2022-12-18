@@ -124,44 +124,18 @@ public class Repository implements Serializable {
 
         //读取HEAD下的分支 例如：master
         String headFileString = Utils.readContentsAsString(HEAD);
-        //读取commit文件下的内容
-        List<String> COMMITList = Utils.plainFilenamesIn(COMMIT);
-        System.out.println("COMMITList:" + COMMITList);
         //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
         File headBranch = join(HEADS, headFileString);
-        System.out.println("headBranch:" + headBranch.getPath());
         //读取headBranch下的内容
         String headBranchText = Utils.readContentsAsString(headBranch);
-        System.out.println("headBranchText:" + headBranchText);
-        //当前分支下会存放未提交前的commit，同样用commit的父目录与commit做一个拼接，读取commit文件下的内容
-        //String commitFile =
-//        File commitFile = join(headBranch,headBranchText);
-//        if(commitFile.isDirectory()){
-//            System.out.println("是目录");
-//        }
-//
-//        if(commitFile.isFile()){
-//            System.out.println("是文件");
-//        }
-//
-//        if(commitFile.exists()){
-//            System.out.println("存在");
-//        }
-//        createNewFile(commitFile);
-        //读取commit文件的内容
-//        String commitFileText = Utils.readContentsAsString(headBranchText);
-//        System.out.println("commitFileText:" + headBranchText);
+        //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(headBranchText);
-
         //如果addStage目录不存在就创建
         if (!ADD_STAGE.exists()){
             ADD_STAGE.mkdir();
         }
-        //读取addStage目录下的所有blob文件名
-        List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
         //更据添加文件名创建bolb文件
         Blob blob = new Blob(newFile);
-
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
         //Tracked的键值对是相对路径--blobId
         //获取相对路径的value
@@ -215,7 +189,6 @@ public class Repository implements Serializable {
                 }
             }
         }
-        System.out.println("调用结束");
     }
 
     /*
@@ -261,81 +234,116 @@ public class Repository implements Serializable {
             //报错
             NotherUtils.message("No changes added to the commit.");
         }
+        //读取HEAD下的分支 例如：master
+        String headFileString = Utils.readContentsAsString(HEAD);
+        //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
+        File headBranch = join(HEADS, headFileString);
+        //读取headBranch下的内容
+        String headBranchText = Utils.readContentsAsString(headBranch);
+        //根据commitId生成commit文件
+        Commit parentCommit = Commit.fromFile(headBranchText);
+
+
         //遍历addStage,将blob的文件名和blobId做出hashMap进行映射
         Map<String, String> tracked = new HashMap<>();
-        for (String addStageFile : addStageList) {
-            File addFile = join(ADD_STAGE, addStageFile);
-            String bolbString = Blob.getBlobId(addFile);
-            //根据blobid直接创建bolb文件
-            Blob blobFile = Blob.fromFile(bolbString);
-            Map<String, String> map = Blob.pathToBlobID(blobFile);
-            //将blobId和相对
-            for (String key: map.keySet()) {
-                tracked.put(key, map.get(key));
-                break;
+        Map<String, String> parentTracked = parentCommit.getTracked();
+        if ((ADD_STAGE.exists())) {
+            for (String addStageFile : addStageList) {
+                //根据blobid直接创建bolb文件
+                Blob blobFile = Blob.fromFile(addStageFile);
+                //增加缓存去的blobId添加到tracked
+                parentTracked.put(blobFile.getFilePath(), blobFile.getId());
+                File addFile = join(ADD_STAGE, addStageFile);
+                //删除addStage下的暂存文件
+                Utils.restrictedDelete(addFile);
             }
-            //删除addStage下的暂存文件
-            Utils.restrictedDelete(addFile);
         }
-        //将HEAD全部内容作为字符串返回。其实也就是前一个返回
-        String headString = Utils.readContentsAsString(HEAD);
-        //读取父commit
-        Commit parentCommit = Commit.fromFile(headString);
         //如果删除区存在
         if ((REMOVE_STAGE.exists())) {
             for (String str : removeStageList) {
                 File removeFile = join(REMOVE_STAGE, str);
                 //创建bolb文件
-                String bolbString = Blob.getBlobId(removeFile);
-                parentCommit.getTracked().remove(bolbString);
+                Blob blobFile = Blob.fromFile(str);
+                parentTracked.remove(blobFile.getId());
                 //删除addStage下的暂存文件
                 Utils.restrictedDelete(removeFile);
             }
         }
-        List<String> parentCommitList = parentCommit.getParent();
-        parentCommitList.add(headString);
+        List<String> list = parentCommit.getParent();
+        list.add(parentCommit.getCommitID());
         //创建新的commit
-        Commit newCommit = new Commit(message, parentCommitList, tracked);
-
+        Commit newCommit = new Commit(message, list, parentTracked);
+        //先删除在创建
+        Utils.restrictedDelete(headBranch);
+        //重新创建
+        File newHeadBranch = join(HEADS, headFileString);
+        createNewFile(newHeadBranch);
         //将新生成的commitId在写入head
-        Utils.writeObject(HEAD, newCommit.getCommitID());
+        System.out.println("将新生成的commitId在写入head");
+        Utils.writeObject(newHeadBranch, newCommit.getCommitID());
+        String newHeadBranchText = Utils.readContentsAsString(newHeadBranch);
+        System.out.println("开始写入:" + newHeadBranchText);
     }
 
     public static void setRM(String removeFile) {
-        File newFile = new File(removeFile);
-        //判断添加的文件是否存在工作目录中，不存在则报错
-        //判断添加暂存区是否存在，不存在就创建
+        File newFile = Paths.get(removeFile).isAbsolute()
+                ? new File(removeFile)
+                : join(CWD, removeFile);
+        //读取HEAD下的分支 例如：master
+        String headFileString = Utils.readContentsAsString(HEAD);
+        //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
+        File headBranch = join(HEADS, headFileString);
+        //读取headBranch下的内容
+        String headBranchText = Utils.readContentsAsString(headBranch);
+        //根据commitId生成commit文件
+        Commit parentCommit = Commit.fromFile(headBranchText);
+        //判断删除暂存区是否存在，不存在就创建
         if (!REMOVE_STAGE.exists()) {
             //创建removeStage文件目录
             REMOVE_STAGE.mkdir();
         }
+        //如果文件在stage for add区域，则将其中缓存区删除；
+        //如果文件被当前commit跟踪，则将其存入stage for removal区域。如果该文件存在于工作目录
+        //更据删除文件名创建bolb文件
         Blob blob = new Blob(newFile);
-        //获取bolbId
-        String bolbString = Blob.getBlobId(newFile);
-        List<String> list = Utils.plainFilenamesIn(ADD_STAGE);
-        //读取HEADcommit
-        String headFileString = Utils.readContentsAsString(HEAD);
-        Commit parentCommit = Commit.fromFile(headFileString);
-        Map<String, String> getTracked = parentCommit.getTracked();
-        boolean flg1 = list.contains(bolbString);
-        boolean flg2 = getTracked.containsKey(bolbString);
-
-        //如果文件既没有被 暂存也没有被 head commit跟踪，打印错误信息No reason to remove the file.
-        if (!flg1 && !flg2) {
-            NotherUtils.message("No reason to remove the file.");
-        }
-        //如果文件在stage for add区域，则将其中缓存区删除
-        if (flg1) {
-            File file = new File(ADD_STAGE.getPath() + newFile.getPath());
-            Utils.restrictedDelete(file);
-        }
-        //如果文件被当前commit跟踪，则将其存入stage for removal区域。如果该文件存在于工作目录中，就将其删除
-        if (flg2) {
-            containsBlob(REMOVE_STAGE, blob);
-            File file = new File(CWD.getPath() + newFile.getPath());
-            if (file.exists()) {
-                Utils.restrictedDelete(file);
+        //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则将其添加到removeStaging中
+        //Tracked的键值对是相对路径--blobId
+        //读取添加暂存区
+        boolean flg = true;
+        List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
+        //遍历addStage中的文件与当前添加的文件做比较
+        for (String str : addStageList){
+            //如果addStage里的相对路径等于添加文件的相对路径
+            if (str.equals(blob.getId()) ){
+                //当前blob添加到removeStaging目录
+                File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
+                createNewFile(rmAddStageFile2);
+                if (newFile.exists()){
+                    //删除目录下的remove文件
+                    restrictedDelete(newFile);
+                }
+                flg = false;
             }
+        }
+        //获取相对路径的value
+        String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+        //不为null说明当前commit文件包含当前删除blob文件路径
+        if (trackBlobId != null){
+            //blobid相等就不用添加了，删除目录下的添加文件
+            if (trackBlobId.equals(blob.blobId())){
+                //当前blob添加到removeStaging目录
+                File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
+                createNewFile(rmAddStageFile2);
+                if (newFile.exists()){
+                    //删除目录下的remove文件
+                    restrictedDelete(newFile);
+                }
+                flg = false;
+            }
+        }
+        //如果文件既没有被 暂存也没有被 head commit跟踪，打印错误信息No reason to remove the file.
+        if (flg) {
+            NotherUtils.message("No reason to remove the file.");
         }
     }
 

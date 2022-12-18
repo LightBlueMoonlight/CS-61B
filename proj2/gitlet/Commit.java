@@ -39,6 +39,7 @@ public class Commit implements Serializable {
         this.tracked = tracked;
         id = commitId();
         file = Utils.join(Repository.COMMIT, id);
+        save();
     }
 
     public Commit() {

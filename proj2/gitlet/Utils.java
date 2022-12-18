@@ -154,15 +154,10 @@ class Utils {
      *出现问题时抛出IllegalArgumentException*/
     static <T extends Serializable> T readObject(File file,
                                                  Class<T> expectedClass) {
-        System.out.println(file.getParentFile());
-        System.out.println(file.getPath());
         try {
-            System.out.println("kaishi");
             ObjectInputStream in =
                 new ObjectInputStream(new FileInputStream(file));
-            System.out.println("jieshu");
             T result = expectedClass.cast(in.readObject());
-            System.out.println("您又怎么了");
             in.close();
             return result;
         } catch (IOException | ClassCastException
