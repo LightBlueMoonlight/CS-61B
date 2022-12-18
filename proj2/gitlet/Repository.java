@@ -135,23 +135,23 @@ public class Repository implements Serializable {
         System.out.println("headBranchText:" + headBranchText);
         //当前分支下会存放未提交前的commit，同样用commit的父目录与commit做一个拼接，读取commit文件下的内容
         //String commitFile =
-        File commitFile = join(headBranch,headBranchText);
-        if(commitFile.isDirectory()){
-            System.out.println("是目录");
-        }
-
-        if(commitFile.isFile()){
-            System.out.println("是文件");
-        }
-
-        if(commitFile.exists()){
-            System.out.println("存在");
-        }
-        createNewFile(commitFile);
+//        File commitFile = join(headBranch,headBranchText);
+//        if(commitFile.isDirectory()){
+//            System.out.println("是目录");
+//        }
+//
+//        if(commitFile.isFile()){
+//            System.out.println("是文件");
+//        }
+//
+//        if(commitFile.exists()){
+//            System.out.println("存在");
+//        }
+//        createNewFile(commitFile);
         //读取commit文件的内容
-        String commitFileText = Utils.readContentsAsString(commitFile);
-        System.out.println("commitFileText:" + headBranchText);
-        Commit parentCommit = Commit.fromFile(commitFileText);
+//        String commitFileText = Utils.readContentsAsString(headBranchText);
+//        System.out.println("commitFileText:" + headBranchText);
+        Commit parentCommit = Commit.fromFile(headBranchText);
 
         //如果addStage目录不存在就创建
         if (!ADD_STAGE.exists()){
