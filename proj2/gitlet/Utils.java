@@ -139,8 +139,7 @@ class Utils {
         try {
             if (file.isDirectory()) {
                 throw
-                    new IllegalArgumentException("cannot overwrite directory"
-                            + ":" + file.getPath());
+                    new IllegalArgumentException("cannot overwrite directory");
             }
             BufferedOutputStream str =
                 new BufferedOutputStream(Files.newOutputStream(file.toPath()));
@@ -164,17 +163,9 @@ class Utils {
     static <T extends Serializable> T readObject(File file,
                                                  Class<T> expectedClass) {
         try {
-            System.out.println("进来：" + file.getPath());
-            System.out.println("进来父：" + file.getParentFile());
-            if(file != null){
-                System.out.println("不为null" );
-            }
             ObjectInputStream in =
                 new ObjectInputStream(new FileInputStream(file));
-            System.out.println("空1" );
             T result = expectedClass.cast(in.readObject());
-            System.out.println("空2" );
-
             in.close();
             return result;
         } catch (IOException | ClassCastException
@@ -205,7 +196,7 @@ class Utils {
     /** Returns a list of the names of all plain files in the directory DIR, in
      *  lexicographic order as Java Strings.  Returns null if DIR does
      *  not denote a directory. */
-    /**返回目录DIR中所有普通文件的名称列表 只返回文件不返回目录
+    /**返回目录DIR中所有普通文件的名称列表
      *字典顺序为Java字符串。如果DIR为空，则返回null
      *不表示目录*/
     static List<String> plainFilenamesIn(File dir) {

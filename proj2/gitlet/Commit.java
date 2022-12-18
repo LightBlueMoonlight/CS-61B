@@ -94,8 +94,7 @@ public class Commit implements Serializable {
     }
 
     public static File getObjectFile(String id) {
-        File fileCommit = join(Repository.COMMIT, id);
-        return fileCommit;
+        return join(Repository.COMMIT, id);
     }
 
 }
