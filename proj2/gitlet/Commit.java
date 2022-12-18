@@ -49,6 +49,7 @@ public class Commit implements Serializable {
         tracked = new HashMap<>();
         id = commitId();
         file = Utils.join(Repository.COMMIT, id);
+        saveCommit();
     }
 
     public File getFile() {
@@ -95,6 +96,10 @@ public class Commit implements Serializable {
 
     public static File getObjectFile(String id) {
         return join(Repository.COMMIT, id);
+    }
+
+    public void saveCommit() {
+        Utils.writeObject(file, id);
     }
 
 }

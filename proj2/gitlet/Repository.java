@@ -123,10 +123,14 @@ public class Repository implements Serializable {
         System.out.println("HEAD:" + headFileString);
         List<String> COMMITList = Utils.plainFilenamesIn(COMMIT);
         System.out.println("COMMITList:" + COMMITList);
+        //master
         File ff = join(HEADS, headFileString);
         System.out.println("headFileString2:" + ff.getPath());
         String headFileString3 = Utils.readContentsAsString(ff);
         System.out.println("headFileString3:" + headFileString3);
+        File ff2 = join(ff.getPath(), headFileString3);
+        String ff2FileString = Utils.readContentsAsString(ff2);
+        System.out.println("ff2FileString:" + ff2FileString);
         Commit parentCommit = Commit.fromFile(headFileString3);
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
 
