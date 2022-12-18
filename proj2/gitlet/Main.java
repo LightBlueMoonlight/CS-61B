@@ -26,8 +26,8 @@ public class Main {
                 break;
             case "add":
                 Repository.checkDir();
-                validateNumArgs(args, 2);
-                text = args[1];
+                validateNumArgs(args, 3);
+                text = args[2];
                 Repository.setAdd(text);
                 break;
             case "commit":
@@ -35,7 +35,7 @@ public class Main {
                 if(args.length == 1){
                     NotherUtils.message("Please enter a commit message.");
                 }
-                text = args[1];
+                text = args[2];
                 if (text.length() == 0) {
                     NotherUtils.message("Please enter a commit message.");
                 }
