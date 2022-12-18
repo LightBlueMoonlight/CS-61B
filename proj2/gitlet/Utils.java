@@ -1,14 +1,6 @@
 package gitlet;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
@@ -171,8 +163,12 @@ class Utils {
         System.out.println(file.getParentFile());
         System.out.println(file.getPath());
         try {
+            InputStream in1 = new FileInputStream(file);
+            if (in1 == null){
+                System.out.println("因为我");
+            }
             ObjectInputStream in =
-                new ObjectInputStream(new FileInputStream(file));
+                new ObjectInputStream(in1);
             T result = expectedClass.cast(in.readObject());
             in.close();
             return result;
