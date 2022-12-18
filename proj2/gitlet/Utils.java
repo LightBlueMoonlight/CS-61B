@@ -154,29 +154,19 @@ class Utils {
      *出现问题时抛出IllegalArgumentException*/
     static <T extends Serializable> T readObject(File file,
                                                  Class<T> expectedClass) {
-        if (file.exists()){
-            System.out.println("file.exists");
-        }
-        if (file.isFile()){
-            System.out.println("file.isFile");
-        }
         System.out.println(file.getParentFile());
         System.out.println(file.getPath());
         try {
-            InputStream in1 = new FileInputStream(file);
             System.out.println("kaishi");
-            if (in1 == null){
-                System.out.println("因为我");
-            }
             ObjectInputStream in =
-                new ObjectInputStream(in1);
+                new ObjectInputStream(new FileInputStream(file));
             System.out.println("jieshu");
             T result = expectedClass.cast(in.readObject());
             in.close();
             return result;
         } catch (IOException | ClassCastException
                  | ClassNotFoundException excp) {
-            throw new IllegalArgumentException(excp.getMessage());
+            throw new IllegalArgumentException(excp.getMessage() + "：什么错" + excp.toString());
         }
     }
 
