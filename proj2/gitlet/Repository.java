@@ -122,8 +122,8 @@ public class Repository implements Serializable {
         List<String> COMMITList = Utils.plainFilenamesIn(COMMIT);
         System.out.println("COMMITList:" + COMMITList);
         String headFileString2 = HEADS.getPath() + headFileString;
-        System.out.println("headFileString2:" + headFileString2);
-        File ff = new File(headFileString2);
+        File ff = join(HEADS, headFileString);
+        System.out.println("headFileString2:" + ff.getPath());
         String headFileString3 = Utils.readContentsAsString(ff);
         System.out.println("headFileString3:" + headFileString3);
         Commit parentCommit = Commit.fromFile(headFileString3);
