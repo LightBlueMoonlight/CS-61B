@@ -164,11 +164,13 @@ class Utils {
         System.out.println(file.getPath());
         try {
             InputStream in1 = new FileInputStream(file);
+            System.out.println("kaishi");
             if (in1 == null){
                 System.out.println("因为我");
             }
             ObjectInputStream in =
                 new ObjectInputStream(in1);
+            System.out.println("jieshu");
             T result = expectedClass.cast(in.readObject());
             in.close();
             return result;

@@ -3,6 +3,7 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,32 +109,64 @@ public class Repository implements Serializable {
      * @param
      */
     public static void setAdd(String addFile) {
-        File newFile = new File(addFile);
+        File newFile = Paths.get(addFile).isAbsolute()
+                ? new File(addFile)
+                : join(CWD, addFile);
         //判断添加的文件是否存在工作目录中，不存在则报错
         if (!newFile.exists()) {
             NotherUtils.message("File does not exist.");
         }
         //直接创建bolb文件
         Blob blob = new Blob(newFile);
-        createNewFile(blob.getBlobSaveFileName());
         //读取HEADcommit
         String headFileString = Utils.readContentsAsString(HEAD);
         System.out.println("HEAD:" + headFileString);
         List<String> COMMITList = Utils.plainFilenamesIn(COMMIT);
         System.out.println("COMMITList:" + COMMITList);
-        String headFileString2 = HEADS.getPath() + headFileString;
         File ff = join(HEADS, headFileString);
         System.out.println("headFileString2:" + ff.getPath());
         String headFileString3 = Utils.readContentsAsString(ff);
         System.out.println("headFileString3:" + headFileString3);
         Commit parentCommit = Commit.fromFile(headFileString3);
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
-        if (!parentCommit.getTracked().containsKey(blob.getId())){
-            System.out.println("进来了吗");
-            //addStatge不包含add的文件，则将add文件写入
-            containsBlob(ADD_STAGE, blob);
-        }
 
+        if (!ADD_STAGE.exists()){
+            ADD_STAGE.mkdir();
+        }
+        List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
+
+        if (addList.contains(blob.getFilePath())){
+            File FFF =join(ADD_STAGE,blob.getFilePath());
+            //比较add的同名文件blobid是否相等
+            String FFF1 = Utils.readContentsAsString(FFF);
+            if (FFF1.equals(blob.getId())){
+                //删除目录下的add文件
+                restrictedDelete(newFile);
+            }else{
+                //先删除在创建
+                restrictedDelete(FFF);
+                createNewFile(FFF);
+                File FFF2 =join(FFF,blob.getId());
+                createNewFile(FFF2);
+            }
+        }
+        //String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+//        //COMMIT文件包含当前blob文件路径
+//        if (trackBlobId != null){
+//            if (trackBlobId.equals(blob.blobId())){
+//                //删除目录下的add文件
+//                restrictedDelete(newFile);
+//            }else {
+//                //替换调这个文件的blob,因为还没commit，所以放到暂存区
+//                File addStage = join(ADD_STAGE, blob.getFilePath());
+//                //删除目录下的add文件
+//                restrictedDelete(newFile);
+//            }
+//        }
+
+        if (!blob.getBlobSaveFileName().exists()) {
+            createNewFile(blob.getBlobSaveFileName());
+        }
 
 
         System.out.println("调用结束");
@@ -157,15 +190,11 @@ public class Repository implements Serializable {
         if (!fileName.exists()) {
             fileName.mkdir();
         }
-
         //获取目录下所有文件名
         List<String> list = Utils.plainFilenamesIn(fileName);
-
-        System.out.println(fileName.getPath() + ":" + list);
         //要在blob目录中创建文件
         createNewFile(blob.getBlobSaveFileName());
         String bolbString = blob.getId();
-        System.out.println("bolbString:"+bolbString);
         if (!list.contains(bolbString)) {
             File saveFile = Utils.join(fileName, bolbString);
             createNewFile(saveFile);

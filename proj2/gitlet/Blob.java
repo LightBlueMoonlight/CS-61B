@@ -48,6 +48,10 @@ public class Blob implements Serializable {
         return fileName;
     }
 
+    public String getFilePath() {
+        return filePath;
+    }
+
     //根据commitId生成commit文件
     public static Blob fromFile(String id) {
         return readObject(getObjectFile(id), Blob.class);
