@@ -94,6 +94,10 @@ public class Repository implements Serializable {
 
     public static void createNewFile(File newFile) {
         try {
+            File fileParent = newFile.getParentFile();
+            if (!fileParent.exists()){
+                fileParent.mkdirs();
+            }
             newFile.createNewFile();
         } catch (IOException | ClassCastException excp) {
             throw new IllegalArgumentException(excp.getMessage() + ":" + newFile.getPath());
