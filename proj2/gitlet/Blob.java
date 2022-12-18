@@ -22,6 +22,12 @@ public class Blob implements Serializable {
         this.bytes = Utils.readContents(file);
         this.id = blobId();
         this.blobSaveFileName = Utils.join(Repository.BLOB, id);
+        saveBlob();
+    }
+
+    public void saveBlob() {
+        Utils.writeObject(blobSaveFileName, id);
+        Repository.createNewFile(blobSaveFileName);
     }
 
     public String getId() {
@@ -52,7 +58,7 @@ public class Blob implements Serializable {
         return filePath;
     }
 
-    //根据commitId生成commit文件
+    //根据blobId生成Blob文件
     public static Blob fromFile(String id) {
         return readObject(getObjectFile(id), Blob.class);
     }
@@ -68,7 +74,4 @@ public class Blob implements Serializable {
         pathToBlobID.put(blob.filePath, blob.id);
         return pathToBlobID;
     }
-
-
-
 }

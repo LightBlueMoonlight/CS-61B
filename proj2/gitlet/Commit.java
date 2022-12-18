@@ -101,7 +101,6 @@ public class Commit implements Serializable {
     public void saveCommit() {
         Utils.writeObject(file, id);
         Repository.createNewFile(file);
-
     }
 
 }
