@@ -85,10 +85,9 @@ public class Repository implements Serializable {
      */
     private static void makeBranch(String branch, String commit) {
         File masterFile = join(HEADS, branch);
+        Utils.writeContents(masterFile, commit);
         if (!masterFile.exists()) {
             createNewFile(masterFile);
-            //尝试
-            Utils.writeContents(masterFile, commit);
         }
     }
 
@@ -128,8 +127,13 @@ public class Repository implements Serializable {
         File headBranch = join(HEADS, headFileString);
         //读取headBranch下的内容
         String headBranchText = Utils.readContentsAsString(headBranch);
+        System.out.println("headBranchText:"+headBranchText);
         //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(headBranchText);
+        System.out.println("parentCommit.commitId():"+parentCommit.commitId());
+        System.out.println("parentCommit.getTracked():"+parentCommit.getTracked());
+        System.out.println("parentCommit.getFile():"+parentCommit.getFile());
+        System.out.println("parentCommit.getMessage():"+parentCommit.getMessage());
         //如果addStage目录不存在就创建
         if (!ADD_STAGE.exists()){
             ADD_STAGE.mkdir();
