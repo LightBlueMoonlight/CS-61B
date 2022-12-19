@@ -27,10 +27,8 @@ public class Commit implements Serializable {
     private String id; //commit对象的ID
     private List<String> parent; //父提交
     private Date date; //提交日期
-    //private List<String> blobID; //文件id
     private File file; //用SHA1 生成的id创建新的commit文件
     private Map<String, String> tracked; //跟踪的文件以文件路径为关键字，SHA1 id为值进行映射。  =blobID？
-
 
     public Commit(String message, List<String> parent, Map<String, String> tracked) {
         date = new Date();
@@ -96,12 +94,6 @@ public class Commit implements Serializable {
 
     public static File getObjectFile(String id) {
         return join(Repository.COMMIT, id);
-    }
-
-    public void saveCommit() {
-        Utils.serialize(file);
-        Utils.writeObject(file, id);
-        Repository.createNewFile(file);
     }
 
     public void save() {

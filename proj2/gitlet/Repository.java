@@ -413,20 +413,28 @@ public class Repository implements Serializable {
         }
         Utils.message("=== Staged Files ===");
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        for (String branchName : addStageList){
-            //根据blobId还原blob文件
-            Blob blobFromFile = Blob.fromFile(branchName);
-            Utils.message(blobFromFile.getFileName().getName());
+        if (addStageList !=null){
+            for (String branchName : addStageList){
+                //根据blobId还原blob文件
+                Blob blobFromFile = Blob.fromFile(branchName);
+                Utils.message(blobFromFile.getFileName().getName());
+            }
         }
+        System.out.println();
         Utils.message("=== Removed Files ===");
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
-        for (String branchName : removeStageList){
-            //根据blobId还原blob文件
-            Blob blobFromFile = Blob.fromFile(branchName);
-            Utils.message(blobFromFile.getFileName().getName());
+        if (removeStageList !=null){
+            for (String branchName : removeStageList){
+                //根据blobId还原blob文件
+                Blob blobFromFile = Blob.fromFile(branchName);
+                Utils.message(blobFromFile.getFileName().getName());
+            }
         }
+        System.out.println();
         Utils.message("=== Modifications Not Staged For Commit ===");
+        System.out.println();
         Utils.message("=== Untracked Files ===");
+        System.out.println();
     }
 
     public static void setRmBranch(String text) {
@@ -441,5 +449,5 @@ public class Repository implements Serializable {
         File headBranch = join(HEADS, text);
         restrictedDelete(headBranch);
     }
-    
+
 }

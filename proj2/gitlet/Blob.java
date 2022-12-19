@@ -24,11 +24,6 @@ public class Blob implements Serializable {
         save();
     }
 
-    public void saveBlob() {
-        Utils.writeObject(blobSaveFileName, id);
-        Repository.createNewFile(blobSaveFileName);
-    }
-
     public void save() {
         saveObjectFile(blobSaveFileName, this);
     }
