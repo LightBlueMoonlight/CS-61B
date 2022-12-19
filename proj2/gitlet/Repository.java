@@ -130,20 +130,25 @@ public class Repository implements Serializable {
         System.out.println("headBranchText:"+headBranchText);
         //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(headBranchText);
-        System.out.println("parentCommit.commitId():"+parentCommit.commitId());
-        System.out.println("parentCommit.getTracked():"+parentCommit.getTracked());
-        System.out.println("parentCommit.getFile():"+parentCommit.getFile());
-        System.out.println("parentCommit.getMessage():"+parentCommit.getMessage());
         //如果addStage目录不存在就创建
         if (!ADD_STAGE.exists()){
             ADD_STAGE.mkdir();
         }
+        System.out.println("newFile.getPath():"+newFile.getPath());
+        System.out.println("newFile.getName():"+newFile.getName());
+
         //更据添加文件名创建bolb文件
         Blob blob = new Blob(newFile);
+        System.out.println("blob.getFilePath():"+blob.getFilePath());
+        System.out.println("blob.getBlobSaveFileName():"+blob.getBlobSaveFileName());
+        System.out.println("blob.getId():"+blob.getId());
+        System.out.println("blob.getFileName():"+blob.getFileName());
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
         //Tracked的键值对是相对路径--blobId
         //获取相对路径的value
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+        System.out.println("trackBlobId:"+trackBlobId);
+
         //不为null说明当前commit文件包含当前添加blob文件路径
         if (trackBlobId != null){
             //blobid相等就不用添加了，删除目录下的添加文件

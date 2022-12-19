@@ -92,6 +92,7 @@ public class Commit implements Serializable {
         return readObject(getObjectFile(id), Commit.class);
     }
 
+    //经过测试，commit可以成功转回 不要在动了
     public static File getObjectFile(String id) {
         return join(Repository.COMMIT, id);
     }
