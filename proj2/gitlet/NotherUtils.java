@@ -37,7 +37,10 @@ public class NotherUtils {
         //为空就直接添加
         if (addStageList == null){
             File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
+            System.out.println("111" + rmAddStageFile2);
             Utils.writeObject(rmAddStageFile2, blob.blobId());
+            Repository.createNewFile(rmAddStageFile2);
+
         }
 
         //不为空则遍历

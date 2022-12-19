@@ -141,8 +141,6 @@ public class Repository implements Serializable {
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
         //当前文件有被commit引用
         if (trackBlobId != null) {
-            System.out.println("到我这了？？？？？？");
-
             if (trackBlobId.equals(blob.getId())) {
                 //删除目录下的add文件
                 NotherUtils.rm(newFile);
@@ -151,15 +149,9 @@ public class Repository implements Serializable {
             if (!trackBlobId.equals(blob.getId())) {
                 NotherUtils.addStageFile(newFile,ADD_STAGE,blob);
             }
-
         }
         //当前文件没有被commit引用
         if (trackBlobId == null){
-            System.out.println("到我这了");
-            System.out.println(newFile);
-            System.out.println(ADD_STAGE);
-            System.out.println(blob);
-
             NotherUtils.addStageFile(newFile,ADD_STAGE,blob);
         }
     }
