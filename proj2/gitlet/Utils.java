@@ -162,7 +162,7 @@ class Utils {
             return result;
         } catch (IOException | ClassCastException
                  | ClassNotFoundException excp) {
-            throw new IllegalArgumentException(excp.getMessage() + "：什么错" + excp.toString());
+            throw new IllegalArgumentException(excp.getMessage());
         }
     }
 

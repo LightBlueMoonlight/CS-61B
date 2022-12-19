@@ -25,11 +25,9 @@ public class Main {
                 Repository.setInit();
                 break;
             case "add":
-
                 Repository.checkDir();
                 validateNumArgs(args, 2);
                 text = args[1];
-                System.out.println("add:"+text);
                 Repository.setAdd(text);
                 break;
             case "commit":
@@ -70,6 +68,11 @@ public class Main {
                 validateNumArgs(args, 2);
                 text = args[1];
                 Repository.setBranch(text);
+                break;
+            case "status":
+                Repository.checkDir();
+                validateNumArgs(args, 1);
+                Repository.setStatus();
                 break;
             default:
                 NotherUtils.message("No command with that name exists.");

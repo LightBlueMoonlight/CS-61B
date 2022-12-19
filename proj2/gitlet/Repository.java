@@ -204,24 +204,6 @@ public class Repository implements Serializable {
         }
     }
 
-    //判断目录下是否包含bilb文件，不包含则创建
-    public static void containsBlob(File fileName, Blob blob) {
-        if (!fileName.exists()) {
-            fileName.mkdir();
-        }
-        //获取目录下所有文件名
-        List<String> list = Utils.plainFilenamesIn(fileName);
-        //要在blob目录中创建文件
-        createNewFile(blob.getBlobSaveFileName());
-        String bolbString = blob.getId();
-        if (!list.contains(bolbString)) {
-            File saveFile = Utils.join(fileName, bolbString);
-            createNewFile(saveFile);
-            List<String> list2 = Utils.plainFilenamesIn(fileName);
-            System.out.println(fileName.getPath() + "<<<<<:" + list2);
-        }
-    }
-
     //comit时的操作
     public static void setCommit(String message) {
         //查看添加暂存区下目录
@@ -279,10 +261,8 @@ public class Repository implements Serializable {
         File newHeadBranch = join(HEADS, headFileString);
         createNewFile(newHeadBranch);
         //将新生成的commitId在写入head
-        System.out.println("将新生成的commitId在写入head");
         Utils.writeObject(newHeadBranch, newCommit.getCommitID());
         String newHeadBranchText = Utils.readContentsAsString(newHeadBranch);
-        System.out.println("开始写入:" + newHeadBranchText);
     }
 
     public static void setRM(String removeFile) {
@@ -348,12 +328,17 @@ public class Repository implements Serializable {
     }
 
     public static void setLog() {
-        //读取HEADcommit
+        //读取HEAD下分支名
         String addFileString = Utils.readContentsAsString(HEAD);
-        printLog(addFileString);
+        //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
+        File headBranch = join(HEADS, addFileString);
+        //读取headBranch下的内容
+        String headBranchText = Utils.readContentsAsString(headBranch);
+        printLog(headBranchText);
     }
 
     private static void printLog(String addFileString) {
+        //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(addFileString);
         System.out.printf("===");
         System.out.printf("commit " + parentCommit.commitId());
@@ -392,7 +377,7 @@ public class Repository implements Serializable {
             }
         }
         if (flg) {
-            Utils.message("Found no commit with that message.");
+            NotherUtils.message("Found no commit with that message.");
         }
     }
 
@@ -402,18 +387,36 @@ public class Repository implements Serializable {
         if (branchList.contains(branch)) {
             NotherUtils.message("A branch with that name already exists.");
         }
-/**
-        //将HEAD全部内容作为字符串返回。其实也就是前一个返回
-        String headString = Utils.readContentsAsString(HEAD);
-        File addFile = join(ADD_STAGE, addStageFile);
-        //创建bolb文件
-        Blob blob = new Blob(addFile);
-        //将blobId和相对
-        tracked.put(Blob.getBlobId(blob.getBlobSaveFileName()), blob.getBlobSaveFileName().getPath()
-        //创建新的commit
-        Commit newCommit = new Commit(message, parentCommit.getParent(), tracked);
-        //读取父commit
-        makeBranch(branch, headString);*/
+    }
+
+    public static void setStatus() {
+        Utils.message("=== Branches ===");
+        //读取HEAD下的分支 例如：master
+        String headFileString = Utils.readContentsAsString(HEAD);
+        List<String> branchList = Utils.plainFilenamesIn(HEADS);
+        for (String branchName : branchList){
+            if (branchName.equals(headFileString)){
+                Utils.message("*" + branchName);
+                continue;
+            }
+            Utils.message(branchName);
+        }
+        Utils.message("=== Staged Files ===");
+        List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
+        for (String branchName : addStageList){
+            //根据blobId还原blob文件
+            Blob blobFromFile = Blob.fromFile(branchName);
+            Utils.message(blobFromFile.getFileName().getName());
+        }
+        Utils.message("=== Removed Files ===");
+        List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
+        for (String branchName : removeStageList){
+            //根据blobId还原blob文件
+            Blob blobFromFile = Blob.fromFile(branchName);
+            Utils.message(blobFromFile.getFileName().getName());
+        }
+        Utils.message("=== Modifications Not Staged For Commit ===");
+        Utils.message("=== Untracked Files ===");
     }
 }
 
