@@ -67,7 +67,7 @@ public class Blob implements Serializable {
         return filePath;
     }
 
-    //根据blobId生成Blob文件
+    //根据blobId生成Blob文件 经测试可以正常返回别动
     public static Blob fromFile(String id) {
         return readObject(getObjectFile(id), Blob.class);
     }

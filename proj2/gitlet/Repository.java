@@ -160,6 +160,39 @@ public class Repository implements Serializable {
                 //遍历addStage下的blob，如果有相同的相对路径，则删除掉之前的blob，替换成当前的blob
                 List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
                 //遍历addStage中的文件与当前添加的文件做比较
+                if(addStageList!=null){
+                    for (String str : addStageList){
+                        //根据blobId还原blob文件
+                        Blob blobFromFile = Blob.fromFile(str);
+                        //如果addStage里的相对路径等于添加文件的相对路径
+                        if (blobFromFile.getFilePath().equals(newFile.getPath())){
+                            //获取之前addStage的文件名
+                            File rmAddStageFile = join(ADD_STAGE,str);
+                            //删除之前的blob文件
+                            restrictedDelete(rmAddStageFile);
+                            //当前blob添加到addStage目录
+                            File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
+                            Utils.writeObject(rmAddStageFile2, blob.blobId());
+                            createNewFile(rmAddStageFile2);
+                        }
+                    }
+                }else{
+                    //addstage是空的，直接添加就好
+                    File rmAddStageFile3 = join(ADD_STAGE,blob.blobId());
+                    Utils.writeObject(rmAddStageFile3, blob.blobId());
+                    createNewFile(rmAddStageFile3);
+                    List<String> addStageList2 = Utils.plainFilenamesIn(ADD_STAGE);
+                    System.out.println("rmAddStageFile3.getName():"+rmAddStageFile3.getName());
+                    System.out.println("addStageList2:"+addStageList2);
+                }
+                //删除目录下的add文件
+                restrictedDelete(newFile);
+            }
+        }else{
+            //为null说明是innitcommit
+            //遍历addStage下的blob，如果有相同的相对路径，则删除掉之前的blob，替换成当前的blob
+            List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
+            if(addStageList != null){
                 for (String str : addStageList){
                     //根据blobId还原blob文件
                     Blob blobFromFile = Blob.fromFile(str);
@@ -175,28 +208,17 @@ public class Repository implements Serializable {
                         createNewFile(rmAddStageFile2);
                     }
                 }
-                //删除目录下的add文件
-                restrictedDelete(newFile);
+            }else{
+                //addstage是空的，直接添加就好
+                File rmAddStageFile3 = join(ADD_STAGE,blob.blobId());
+                Utils.writeObject(rmAddStageFile3, blob.blobId());
+                createNewFile(rmAddStageFile3);
+                List<String> addStageList2 = Utils.plainFilenamesIn(ADD_STAGE);
+                System.out.println("rmAddStageFile3.getName():"+rmAddStageFile3.getName());
+                System.out.println("addStageList2:"+addStageList2);
             }
-        }else{
-            //遍历addStage下的blob，如果有相同的相对路径，则删除掉之前的blob，替换成当前的blob
-            List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-            //不包含则将其添加到staging中
-            for (String str : addStageList){
-                //根据blobId还原blob文件
-                Blob blobFromFile = Blob.fromFile(str);
-                //如果addStage里的相对路径等于添加文件的相对路径
-                if (blobFromFile.getFilePath().equals(newFile.getPath())){
-                    //获取之前addStage的文件名
-                    File rmAddStageFile = join(ADD_STAGE,str);
-                    //删除之前的blob文件
-                    restrictedDelete(rmAddStageFile);
-                    //当前blob添加到addStage目录
-                    File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
-                    Utils.writeObject(rmAddStageFile2, blob.blobId());
-                    createNewFile(rmAddStageFile2);
-                }
-            }
+            //删除目录下的add文件
+            restrictedDelete(newFile);
         }
     }
 
