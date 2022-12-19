@@ -67,6 +67,8 @@ class Utils {
      *FILE还包含一个名为.gitlet的目录*/
     static boolean restrictedDelete(File file) {
         System.out.println("file.getParentFile():+" + file.getParentFile());
+        System.out.println("file.getName():+" + file.getName());
+        System.out.println("file.getPath():+" + file.getPath());
         if (!(new File(file.getParentFile(), ".gitlet")).isDirectory()) {
             throw new IllegalArgumentException("not .gitlet working directory");
         }
