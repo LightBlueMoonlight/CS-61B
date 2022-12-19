@@ -192,17 +192,23 @@ public class Repository implements Serializable {
 
         //遍历addStage,将blob的文件名和blobId做出hashMap进行映射
         Map<String, String> parentTracked = parentCommit.getTracked();
+        System.out.println("parentTracked0"+parentTracked);
+        System.out.println("addStageList"+addStageList);
         if ((ADD_STAGE.exists())) {
             for (String addStageFile : addStageList) {
                 //根据blobid直接创建bolb文件
+                System.out.println("addStageFile"+addStageFile);
                 Blob blobFile = Blob.fromFile(addStageFile);
                 //增加缓存去的blobId添加到tracked
                 parentTracked.put(blobFile.getFilePath(), blobFile.getId());
+                System.out.println("blobFile.getId()"+blobFile.getId());
                 File addFile = join(ADD_STAGE, addStageFile);
                 //删除addStage下的暂存文件
                 NotherUtils.rm(addFile);
             }
         }
+        System.out.println("parentTracked1"+parentTracked);
+        System.out.println("removeStageList"+removeStageList);
         //如果删除区存在
         if ((REMOVE_STAGE.exists())) {
             for (String str : removeStageList) {
@@ -214,12 +220,10 @@ public class Repository implements Serializable {
                 NotherUtils.rm(removeFile);
             }
         }
+        System.out.println("parentTracked2"+parentTracked);
         List<String> list = parentCommit.getParent();
-        System.out.println("parentCommit.getCommitID()"+parentCommit.getCommitID());
-        System.out.println("message"+message);
-        System.out.println("parentTracked"+parentTracked);
+
         list.add(parentCommit.getCommitID());
-        System.out.println("list"+list);
         //创建新的commit
         Commit newCommit = new Commit(message, list, parentTracked);
         //先删除在创建
@@ -228,8 +232,6 @@ public class Repository implements Serializable {
         File newHeadBranch = join(HEADS, headFileString);
         //将新生成的commitId在写入head
         Utils.writeObject(newHeadBranch, newCommit.getCommitID());
-        System.out.println("newCommit.getCommitID()"+newCommit.getCommitID());
-        System.out.println("newHeadBranch"+newHeadBranch);
         createNewFile(newHeadBranch);
     }
 
