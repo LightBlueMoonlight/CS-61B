@@ -31,11 +31,12 @@ public class NotherUtils {
     }
 
     public static void addStageFile(File newFile,File ADD_STAGE,Blob blob){
+        System.out.println("进来");
         //获取addStage中的文件
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
         //遍历addStage中的文件与当前添加的文件做比较
         //为空就直接添加
-        if (addStageList == null){
+        if (addStageList == null || addStageList.size()==0){
             File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
             System.out.println("111" + rmAddStageFile2);
             Utils.writeObject(rmAddStageFile2, blob.blobId());
@@ -44,7 +45,7 @@ public class NotherUtils {
         }
 
         //不为空则遍历
-        if (addStageList != null) {
+        if (addStageList != null || addStageList.size()!=0) {
             //文件名相同，内容不同，要添加addStage
             for (String str : addStageList) {
                 //根据blobId还原blob文件

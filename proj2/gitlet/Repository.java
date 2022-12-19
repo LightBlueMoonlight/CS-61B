@@ -132,6 +132,7 @@ public class Repository implements Serializable {
         if (!ADD_STAGE.exists()){
             ADD_STAGE.mkdir();
         }
+        System.out.println("开始");
         //更据添加文件名创建bolb文件
         Blob blob = new Blob(newFile);
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
