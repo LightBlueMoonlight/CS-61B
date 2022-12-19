@@ -225,9 +225,7 @@ public class Repository implements Serializable {
         //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(headBranchText);
 
-
         //遍历addStage,将blob的文件名和blobId做出hashMap进行映射
-        Map<String, String> tracked = new HashMap<>();
         Map<String, String> parentTracked = parentCommit.getTracked();
         if ((ADD_STAGE.exists())) {
             for (String addStageFile : addStageList) {
@@ -384,9 +382,21 @@ public class Repository implements Serializable {
     public static void setBranch(String branch) {
         //如果具有给定名称的分支已经存在，则打印错误消息A branch with that name already exists.
         List<String> branchList = Utils.plainFilenamesIn(HEADS);
+
         if (branchList.contains(branch)) {
             NotherUtils.message("A branch with that name already exists.");
         }
+        String head = Utils.readContentsAsString(HEAD);
+        //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
+        File headBranch = join(HEADS, head);
+        //读取headBranch下的内容
+        String headBranchText = Utils.readContentsAsString(headBranch);
+        //根据commitId生成commit文件
+        Commit parentCommit = Commit.fromFile(headBranchText);
+        File newBranch = join(HEADS, branch);
+        Utils.writeContents(newBranch,parentCommit.commitId());
+        createNewFile(newBranch);
+
     }
 
     public static void setStatus() {
@@ -418,5 +428,18 @@ public class Repository implements Serializable {
         Utils.message("=== Modifications Not Staged For Commit ===");
         Utils.message("=== Untracked Files ===");
     }
-}
 
+    public static void setRmBranch(String text) {
+        List<String> branchList = Utils.plainFilenamesIn(HEADS);
+        if (!branchList.contains(text)) {
+            NotherUtils.message("A branch with that name does not exist.");
+        }
+        String head = Utils.readContentsAsString(HEAD);
+        if (head.equals(text)){
+            NotherUtils.message("Cannot remove the current branch.");
+        }
+        File headBranch = join(HEADS, text);
+        restrictedDelete(headBranch);
+    }
+    
+}
