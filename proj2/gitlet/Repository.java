@@ -120,105 +120,40 @@ public class Repository implements Serializable {
         if (!newFile.exists()) {
             NotherUtils.message("File does not exist.");
         }
-
         //读取HEAD下的分支 例如：master
         String headFileString = Utils.readContentsAsString(HEAD);
         //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
         File headBranch = join(HEADS, headFileString);
         //读取headBranch下的内容
         String headBranchText = Utils.readContentsAsString(headBranch);
-        System.out.println("headBranchText:"+headBranchText);
         //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(headBranchText);
         //如果addStage目录不存在就创建
         if (!ADD_STAGE.exists()){
             ADD_STAGE.mkdir();
         }
-        System.out.println("newFile.getPath():"+newFile.getPath());
-        System.out.println("newFile.getName():"+newFile.getName());
-
         //更据添加文件名创建bolb文件
         Blob blob = new Blob(newFile);
-        System.out.println("blob.getFilePath():"+blob.getFilePath());
-        System.out.println("blob.getBlobSaveFileName():"+blob.getBlobSaveFileName());
-        System.out.println("blob.getId():"+blob.getId());
-        System.out.println("blob.getFileName():"+blob.getFileName());
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
         //Tracked的键值对是相对路径--blobId
         //获取相对路径的value
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
-        System.out.println("trackBlobId:"+trackBlobId);
+        //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
+        //当前文件有被commit引用
+        if (trackBlobId != null) {
+            if (trackBlobId.equals(blob.getId())) {
+                //删除目录下的add文件
+                restrictedDelete(newFile);
+            }
 
-        //不为null说明当前commit文件包含当前添加blob文件路径
-        if (trackBlobId != null){
-            //blobid相等就不用添加了，删除目录下的添加文件
-            if (trackBlobId.equals(blob.blobId())){
-                //删除目录下的add文件
-                restrictedDelete(newFile);
-            }else {
-                //blobid不相等就等commit下替换相对路径的value。因为还没commit，所以放到暂存区
-                //遍历addStage下的blob，如果有相同的相对路径，则删除掉之前的blob，替换成当前的blob
-                List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-                //遍历addStage中的文件与当前添加的文件做比较
-                if(addStageList!=null){
-                    for (String str : addStageList){
-                        //根据blobId还原blob文件
-                        Blob blobFromFile = Blob.fromFile(str);
-                        //如果addStage里的相对路径等于添加文件的相对路径
-                        if (blobFromFile.getFilePath().equals(newFile.getPath())){
-                            //获取之前addStage的文件名
-                            File rmAddStageFile = join(ADD_STAGE,str);
-                            //删除之前的blob文件
-                            restrictedDelete(rmAddStageFile);
-                            //当前blob添加到addStage目录
-                            File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
-                            Utils.writeObject(rmAddStageFile2, blob.blobId());
-                            createNewFile(rmAddStageFile2);
-                        }
-                    }
-                }else{
-                    //addstage是空的，直接添加就好
-                    File rmAddStageFile3 = join(ADD_STAGE,blob.blobId());
-                    Utils.writeObject(rmAddStageFile3, blob.blobId());
-                    createNewFile(rmAddStageFile3);
-                    List<String> addStageList2 = Utils.plainFilenamesIn(ADD_STAGE);
-                    System.out.println("rmAddStageFile3.getName():"+rmAddStageFile3.getName());
-                    System.out.println("addStageList2:"+addStageList2);
-                }
-                //删除目录下的add文件
-                restrictedDelete(newFile);
+            if (!trackBlobId.equals(blob.getId())) {
+                NotherUtils.addStageFile(newFile,ADD_STAGE,blob);
             }
-        }else{
-            //为null说明是innitcommit
-            //遍历addStage下的blob，如果有相同的相对路径，则删除掉之前的blob，替换成当前的blob
-            List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-            if(addStageList != null){
-                for (String str : addStageList){
-                    //根据blobId还原blob文件
-                    Blob blobFromFile = Blob.fromFile(str);
-                    //如果addStage里的相对路径等于添加文件的相对路径
-                    if (blobFromFile.getFilePath().equals(newFile.getPath())){
-                        //获取之前addStage的文件名
-                        File rmAddStageFile = join(ADD_STAGE,str);
-                        //删除之前的blob文件
-                        restrictedDelete(rmAddStageFile);
-                        //当前blob添加到addStage目录
-                        File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
-                        Utils.writeObject(rmAddStageFile2, blob.blobId());
-                        createNewFile(rmAddStageFile2);
-                    }
-                }
-            }else{
-                //addstage是空的，直接添加就好
-                File rmAddStageFile3 = join(ADD_STAGE,blob.blobId());
-                Utils.writeObject(rmAddStageFile3, blob.blobId());
-                createNewFile(rmAddStageFile3);
-                List<String> addStageList2 = Utils.plainFilenamesIn(ADD_STAGE);
-                System.out.println("rmAddStageFile3.getName():"+rmAddStageFile3.getName());
-                System.out.println("addStageList2:"+addStageList2);
-            }
-            //删除目录下的add文件
-            restrictedDelete(newFile);
+
+        }
+        //当前文件没有被commit引用
+        if (trackBlobId == null){
+            NotherUtils.addStageFile(newFile,ADD_STAGE,blob);
         }
     }
 
