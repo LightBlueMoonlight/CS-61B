@@ -16,7 +16,7 @@ public class Main {
             gitlet.Utils.message("Please enter a command.");
             System.exit(0);
         }
-        System.out.println("args:"+args);
+
         String firstArg = args[0];
         String text;
         switch (firstArg) {
@@ -25,9 +25,11 @@ public class Main {
                 Repository.setInit();
                 break;
             case "add":
+
                 Repository.checkDir();
                 validateNumArgs(args, 2);
                 text = args[1];
+                System.out.println("add:"+text);
                 Repository.setAdd(text);
                 break;
             case "commit":
