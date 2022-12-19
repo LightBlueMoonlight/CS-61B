@@ -215,7 +215,11 @@ public class Repository implements Serializable {
             }
         }
         List<String> list = parentCommit.getParent();
+        System.out.println("parentCommit.getCommitID()"+parentCommit.getCommitID());
+        System.out.println("message"+message);
+        System.out.println("parentTracked"+parentTracked);
         list.add(parentCommit.getCommitID());
+        System.out.println("list"+list);
         //创建新的commit
         Commit newCommit = new Commit(message, list, parentTracked);
         //先删除在创建
@@ -224,6 +228,8 @@ public class Repository implements Serializable {
         File newHeadBranch = join(HEADS, headFileString);
         //将新生成的commitId在写入head
         Utils.writeObject(newHeadBranch, newCommit.getCommitID());
+        System.out.println("newCommit.getCommitID()"+newCommit.getCommitID());
+        System.out.println("newHeadBranch"+newHeadBranch);
         createNewFile(newHeadBranch);
     }
 
@@ -292,6 +298,7 @@ public class Repository implements Serializable {
     public static void setLog() {
         //读取HEAD下分支名
         String addFileString = Utils.readContentsAsString(HEAD);
+        System.out.println("addFileString"+addFileString);
         //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
         File headBranch = join(HEADS, addFileString);
         //读取headBranch下的内容
