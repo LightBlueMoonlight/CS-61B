@@ -143,7 +143,7 @@ public class Repository implements Serializable {
         if (trackBlobId != null) {
             if (trackBlobId.equals(blob.getId())) {
                 //删除目录下的add文件
-                restrictedDelete(newFile);
+                NotherUtils.rm(newFile);
             }
 
             if (!trackBlobId.equals(blob.getId())) {
@@ -201,7 +201,7 @@ public class Repository implements Serializable {
                 parentTracked.put(blobFile.getFilePath(), blobFile.getId());
                 File addFile = join(ADD_STAGE, addStageFile);
                 //删除addStage下的暂存文件
-                Utils.restrictedDelete(addFile);
+                NotherUtils.rm(addFile);
             }
         }
         //如果删除区存在
@@ -212,7 +212,7 @@ public class Repository implements Serializable {
                 Blob blobFile = Blob.fromFile(str);
                 parentTracked.remove(blobFile.getId());
                 //删除addStage下的暂存文件
-                Utils.restrictedDelete(removeFile);
+                NotherUtils.rm(removeFile);
             }
         }
         List<String> list = parentCommit.getParent();
@@ -220,13 +220,12 @@ public class Repository implements Serializable {
         //创建新的commit
         Commit newCommit = new Commit(message, list, parentTracked);
         //先删除在创建
-        Utils.restrictedDelete(headBranch);
+        NotherUtils.rm(headBranch);
         //重新创建
         File newHeadBranch = join(HEADS, headFileString);
-        createNewFile(newHeadBranch);
         //将新生成的commitId在写入head
         Utils.writeObject(newHeadBranch, newCommit.getCommitID());
-        String newHeadBranchText = Utils.readContentsAsString(newHeadBranch);
+        createNewFile(newHeadBranch);
     }
 
     public static void setRM(String removeFile) {

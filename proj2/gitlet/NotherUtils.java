@@ -52,7 +52,7 @@ public class NotherUtils {
                     File rmAddStageFile = join(ADD_STAGE, str);
                     System.out.println("rmAddStageFile:" + rmAddStageFile.getName());
                     //删除之前的blob文件
-                    restrictedDelete(rmAddStageFile);
+                    rm(rmAddStageFile);
                     //当前blob添加到addStage目录
                     File rmAddStageFile2 = join(ADD_STAGE, blob.blobId());
                     Utils.writeObject(rmAddStageFile2, blob.blobId());
@@ -62,8 +62,12 @@ public class NotherUtils {
             }
         }
         //删除目录下的add文件
-        restrictedDelete(newFile);
+        rm(newFile);
     }
 
-
+    public static void rm(File file) {
+        if (!file.delete()) {
+            throw new IllegalArgumentException(String.format("rm: %s: Failed to delete.", file.getPath()));
+        }
+    }
 }
