@@ -225,9 +225,15 @@ public class Repository implements Serializable {
         NotherUtils.rm(headBranch);
         //重新创建
         File newHeadBranch = join(HEADS, headFileString);
+        System.out.println("newHeadBranch"+newHeadBranch);
+        System.out.println("newCommit.getCommitID()"+newCommit.getCommitID());
+
         //将新生成的commitId在写入head
         Utils.writeObject(newHeadBranch, newCommit.getCommitID());
         createNewFile(newHeadBranch);
+        String ss = Utils.readContentsAsString(newHeadBranch);
+        System.out.println("ss"+ss);
+
     }
 
     public static void setRM(String removeFile) {
@@ -252,6 +258,7 @@ public class Repository implements Serializable {
         //如果文件在stage for add区域，则将其中缓存区删除；
         //如果文件被当前commit跟踪，则将其存入stage for removal区域。如果该文件存在于工作目录
         //更据删除文件名创建bolb文件
+        createNewFile(newFile);
         Blob blob = new Blob(newFile);
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则将其添加到removeStaging中
         //Tracked的键值对是相对路径--blobId
