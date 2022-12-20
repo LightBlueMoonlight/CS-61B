@@ -161,7 +161,7 @@ public class Repository implements Serializable {
             for (String str : removeStageList){
                 Blob blob1 = Blob.fromFile(str);
                 if (blob1.getFileName().equals(blob.getFileName())){
-                    File rmAddStageFile1 = join(ADD_STAGE,str);
+                    File rmAddStageFile1 = join(REMOVE_STAGE,str);
                     createNewFile(rmAddStageFile1);
                     NotherUtils.rm(rmAddStageFile1);
                 }
