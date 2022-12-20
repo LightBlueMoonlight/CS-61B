@@ -310,16 +310,16 @@ public class Repository implements Serializable {
         //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(addFileString);
         System.out.printf("===");
-        System.out.printf("commit " + parentCommit.commitId());
+        Utils.message("commit " + parentCommit.commitId());
         //对于合并提交（那些有两个父提交的提交），在第一个提交的正下方添加一行
         if (parentCommit.getParent().size() == 2) {
             Commit parentCommit2 = Commit.fromFile(parentCommit.getParent().get(1));
             //Merge:”后面的两个十六进制数字由第一个和第二个父项的提交 ID 的前七位组成
-            System.out.printf("Merge: " + parentCommit.commitId().substring(0, 7) + " "
+            Utils.message("Merge: " + parentCommit.commitId().substring(0, 7) + " "
                     + parentCommit2.commitId().substring(0, 7));
         }
-        System.out.printf("Date: " + parentCommit.getDate());
-        System.out.printf(parentCommit.getMessage());
+        Utils.message("Date: " + parentCommit.getDate());
+        Utils.message(parentCommit.getMessage());
         System.out.println();
         if (parentCommit.getParent().size() != 0) {
             printLog(parentCommit.getParent().get(0));
