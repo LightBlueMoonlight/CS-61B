@@ -137,6 +137,7 @@ public class Repository implements Serializable {
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
         //Tracked的键值对是相对路径--blobId
         //获取相对路径的value
+        System.out.println("blob.getFilePath()"+blob.getFilePath());
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
         //当前文件有被commit引用
