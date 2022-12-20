@@ -166,11 +166,9 @@ public class Repository implements Serializable {
         //查看删除暂存区下目录
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         //判断暂存区是否存在，或为空
-        boolean flg1 = ADD_STAGE.exists()
-                && addStageList != null
+        boolean flg1 = addStageList != null
                 && !addStageList.isEmpty();
-        boolean flg2 = REMOVE_STAGE.exists()
-                && removeStageList == null
+        boolean flg2 = removeStageList != null
                 && !addStageList.isEmpty();
         if (!flg1 && !flg2) {
             //报错
@@ -252,13 +250,12 @@ public class Repository implements Serializable {
         //获取相对路径的value
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
-        List<String> cwdList = Utils.plainFilenamesIn(CWD);
         //文件刚被add进addstage而没有commit，直接删除addstage中的Blob就可以
         if (addStageList != null && !addStageList.isEmpty()){
             for (String str : addStageList){
                 Blob blob1 = Blob.fromFile(str);
                 if (blob1.getFilePath().equals(blob.getFilePath())){
-                    File rmAddStageFile1 = join(ADD_STAGE,blob.getId());
+                    File rmAddStageFile1 = join(ADD_STAGE,str);
                     createNewFile(rmAddStageFile1);
                     NotherUtils.rm(rmAddStageFile1);
                     flg = false;
