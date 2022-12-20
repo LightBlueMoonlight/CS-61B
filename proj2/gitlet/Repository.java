@@ -225,12 +225,11 @@ public class Repository implements Serializable {
         NotherUtils.rm(headBranch);
         //重新创建
         File newHeadBranch = join(HEADS, headFileString);
+        createNewFile(newHeadBranch);
         System.out.println("newHeadBranch"+newHeadBranch);
         System.out.println("newCommit.getCommitID()"+newCommit.getCommitID());
-
         //将新生成的commitId在写入head
         Utils.writeObject(newHeadBranch, newCommit.getCommitID());
-        createNewFile(newHeadBranch);
         String ss = Utils.readContentsAsString(newHeadBranch);
         System.out.println("ss"+ss);
 
