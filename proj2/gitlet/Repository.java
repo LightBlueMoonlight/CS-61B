@@ -226,6 +226,7 @@ public class Repository implements Serializable {
         File newFile = Paths.get(removeFile).isAbsolute()
                 ? new File(removeFile)
                 : join(CWD, removeFile);
+        createNewFile(newFile);
         //读取HEAD下的分支 例如：master
         String headFileString = Utils.readContentsAsString(HEAD);
         //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
