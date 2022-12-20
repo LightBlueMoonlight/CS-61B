@@ -207,11 +207,14 @@ public class Repository implements Serializable {
         if ((REMOVE_STAGE.exists())) {
             for (String str : removeStageList) {
                 File removeFile = join(REMOVE_STAGE, str);
+                System.out.println("removeFile:"+removeFile);
                 //创建bolb文件
                 Blob blobFile = Blob.fromFile(str);
-                parentTracked.remove(blobFile.getId());
-                //删除addStage下的暂存文件
-                NotherUtils.rm(removeFile);
+                if (parentTracked !=null){
+                    parentTracked.remove(blobFile.getId());
+                    //删除removeStage下的暂存文件
+                    NotherUtils.rm(removeFile);
+                }
             }
         }
         List<String> list = parentCommit.getParent();
@@ -254,35 +257,41 @@ public class Repository implements Serializable {
         boolean flg = true;
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
         //遍历addStage中的文件与当前添加的文件做比较
-        for (String str : addStageList){
-            //如果addStage里的相对路径等于添加文件的相对路径
-            if (str.equals(blob.getId()) ){
-                //当前blob添加到removeStaging目录
-                File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
-                createNewFile(rmAddStageFile2);
-                if (newFile.exists()){
-                    //删除目录下的remove文件
-                    restrictedDelete(newFile);
+        if (addStageList != null || addStageList.size()!=0) {
+            for (String str : addStageList){
+                //如果addStage里的相对路径等于删除文件的相对路径
+                if (str.equals(blob.getId()) ){
+                    //当前blob添加到removeStaging目录
+                    File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
+                    Utils.writeObject(rmAddStageFile2, blob.blobId());
+                    createNewFile(rmAddStageFile2);
+                    flg = false;
                 }
-                flg = false;
             }
         }
+
         //获取相对路径的value
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+        List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         //不为null说明当前commit文件包含当前删除blob文件路径
         if (trackBlobId != null){
-            //blobid相等就不用添加了，删除目录下的添加文件
+            //blobid相等 commit有引用，添加到removeStage 删除目录中的文件
             if (trackBlobId.equals(blob.blobId())){
-                //当前blob添加到removeStaging目录
-                File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
-                createNewFile(rmAddStageFile2);
-                if (newFile.exists()){
-                    //删除目录下的remove文件
-                    restrictedDelete(newFile);
+                //removeStage不包含直接添加
+                if (!removeStageList.contains(blob.getId())) {
+                    File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
+                    Utils.writeObject(rmAddStageFile2, blob.blobId());
+                    createNewFile(rmAddStageFile2);
                 }
                 flg = false;
             }
         }
+
+        if (newFile.exists()){
+            //删除目录下的remove文件
+            NotherUtils.rm(newFile);
+        }
+
         //如果文件既没有被 暂存也没有被 head commit跟踪，打印错误信息No reason to remove the file.
         if (flg) {
             NotherUtils.message("No reason to remove the file.");
@@ -375,6 +384,7 @@ public class Repository implements Serializable {
             }
             Utils.message(branchName);
         }
+        System.out.println();
         Utils.message("=== Staged Files ===");
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
         if (addStageList !=null){
