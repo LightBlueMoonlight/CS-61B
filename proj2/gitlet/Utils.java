@@ -259,14 +259,4 @@ class Utils {
         System.out.println();
     }
 
-    /**
-     *
-     * 转换成编译器指定的日期格式
-     * @param date
-     * @return
-     */
-    private static String dateToTimeStamp(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
-        return dateFormat.format(date);
-    }
 }

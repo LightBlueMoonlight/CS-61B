@@ -176,8 +176,13 @@ public class Repository implements Serializable {
         //查看删除暂存区下目录
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         //判断暂存区是否存在，或为空
-        if ((!ADD_STAGE.exists() || addStageList == null)
-                && (!REMOVE_STAGE.exists() || removeStageList == null)) {
+        boolean flg1 = ADD_STAGE.exists()
+                && addStageList != null
+                && !addStageList.isEmpty();
+        boolean flg2 = REMOVE_STAGE.exists()
+                && removeStageList == null
+                && !addStageList.isEmpty();
+        if (!flg1 && !flg2) {
             //报错
             NotherUtils.message("No changes added to the commit.");
         }
@@ -255,7 +260,7 @@ public class Repository implements Serializable {
         boolean flg = true;
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
         //遍历addStage中的文件与当前添加的文件做比较
-        if (addStageList != null || addStageList.size()!=0) {
+        if (addStageList != null && !addStageList.isEmpty()) {
             for (String str : addStageList){
                 //如果addStage里的相对路径等于删除文件的相对路径
                 if (str.equals(blob.getId()) ){
@@ -385,7 +390,8 @@ public class Repository implements Serializable {
         System.out.println();
         Utils.message("=== Staged Files ===");
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        if (addStageList !=null){
+        System.out.println("addStageList:"+addStageList);
+        if (addStageList !=null && !addStageList.isEmpty()){
             for (String branchName : addStageList){
                 //根据blobId还原blob文件
                 Blob blobFromFile = Blob.fromFile(branchName);
@@ -395,7 +401,7 @@ public class Repository implements Serializable {
         System.out.println();
         Utils.message("=== Removed Files ===");
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
-        if (removeStageList !=null){
+        if (removeStageList !=null && !removeStageList.isEmpty()){
             for (String branchName : removeStageList){
                 //根据blobId还原blob文件
                 Blob blobFromFile = Blob.fromFile(branchName);
