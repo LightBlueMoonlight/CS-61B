@@ -254,13 +254,17 @@ public class Repository implements Serializable {
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         List<String> cwdList = Utils.plainFilenamesIn(CWD);
         //文件刚被add进addstage而没有commit，直接删除addstage中的Blob就可以
-        if (addStageList.contains(blob.getId())){
-            File rmAddStageFile1 = join(ADD_STAGE,blob.getId());
-            createNewFile(rmAddStageFile1);
-            NotherUtils.rm(newFile);
-            flg = false;
+        if (addStageList != null && !addStageList.isEmpty()){
+            for (String str : addStageList){
+                Blob blob1 = Blob.fromFile(str);
+                if (blob1.getFilePath().equals(blob.getFilePath())){
+                    File rmAddStageFile1 = join(ADD_STAGE,blob.getId());
+                    createNewFile(rmAddStageFile1);
+                    NotherUtils.rm(newFile);
+                    flg = false;
+                }
+            }
         }
-
         //文件被当前Commit追踪并且存在于工作目录中，那么就将及放入removestage并且在工作目录中删除此文件。在下次commit中进行记录。
         //文件被当前Commit追踪并且不存在于工作目录中，那么就将及放入removestage并即可
         //不为null说明当前commit文件包含当前删除blob文件路径
