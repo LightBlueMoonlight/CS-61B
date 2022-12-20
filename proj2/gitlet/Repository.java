@@ -116,8 +116,10 @@ public class Repository implements Serializable {
         File newFile = Paths.get(addFile).isAbsolute()
                 ? new File(addFile)
                 : join(CWD, addFile);
+        createNewFile(newFile);
+        List<String> cwdList = Utils.plainFilenamesIn(CWD);
         //判断添加的文件是否存在工作目录中，不存在则报错
-        if (!newFile.exists()) {
+        if (!cwdList.contains(addFile)) {
             NotherUtils.message("File does not exist.");
         }
         //读取HEAD下的分支 例如：master
@@ -137,17 +139,17 @@ public class Repository implements Serializable {
             ADD_STAGE.mkdir();
         }
 
-        boolean flg = true;
-        if (trackBlobId != null){
-            flg = false;
-            if (newFile.exists()){
-                NotherUtils.rm(newFile);
-            }
-        }
+//        boolean flg = true;
+//        if (trackBlobId != null){
+//            flg = false;
+//            if (newFile.exists()){
+//                NotherUtils.rm(newFile);
+//            }
+//        }
 
         //查看添加暂存区下目录
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        if (!addStageList.contains(blob.blobId()) && flg){
+        if (!addStageList.contains(blob.blobId())){
             File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
             Utils.writeObject(rmAddStageFile2, blob.blobId());
             createNewFile(rmAddStageFile2);
@@ -275,8 +277,11 @@ public class Repository implements Serializable {
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         //文件刚被add进addstage而没有commit，直接删除addstage中的Blob就可以
         if (addStageList != null && !addStageList.isEmpty()){
+            System.out.println("remove里的add");
             for (String str : addStageList){
                 Blob blob1 = Blob.fromFile(str);
+                System.out.println("blob1.getFileName():"+blob1.getFileName());
+                System.out.println("blob.getFileName():"+blob.getFileName());
                 if (blob1.getFileName().equals(blob.getFileName())){
                     File rmAddStageFile1 = join(ADD_STAGE,str);
                     createNewFile(rmAddStageFile1);
@@ -448,15 +453,39 @@ public class Repository implements Serializable {
                 createNewFile(rmAddStageFile2);
                 NotherUtils.rm(rmAddStageFile2);
             }
-            File newBranch = join(HEADS, fileName);
+            File newBranch = join(CWD, fileName);
             Utils.writeContents(newBranch,blob.getBytes());
+            createNewFile(newBranch);
         }else{
             NotherUtils.message("File does not exist in that commit.");
         }
-
     }
 
     public static void checkout(String commitId, String fileName) {
+        File newFile = Paths.get(fileName).isAbsolute()
+                ? new File(fileName)
+                : join(CWD, fileName);
+        createNewFile(newFile);
+        List<String> commitList = Utils.plainFilenamesIn(COMMIT);
+        if (!commitList.contains(commitId)){
+            NotherUtils.message("No commit with that id exists.");
+        }
+        Commit parentCommit = Commit.fromFile(commitId);
+        Blob blob = new Blob(newFile);
+        String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+        if(trackBlobId != null){
+            List<String> cwdList = Utils.plainFilenamesIn(CWD);
+            if (cwdList.contains(fileName)) {
+                File rmAddStageFile2 = join(CWD, fileName);
+                createNewFile(rmAddStageFile2);
+                NotherUtils.rm(rmAddStageFile2);
+            }
+            File newBranch = join(CWD, fileName);
+            Utils.writeContents(newBranch,blob.getBytes());
+            createNewFile(newBranch);
+        }else{
+            NotherUtils.message("File does not exist in that commit.");
+        }
     }
 
     public static void checkoutBranch(String branch) {
