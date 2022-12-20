@@ -206,7 +206,7 @@ public class Repository implements Serializable {
                 //创建bolb文件
                 Blob blobFile = Blob.fromFile(str);
                 if (parentTracked !=null){
-                    parentTracked.remove(blobFile.getId());
+                    parentTracked.remove(blobFile.getFilePath());
                     //删除removeStage下的暂存文件
                     NotherUtils.rm(removeFile);
                 }
@@ -276,7 +276,6 @@ public class Repository implements Serializable {
         if (trackBlobId != null){
             System.out.println("commit包含");
             //blobid相等 commit有引用，添加到removeStage 删除目录中的文件
-            if (trackBlobId.equals(blob.blobId())){
                 flg = false;
                 //removeStage不包含直接添加
                 if (!removeStageList.contains(blob.blobId())){
@@ -284,7 +283,6 @@ public class Repository implements Serializable {
                     Utils.writeObject(rmAddStageFile2, blob.blobId());
                     createNewFile(rmAddStageFile2);
                 }
-            }
         }
         if (cwdList.contains(removeFile)){
             NotherUtils.rm(newFile);
