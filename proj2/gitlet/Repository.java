@@ -191,11 +191,7 @@ public class Repository implements Serializable {
         //查看删除暂存区下目录
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         //判断暂存区是否存在，或为空
-        boolean flg1 = addStageList != null
-                && !addStageList.isEmpty();
-        boolean flg2 = removeStageList != null
-                && !addStageList.isEmpty();
-        if (!flg1 && !flg2) {
+        if (addStageList == null || addStageList.isEmpty()) {
             //报错
             NotherUtils.message("No changes added to the commit.");
         }
