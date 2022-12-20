@@ -4,10 +4,7 @@ package gitlet;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 
-import static gitlet.Utils.join;
-import static gitlet.Utils.restrictedDelete;
 
 public class NotherUtils {
     /**

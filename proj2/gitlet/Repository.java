@@ -260,7 +260,7 @@ public class Repository implements Serializable {
                 if (blob1.getFilePath().equals(blob.getFilePath())){
                     File rmAddStageFile1 = join(ADD_STAGE,blob.getId());
                     createNewFile(rmAddStageFile1);
-                    NotherUtils.rm(newFile);
+                    NotherUtils.rm(rmAddStageFile1);
                     flg = false;
                 }
             }
@@ -278,9 +278,8 @@ public class Repository implements Serializable {
                     createNewFile(rmAddStageFile2);
                 }
         }
-        if (cwdList.contains(removeFile)){
-            NotherUtils.rm(newFile);
-        }
+        NotherUtils.rm(newFile);
+
         //如果文件既没有被 暂存也没有被 head commit跟踪，打印错误信息No reason to remove the file.
         if (flg) {
             NotherUtils.message("No reason to remove the file.");
