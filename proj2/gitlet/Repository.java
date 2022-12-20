@@ -202,6 +202,7 @@ public class Repository implements Serializable {
                 //增加缓存去的blobId添加到tracked
                 parentTracked.put(blobFile.getFilePath(), blobFile.getId());
                 System.out.println("blobFile.getId()"+blobFile.getId());
+                System.out.println("blobFile.getFilePath()"+blobFile.getFilePath());
                 File addFile = join(ADD_STAGE, addStageFile);
                 //删除addStage下的暂存文件
                 NotherUtils.rm(addFile);
@@ -387,10 +388,15 @@ public class Repository implements Serializable {
         }
         Utils.message("=== Staged Files ===");
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
+        System.out.println("addStageList"+addStageList);
         if (addStageList !=null){
             for (String branchName : addStageList){
                 //根据blobId还原blob文件
                 Blob blobFromFile = Blob.fromFile(branchName);
+                System.out.println("getId()"+blobFromFile.getId());
+                System.out.println("getFilePath()"+blobFromFile.getFilePath());
+                System.out.println("getFileName()"+blobFromFile.getFileName());
+                System.out.println("getBlobSaveFileName()"+blobFromFile.getBlobSaveFileName());
                 Utils.message(blobFromFile.getFileName().getName());
             }
         }
