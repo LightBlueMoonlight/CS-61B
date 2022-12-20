@@ -253,16 +253,8 @@ public class Repository implements Serializable {
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         List<String> cwdList = Utils.plainFilenamesIn(CWD);
-        System.out.println("newFile.getParentFile():"+newFile.getParentFile());
-        System.out.println("newFile.getPath():"+newFile.getPath());
-        System.out.println("CWD:"+cwdList);
-        System.out.println("blob.getFilePath():"+blob.getFilePath());
-        System.out.println("blob.blobId():"+blob.blobId());
-        System.out.println("blob.getFileName():"+blob.getFileName());
-        System.out.println("addStageList:"+addStageList);
         //文件刚被add进addstage而没有commit，直接删除addstage中的Blob就可以
         if (addStageList.contains(blob.getId())){
-            System.out.println("add包含");
             File rmAddStageFile1 = join(ADD_STAGE,blob.getId());
             createNewFile(rmAddStageFile1);
             NotherUtils.rm(newFile);
@@ -274,7 +266,6 @@ public class Repository implements Serializable {
         //不为null说明当前commit文件包含当前删除blob文件路径
         System.out.println("trackBlobId:"+trackBlobId);
         if (trackBlobId != null){
-            System.out.println("commit包含");
             //blobid相等 commit有引用，添加到removeStage 删除目录中的文件
                 flg = false;
                 //removeStage不包含直接添加
