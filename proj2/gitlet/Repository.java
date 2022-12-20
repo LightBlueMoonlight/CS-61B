@@ -398,7 +398,6 @@ public class Repository implements Serializable {
         System.out.println();
         Utils.message("=== Staged Files ===");
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        System.out.println("addStageList:"+addStageList);
         if (addStageList !=null && !addStageList.isEmpty()){
             for (String branchName : addStageList){
                 //根据blobId还原blob文件
