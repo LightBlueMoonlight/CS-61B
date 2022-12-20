@@ -36,16 +36,11 @@ public class NotherUtils {
         //遍历addStage中的文件与当前添加的文件做比较
         //为空就直接添加
         if (addStageList == null || addStageList.isEmpty()){
-            System.out.println("第一次");
             File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
             Utils.writeObject(rmAddStageFile2, blob.blobId());
             Repository.createNewFile(rmAddStageFile2);
-        }
-
-        //不为空则遍历
-        if (addStageList != null && !addStageList.isEmpty()) {
-            System.out.println("第二次");
-            //文件名相同，内容不同，要添加addStage
+        }else {
+            System.out.println("keyijinlaima");
             for (String str : addStageList) {
                 //根据blobId还原blob文件
                 Blob blobFromFile = Blob.fromFile(str);

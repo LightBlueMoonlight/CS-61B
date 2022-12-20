@@ -134,27 +134,37 @@ public class Repository implements Serializable {
         }
         //更据添加文件名创建bolb文件
         Blob blob = new Blob(newFile);
+        //查看添加暂存区下目录
+        List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
+        if (!addStageList.contains(blob.blobId())){
+            File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
+            Utils.writeObject(rmAddStageFile2, blob.blobId());
+            createNewFile(rmAddStageFile2);
+            if (newFile.exists()){
+                NotherUtils.rm(newFile);
+            }
+        }
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
         //Tracked的键值对是相对路径--blobId
         //获取相对路径的value
-        System.out.println("blob.getFilePath()"+blob.getFilePath());
-        String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
-        //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
-        //当前文件有被commit引用
-        if (trackBlobId != null) {
-            if (trackBlobId.equals(blob.getId())) {
-                //删除目录下的add文件
-                NotherUtils.rm(newFile);
-            }
-
-            if (!trackBlobId.equals(blob.getId())) {
-                NotherUtils.addStageFile(newFile,ADD_STAGE,blob);
-            }
-        }
-        //当前文件没有被commit引用
-        if (trackBlobId == null){
-            NotherUtils.addStageFile(newFile,ADD_STAGE,blob);
-        }
+//        System.out.println("blob.getFilePath()"+blob.getFilePath());
+//        String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+//        //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则不将其添加到staging中
+//        //当前文件有被commit引用
+//        if (trackBlobId != null) {
+//            if (trackBlobId.equals(blob.getId())) {
+//                //删除目录下的add文件
+//                NotherUtils.rm(newFile);
+//            }
+//
+//            if (!trackBlobId.equals(blob.getId())) {
+//                NotherUtils.addStageFile(newFile,ADD_STAGE,blob);
+//            }
+//        }
+//        //当前文件没有被commit引用
+//        if (trackBlobId == null){
+//            NotherUtils.addStageFile(newFile,ADD_STAGE,blob);
+//        }
     }
 
     /*
@@ -260,42 +270,39 @@ public class Repository implements Serializable {
         //读取添加暂存区
         boolean flg = true;
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        //遍历addStage中的文件与当前添加的文件做比较
-        if (addStageList != null && !addStageList.isEmpty()) {
-            for (String str : addStageList){
-                //如果addStage里的相对路径等于删除文件的相对路径
-                if (str.equals(blob.getId()) ){
-                    //当前blob添加到removeStaging目录
-                    File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
-                    Utils.writeObject(rmAddStageFile2, blob.blobId());
-                    createNewFile(rmAddStageFile2);
-                    flg = false;
-                }
-            }
-        }
-
         //获取相对路径的value
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
+        List<String> cwdList = Utils.plainFilenamesIn(CWD);
+
+        //文件刚被add进addstage而没有commit，直接删除addstage中的Blob就可以
+        if (addStageList.contains(blob.getId())){
+            File rmAddStageFile1 = join(ADD_STAGE,blob.getId());
+            createNewFile(rmAddStageFile1);
+            NotherUtils.rm(newFile);
+            flg = false;
+        }
+
+        //文件被当前Commit追踪并且存在于工作目录中，那么就将及放入removestage并且在工作目录中删除此文件。在下次commit中进行记录。
+        //文件被当前Commit追踪并且不存在于工作目录中，那么就将及放入removestage并即可
         //不为null说明当前commit文件包含当前删除blob文件路径
         if (trackBlobId != null){
             //blobid相等 commit有引用，添加到removeStage 删除目录中的文件
             if (trackBlobId.equals(blob.blobId())){
                 //removeStage不包含直接添加
-                if (!removeStageList.contains(blob.getId())) {
+                if (!removeStageList.contains(blob.blobId())){
                     File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
                     Utils.writeObject(rmAddStageFile2, blob.blobId());
                     createNewFile(rmAddStageFile2);
+                    flg = false;
                 }
-                flg = false;
+
+                if (cwdList.contains(removeFile)){
+                    NotherUtils.rm(newFile);
+                    flg = false;
+                }
             }
         }
-
-        if (newFile.exists()){
-            //删除目录下的remove文件
-            NotherUtils.rm(newFile);
-        }
-
         //如果文件既没有被 暂存也没有被 head commit跟踪，打印错误信息No reason to remove the file.
         if (flg) {
             NotherUtils.message("No reason to remove the file.");
