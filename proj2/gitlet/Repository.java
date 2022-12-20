@@ -128,15 +128,26 @@ public class Repository implements Serializable {
         String headBranchText = Utils.readContentsAsString(headBranch);
         //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(headBranchText);
+        //更据添加文件名创建bolb文件
+        Blob blob = new Blob(newFile);
+        String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+
         //如果addStage目录不存在就创建
         if (!ADD_STAGE.exists()){
             ADD_STAGE.mkdir();
         }
-        //更据添加文件名创建bolb文件
-        Blob blob = new Blob(newFile);
+
+        boolean flg = true;
+        if (trackBlobId != null){
+            flg = false;
+            if (newFile.exists()){
+                NotherUtils.rm(newFile);
+            }
+        }
+
         //查看添加暂存区下目录
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        if (!addStageList.contains(blob.blobId())){
+        if (!addStageList.contains(blob.blobId()) && flg){
             File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
             Utils.writeObject(rmAddStageFile2, blob.blobId());
             createNewFile(rmAddStageFile2);
@@ -147,8 +158,11 @@ public class Repository implements Serializable {
 
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         if (removeStageList != null && !removeStageList.isEmpty()){
+            System.out.println("add里面的remove");
             for (String str : removeStageList){
                 Blob blob1 = Blob.fromFile(str);
+                System.out.println("blob.getFileName():"+blob.getFileName());
+                System.out.println("blob1.getFileName():"+blob1.getFileName());
                 if (blob1.getFileName().equals(blob.getFileName())){
                     File rmAddStageFile1 = join(ADD_STAGE,str);
                     createNewFile(rmAddStageFile1);
@@ -421,4 +435,33 @@ public class Repository implements Serializable {
         NotherUtils.rm(headBranch);
     }
 
+    public static void checkout(String fileName) {
+        File newFile = Paths.get(fileName).isAbsolute()
+                ? new File(fileName)
+                : join(CWD, fileName);
+        createNewFile(newFile);
+        //如果文件被当前commit所跟踪，则其放入工作目录中（如果工作目录中有同名文件，则替代它）；
+        Commit parentCommit = NotherUtils.getHeadBranchCommitId();
+        Blob blob = new Blob(newFile);
+        String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+        if(trackBlobId != null){
+            List<String> cwdList = Utils.plainFilenamesIn(CWD);
+            if (cwdList.contains(fileName)) {
+                File rmAddStageFile2 = join(CWD, fileName);
+                createNewFile(rmAddStageFile2);
+                NotherUtils.rm(rmAddStageFile2);
+            }
+            File newBranch = join(HEADS, fileName);
+            Utils.writeContents(newBranch,blob.getBytes());
+        }else{
+            NotherUtils.message("File does not exist in that commit.");
+        }
+
+    }
+
+    public static void checkout(String commitId, String fileName) {
+    }
+
+    public static void checkoutBranch(String branch) {
+    }
 }

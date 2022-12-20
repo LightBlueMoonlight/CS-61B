@@ -24,6 +24,11 @@ public class Blob implements Serializable {
         save();
     }
 
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+
     public void save() {
         saveObjectFile(blobSaveFileName, this);
     }

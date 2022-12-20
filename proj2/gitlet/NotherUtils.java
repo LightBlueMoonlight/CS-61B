@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import static gitlet.Utils.join;
+
 
 public class NotherUtils {
     /**
@@ -31,5 +33,17 @@ public class NotherUtils {
         if (!file.delete()) {
             throw new IllegalArgumentException(String.format("rm: %s: Failed to delete.", file.getPath()));
         }
+    }
+
+    public static Commit getHeadBranchCommitId() {
+        //读取HEAD下的分支 例如：master
+        String headFileString = Utils.readContentsAsString(Repository.HEAD);
+        //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
+        File headBranch = join(Repository.HEADS, headFileString);
+        //读取headBranch下的内容
+        String headBranchText = Utils.readContentsAsString(headBranch);
+        //根据commitId生成commit文件
+        Commit parentCommit = Commit.fromFile(headBranchText);
+        return parentCommit;
     }
 }

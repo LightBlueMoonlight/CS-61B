@@ -80,6 +80,32 @@ public class Main {
                 validateNumArgs(args, 1);
                 Repository.setStatus();
                 break;
+            case "checkout":
+                Repository.checkDir();
+                validateNumArgs(args, 1);
+                switch (args.length) {
+                    case 3 :
+                        if (!args[1].equals("--")) {
+                            NotherUtils.message("Incorrect operands.");
+                        }
+                        String fileName = args[2];
+                        Repository.checkout(fileName);
+                    case 4 :
+                        if (!args[2].equals("--")) {
+                            NotherUtils.message("Incorrect operands.");
+                        }
+                        String commitId = args[1];
+                        String fileName2 = args[3];
+                        Repository.checkout(commitId, fileName2);
+                    case 2 :
+                        String branch = args[1];
+                        Repository.checkoutBranch(branch);
+                    default :
+                        NotherUtils.message("Incorrect operands.");
+                        break;
+                }
+                Repository.setStatus();
+                break;
             default:
                 NotherUtils.message("No command with that name exists.");
                 break;
@@ -88,8 +114,7 @@ public class Main {
 
     public static void validateNumArgs(String[] args, int n) {
         if (args.length != n) {
-            Utils.message("Incorrect operands.");
-            System.exit(0);
+            NotherUtils.message("Incorrect operands.");
         }
     }
 }
