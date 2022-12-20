@@ -192,24 +192,17 @@ public class Repository implements Serializable {
 
         //遍历addStage,将blob的文件名和blobId做出hashMap进行映射
         Map<String, String> parentTracked = parentCommit.getTracked();
-        System.out.println("parentTracked0"+parentTracked);
-        System.out.println("addStageList"+addStageList);
         if ((ADD_STAGE.exists())) {
             for (String addStageFile : addStageList) {
                 //根据blobid直接创建bolb文件
-                System.out.println("addStageFile"+addStageFile);
                 Blob blobFile = Blob.fromFile(addStageFile);
                 //增加缓存去的blobId添加到tracked
                 parentTracked.put(blobFile.getFilePath(), blobFile.getId());
-                System.out.println("blobFile.getId()"+blobFile.getId());
-                System.out.println("blobFile.getFilePath()"+blobFile.getFilePath());
                 File addFile = join(ADD_STAGE, addStageFile);
                 //删除addStage下的暂存文件
                 NotherUtils.rm(addFile);
             }
         }
-        System.out.println("parentTracked1"+parentTracked);
-        System.out.println("removeStageList"+removeStageList);
         //如果删除区存在
         if ((REMOVE_STAGE.exists())) {
             for (String str : removeStageList) {
@@ -221,9 +214,7 @@ public class Repository implements Serializable {
                 NotherUtils.rm(removeFile);
             }
         }
-        System.out.println("parentTracked2"+parentTracked);
         List<String> list = parentCommit.getParent();
-
         list.add(parentCommit.getCommitID());
         //创建新的commit
         Commit newCommit = new Commit(message, list, parentTracked);
@@ -231,7 +222,6 @@ public class Repository implements Serializable {
         NotherUtils.rm(headBranch);
         //重新创建
         File newHeadBranch = join(HEADS, headFileString);
-        System.out.println("newCommit.getCommitID()"+newCommit.getCommitID());
         //将新生成的commitId在写入head
         Utils.writeObject(newHeadBranch, newCommit.getCommitID());
         createNewFile(newHeadBranch);
@@ -302,12 +292,10 @@ public class Repository implements Serializable {
     public static void setLog() {
         //读取HEAD下分支名
         String addFileString = Utils.readContentsAsString(HEAD);
-        System.out.println("addFileString"+addFileString);
         //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
         File headBranch = join(HEADS, addFileString);
         //读取headBranch下的内容
         String headBranchText = Utils.readContentsAsString(headBranch);
-        System.out.println("headBranchText"+headBranchText);
         printLog(headBranchText);
     }
 
@@ -389,15 +377,10 @@ public class Repository implements Serializable {
         }
         Utils.message("=== Staged Files ===");
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        System.out.println("addStageList"+addStageList);
         if (addStageList !=null){
             for (String branchName : addStageList){
                 //根据blobId还原blob文件
                 Blob blobFromFile = Blob.fromFile(branchName);
-                System.out.println("getId()"+blobFromFile.getId());
-                System.out.println("getFilePath()"+blobFromFile.getFilePath());
-                System.out.println("getFileName()"+blobFromFile.getFileName());
-                System.out.println("getBlobSaveFileName()"+blobFromFile.getBlobSaveFileName());
                 Utils.message(blobFromFile.getFileName().getName());
             }
         }
