@@ -144,6 +144,18 @@ public class Repository implements Serializable {
                 NotherUtils.rm(newFile);
             }
         }
+
+        List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
+        if (removeStageList != null && !removeStageList.isEmpty()){
+            for (String str : removeStageList){
+                Blob blob1 = Blob.fromFile(str);
+                if (blob1.getFileName().equals(blob.getFileName())){
+                    File rmAddStageFile1 = join(ADD_STAGE,str);
+                    createNewFile(rmAddStageFile1);
+                    NotherUtils.rm(rmAddStageFile1);
+                }
+            }
+        }
     }
 
     /*
@@ -254,7 +266,7 @@ public class Repository implements Serializable {
         if (addStageList != null && !addStageList.isEmpty()){
             for (String str : addStageList){
                 Blob blob1 = Blob.fromFile(str);
-                if (blob1.getFilePath().equals(blob.getFilePath())){
+                if (blob1.getFileName().equals(blob.getFileName())){
                     File rmAddStageFile1 = join(ADD_STAGE,str);
                     createNewFile(rmAddStageFile1);
                     NotherUtils.rm(rmAddStageFile1);
