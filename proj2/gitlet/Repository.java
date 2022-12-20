@@ -231,6 +231,7 @@ public class Repository implements Serializable {
         NotherUtils.rm(headBranch);
         //重新创建
         File newHeadBranch = join(HEADS, headFileString);
+        System.out.println("newCommit.getCommitID()"+newCommit.getCommitID());
         //将新生成的commitId在写入head
         Utils.writeObject(newHeadBranch, newCommit.getCommitID());
         createNewFile(newHeadBranch);
