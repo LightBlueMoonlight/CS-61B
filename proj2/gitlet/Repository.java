@@ -149,16 +149,8 @@ public class Repository implements Serializable {
 
         //查看添加暂存区下目录
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        if (!addStageList.contains(blob.blobId())){
-            File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
-            Utils.writeObject(rmAddStageFile2, blob.blobId());
-            createNewFile(rmAddStageFile2);
-            if (newFile.exists()){
-                NotherUtils.rm(newFile);
-            }
-        }
-
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
+        boolean flg1 = true;
         if (removeStageList != null && !removeStageList.isEmpty()){
             for (String str : removeStageList){
                 Blob blob1 = Blob.fromFile(str);
@@ -166,6 +158,20 @@ public class Repository implements Serializable {
                     File rmAddStageFile1 = join(REMOVE_STAGE,str);
                     createNewFile(rmAddStageFile1);
                     NotherUtils.rm(rmAddStageFile1);
+                    flg1 = false;
+                }
+            }
+        }
+
+        if (!addStageList.contains(blob.blobId())){
+            if (flg1){
+                if (!removeStageList.contains(blob.blobId())){
+                    File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
+                    Utils.writeObject(rmAddStageFile2, blob.blobId());
+                    createNewFile(rmAddStageFile2);
+                    if (newFile.exists()){
+                        NotherUtils.rm(newFile);
+                    }
                 }
             }
         }
@@ -277,11 +283,8 @@ public class Repository implements Serializable {
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         //文件刚被add进addstage而没有commit，直接删除addstage中的Blob就可以
         if (addStageList != null && !addStageList.isEmpty()){
-            System.out.println("remove里的add");
             for (String str : addStageList){
                 Blob blob1 = Blob.fromFile(str);
-                System.out.println("blob1.getFileName():"+blob1.getFileName());
-                System.out.println("blob.getFileName():"+blob.getFileName());
                 if (blob1.getFileName().equals(blob.getFileName())){
                     File rmAddStageFile1 = join(ADD_STAGE,str);
                     createNewFile(rmAddStageFile1);
