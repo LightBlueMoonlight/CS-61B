@@ -240,6 +240,8 @@ public class Repository implements Serializable {
         File headBranch = join(HEADS, headFileString);
         //读取headBranch下的内容
         String headBranchText = Utils.readContentsAsString(headBranch);
+        System.out.println("headBranch"+headBranch);
+        System.out.println("headBranchText"+headBranchText);
         //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(headBranchText);
         //判断删除暂存区是否存在，不存在就创建
@@ -305,6 +307,8 @@ public class Repository implements Serializable {
         File headBranch = join(HEADS, addFileString);
         //读取headBranch下的内容
         String headBranchText = Utils.readContentsAsString(headBranch);
+        System.out.println("headBranch:"+headBranch);
+        System.out.println("headBranchText:"+headBranchText);
         printLog(headBranchText);
     }
 
