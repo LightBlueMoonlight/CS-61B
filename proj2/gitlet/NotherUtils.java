@@ -30,39 +30,6 @@ public class NotherUtils {
 
     }
 
-    public static void addStageFile(File newFile,File ADD_STAGE,Blob blob){
-        //获取addStage中的文件
-        List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        //遍历addStage中的文件与当前添加的文件做比较
-        //为空就直接添加
-        if (addStageList == null || addStageList.isEmpty()){
-            File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
-            Utils.writeObject(rmAddStageFile2, blob.blobId());
-            Repository.createNewFile(rmAddStageFile2);
-        }else {
-            System.out.println("keyijinlaima");
-            for (String str : addStageList) {
-                //根据blobId还原blob文件
-                Blob blobFromFile = Blob.fromFile(str);
-                //如果addStage里的相对路径等于添加文件的相对路径
-                if (blobFromFile.getFilePath().equals(newFile.getPath())) {
-                    //获取之前addStage的文件名
-                    File rmAddStageFile = join(ADD_STAGE, str);
-                    System.out.println("rmAddStageFile:" + rmAddStageFile.getName());
-                    //删除之前的blob文件
-                    rm(rmAddStageFile);
-                    //当前blob添加到addStage目录
-                    File rmAddStageFile2 = join(ADD_STAGE, blob.blobId());
-                    Utils.writeObject(rmAddStageFile2, blob.blobId());
-                    Repository.createNewFile(rmAddStageFile2);
-                    System.out.println("rmAddStageFile2:" + rmAddStageFile2.getName());
-                }
-            }
-        }
-        //删除目录下的add文件
-        rm(newFile);
-    }
-
     public static void rm(File file) {
         if (!file.delete()) {
             throw new IllegalArgumentException(String.format("rm: %s: Failed to delete.", file.getPath()));
