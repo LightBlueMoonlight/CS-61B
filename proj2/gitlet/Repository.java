@@ -165,14 +165,12 @@ public class Repository implements Serializable {
 
         if (!addStageList.contains(blob.blobId())){
             if (flg1){
-                if (!removeStageList.contains(blob.blobId())){
                     File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
                     Utils.writeObject(rmAddStageFile2, blob.blobId());
                     createNewFile(rmAddStageFile2);
                     if (newFile.exists()){
                         NotherUtils.rm(newFile);
                     }
-                }
             }
         }
     }
