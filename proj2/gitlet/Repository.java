@@ -309,7 +309,7 @@ public class Repository implements Serializable {
     private static void printLog(String addFileString) {
         //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(addFileString);
-        System.out.printf("===");
+        Utils.message("===");
         Utils.message("commit " + parentCommit.commitId());
         //对于合并提交（那些有两个父提交的提交），在第一个提交的正下方添加一行
         if (parentCommit.getParent().size() == 2) {
