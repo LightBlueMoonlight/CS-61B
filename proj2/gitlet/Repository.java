@@ -116,10 +116,8 @@ public class Repository implements Serializable {
         File newFile = Paths.get(addFile).isAbsolute()
                 ? new File(addFile)
                 : join(CWD, addFile);
-        createNewFile(newFile);
-        List<String> cwdList = Utils.plainFilenamesIn(CWD);
         //判断添加的文件是否存在工作目录中，不存在则报错
-        if (!cwdList.contains(addFile)) {
+        if (!newFile.exists()) {
             NotherUtils.message("File does not exist.");
         }
         //读取HEAD下的分支 例如：master
@@ -133,24 +131,24 @@ public class Repository implements Serializable {
         //更据添加文件名创建bolb文件
         Blob blob = new Blob(newFile);
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
-
         //如果addStage目录不存在就创建
         if (!ADD_STAGE.exists()){
             ADD_STAGE.mkdir();
         }
-
-//        boolean flg = true;
-//        if (trackBlobId != null){
-//            flg = false;
-//            if (newFile.exists()){
-//                NotherUtils.rm(newFile);
-//            }
-//        }
-
+        boolean flg = true;
+        boolean flg2 = false;
+        if (trackBlobId != null){
+            flg = false;
+            if (newFile.exists()){
+                NotherUtils.rm(newFile);
+            }
+        }
         //查看添加暂存区下目录
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
+        if (!addStageList.contains(blob.blobId()) && flg){
+            flg2 = true;
+        }
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
-        boolean flg1 = true;
         if (removeStageList != null && !removeStageList.isEmpty()){
             for (String str : removeStageList){
                 Blob blob1 = Blob.fromFile(str);
@@ -158,19 +156,17 @@ public class Repository implements Serializable {
                     File rmAddStageFile1 = join(REMOVE_STAGE,str);
                     createNewFile(rmAddStageFile1);
                     NotherUtils.rm(rmAddStageFile1);
-                    flg1 = false;
+                    flg2 = false;
                 }
             }
         }
-
-        if (!addStageList.contains(blob.blobId())){
-            if (flg1){
-                    File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
-                    Utils.writeObject(rmAddStageFile2, blob.blobId());
-                    createNewFile(rmAddStageFile2);
-                    if (newFile.exists()){
-                        NotherUtils.rm(newFile);
-                    }
+        //flg2为true才创建
+        if (flg2){
+            File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
+            Utils.writeObject(rmAddStageFile2, blob.blobId());
+            createNewFile(rmAddStageFile2);
+            if (newFile.exists()){
+                NotherUtils.rm(newFile);
             }
         }
     }
