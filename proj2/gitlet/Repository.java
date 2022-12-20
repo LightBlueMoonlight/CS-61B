@@ -441,9 +441,10 @@ public class Repository implements Serializable {
         createNewFile(newFile);
         //如果文件被当前commit所跟踪，则其放入工作目录中（如果工作目录中有同名文件，则替代它）；
         Commit parentCommit = NotherUtils.getHeadBranchCommitId();
-        Blob blob = new Blob(newFile);
-        String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+
+        String trackBlobId = parentCommit.getTracked().get(newFile.getPath());
         if(trackBlobId != null){
+            Blob blob = Blob.fromFile(trackBlobId);
             List<String> cwdList = Utils.plainFilenamesIn(CWD);
             if (cwdList.contains(fileName)) {
                 File rmAddStageFile2 = join(CWD, fileName);
@@ -468,9 +469,9 @@ public class Repository implements Serializable {
             NotherUtils.message("No commit with that id exists.");
         }
         Commit parentCommit = Commit.fromFile(commitId);
-        Blob blob = new Blob(newFile);
-        String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+        String trackBlobId = parentCommit.getTracked().get(newFile.getPath());
         if(trackBlobId != null){
+            Blob blob = Blob.fromFile(trackBlobId);
             List<String> cwdList = Utils.plainFilenamesIn(CWD);
             if (cwdList.contains(fileName)) {
                 File rmAddStageFile2 = join(CWD, fileName);
@@ -486,5 +487,78 @@ public class Repository implements Serializable {
     }
 
     public static void checkoutBranch(String branch) {
+        //如果checked branch不存在，输出错误信息
+        List<String> headsList = Utils.plainFilenamesIn(HEADS);
+        if (!headsList.contains(branch)){
+            NotherUtils.message("No such branch exists.");
+        }
+        String headFileString = Utils.readContentsAsString(HEAD);
+        if (headFileString.equals(branch)){
+            NotherUtils.message("No need to checkout the current branch.");
+        }
+
+        File file = join(HEADS,branch);
+        //newBranCh的commitID
+        String commitId1 = Utils.readContentsAsString(file);
+        Commit parentCommit1 = Commit.fromFile(commitId1);
+        //未切换前的分支
+        Commit parentCommit2 = NotherUtils.getHeadBranchCommitId();
+        File oldBranch = join(HEAD,parentCommit2.commitId());
+        createNewFile(oldBranch);
+        NotherUtils.rm(oldBranch);
+        File newBranch = join(HEADS, branch);
+        Utils.writeContents(newBranch,commitId1);
+        createNewFile(newBranch);
+        List<String> cwdList = Utils.plainFilenamesIn(CWD);
+        for (String key : parentCommit1.getTracked().keySet()){
+            //切换后
+            String Commit3B = key;
+            String Commit3BValue = parentCommit1.getTracked().get(Commit3B);
+            for (String key2 : parentCommit2.getTracked().keySet()){
+                //切换前
+                String Commit3A = key2;
+                String Commit3AValue = parentCommit1.getTracked().get(Commit3A);
+                if (Commit3BValue != null && Commit3AValue != null){
+                    //文件名既被Commit3B追踪的文件，也被Commit3A追踪
+                    if (Commit3B.equals(Commit3A)){
+                        //相同文件名并且blobID相同，不进行任何操作
+                        if (Commit3BValue.equals(Commit3AValue)){
+
+                        }else{
+                            //相同文件名但blobID不同（也就是内容不同），则用Commit3B种的文件来替代原来的文件
+                            Blob blob3A = Blob.fromFile(Commit3AValue);
+                            Blob blob3B = Blob.fromFile(Commit3BValue);
+                            File removeFile = join(BLOB,blob3A.blobId());
+                            createNewFile(removeFile);
+                            NotherUtils.rm(removeFile);
+                            File coverFile = join(BLOB, blob3B.blobId());
+                            Utils.writeContents(coverFile,blob3B.blobId());
+                            createNewFile(coverFile);
+                        }
+                    }
+                }
+                //文件名不被Commit3B追踪的文件，而仅被Commit3A追踪，那么直接删除这些文件
+                if (!parentCommit1.getTracked().containsKey(Commit3A)){
+                    Blob blob3A = Blob.fromFile(Commit3AValue);
+                    File removeFile = join(BLOB,blob3A.blobId());
+                    createNewFile(removeFile);
+                    NotherUtils.rm(removeFile);
+                }
+
+                //文件名仅被Commit3B追踪的文件，而不被Commit3A追踪，那么直接将这些文件写入到工作目录。
+                if (!parentCommit2.getTracked().containsKey(Commit3B)){
+                    Blob blob3B = Blob.fromFile(Commit3BValue);
+                    File cwdFile = join(CWD,blob3B.getFilePath());
+                    //将要直接写入的时候如果有同名文件（例如1.txt）已经在工作目录中了，说明工作目录中在执行checkout前增加了新的1.txt文件而没有commit，
+                    // 这时候gitlet不知道是应该保存用户新添加进来的1.txt还是把Commit3B中的1.txt拿过来overwrite掉，为了避免出现信息丢失，gitlet就会报错
+                    if (cwdList.contains(cwdFile)){
+                        NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
+                    }else {
+                        Utils.writeContents(cwdFile,blob3B.blobId());
+                        createNewFile(cwdFile);
+                    }
+                }
+            }
+        }
     }
 }
