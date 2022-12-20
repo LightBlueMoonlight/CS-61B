@@ -158,11 +158,8 @@ public class Repository implements Serializable {
 
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         if (removeStageList != null && !removeStageList.isEmpty()){
-            System.out.println("add里面的remove");
             for (String str : removeStageList){
                 Blob blob1 = Blob.fromFile(str);
-                System.out.println("blob.getFileName():"+blob.getFileName());
-                System.out.println("blob1.getFileName():"+blob1.getFileName());
                 if (blob1.getFileName().equals(blob.getFileName())){
                     File rmAddStageFile1 = join(ADD_STAGE,str);
                     createNewFile(rmAddStageFile1);
