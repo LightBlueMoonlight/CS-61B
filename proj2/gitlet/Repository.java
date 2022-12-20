@@ -224,15 +224,7 @@ public class Repository implements Serializable {
         //先删除在创建
         NotherUtils.rm(headBranch);
         //重新创建
-        File newHeadBranch = join(HEADS, headFileString);
-        createNewFile(newHeadBranch);
-        System.out.println("newHeadBranch"+newHeadBranch);
-        System.out.println("newCommit.getCommitID()"+newCommit.getCommitID());
-        //将新生成的commitId在写入head
-        Utils.writeObject(newHeadBranch, newCommit.getCommitID());
-        String ss = Utils.readContentsAsString(newHeadBranch);
-        System.out.println("ss"+ss);
-
+        makeBranch(headFileString,newCommit.getCommitID());
     }
 
     public static void setRM(String removeFile) {
