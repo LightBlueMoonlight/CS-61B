@@ -478,12 +478,16 @@ public class Repository implements Serializable {
         String trackBlobId = parentCommit.getTracked().get(newFile.getPath());
         if(trackBlobId != null){
             Blob blob = Blob.fromFile(trackBlobId);
-            List<String> cwdList = Utils.plainFilenamesIn(ADD_STAGE);
+            List<String> cwdList = Utils.plainFilenamesIn(CWD);
+            System.out.println("cwdList:"+cwdList);
+            System.out.println("fileName:"+fileName);
             if (cwdList.contains(fileName)) {
-                File rmAddStageFile2 = join(ADD_STAGE, fileName);
+                File rmAddStageFile2 = join(CWD, fileName);
                 createNewFile(rmAddStageFile2);
                 NotherUtils.rm(rmAddStageFile2);
             }
+            List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
+            System.out.println("addList:"+addList);
             File newBranch = join(ADD_STAGE, fileName);
             Utils.writeContents(newBranch,blob.getId());
             createNewFile(newBranch);
