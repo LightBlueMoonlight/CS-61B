@@ -82,8 +82,14 @@ public class Main {
                 break;
             case "checkout":
                 Repository.checkDir();
+                System.out.println("args.length:"+args.length);
+                System.out.println("args:"+args);
                 switch (args.length) {
                     case 3 :
+                        System.out.println("进来了");
+                        System.out.println("args0:"+args[0]);
+                        System.out.println("args1:"+args[1]);
+                        System.out.println("args2:"+args[2]);
                         if (!args[1].equals("--")) {
                             NotherUtils.message("Incorrect operands.");
                         }

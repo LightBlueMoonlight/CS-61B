@@ -221,7 +221,6 @@ public class Repository implements Serializable {
         if ((REMOVE_STAGE.exists())) {
             for (String str : removeStageList) {
                 File removeFile = join(REMOVE_STAGE, str);
-                System.out.println("removeFile:"+removeFile);
                 //创建bolb文件
                 Blob blobFile = Blob.fromFile(str);
                 if (parentTracked !=null){
