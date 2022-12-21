@@ -70,9 +70,11 @@ public class Main {
                 Repository.setBranch(text);
                 break;
             case "rm-branch":
+                System.out.println("什么情况");
                 Repository.checkDir();
                 validateNumArgs(args, 2);
                 text = args[1];
+                System.out.println("text"+text);
                 Repository.setRmBranch(text);
                 break;
             case "status":
