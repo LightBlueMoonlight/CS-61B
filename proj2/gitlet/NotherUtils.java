@@ -46,4 +46,13 @@ public class NotherUtils {
         Commit parentCommit = Commit.fromFile(headBranchText);
         return parentCommit;
     }
+
+//    public static String getBytes(Byte[] bytes){
+//        String s = new String(String.valueOf(bytes));
+//        return new String(bytes, "UTF-8");
+//    }
+
 }
+
+
+
