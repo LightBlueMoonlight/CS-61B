@@ -458,7 +458,7 @@ public class Repository implements Serializable {
                 createNewFile(rmAddStageFile2);
                 NotherUtils.rm(rmAddStageFile2);
             }
-            File newBranch = join(ADD_STAGE, fileName);
+            File newBranch = join(ADD_STAGE, blob.getId());
             Utils.writeContents(newBranch,blob.getId());
             createNewFile(newBranch);
         }else{
