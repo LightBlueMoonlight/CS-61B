@@ -204,6 +204,8 @@ public class Repository implements Serializable {
 
         //判断暂存区是否存在，或为空
         if (flag && flag2) {
+            System.out.println("addStageList:"+addStageList);
+            System.out.println("removeStageList:"+removeStageList);
             //报错
             NotherUtils.message("No changes added to the commit.");
         }
@@ -460,7 +462,7 @@ public class Repository implements Serializable {
             File newBranch = join(CWD, fileName);
             Utils.writeContents(newBranch,trackBlobId);
             createNewFile(newBranch);
-            File addBranch = join(ADD_STAGE, fileName);
+            File addBranch = join(ADD_STAGE, trackBlobId);
             Utils.writeContents(addBranch,trackBlobId);
             createNewFile(addBranch);
         }else{
