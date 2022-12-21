@@ -517,8 +517,7 @@ public class Repository implements Serializable {
         File newBranch = join(HEADS, branch);
         Utils.writeContents(newBranch,commitId1);
         createNewFile(newBranch);
-        File headBranch = join(HEAD, branch);
-        createNewFile(headBranch);
+        Utils.writeContents(HEAD,branch);
         List<String> cwdList = Utils.plainFilenamesIn(CWD);
         for (String key : parentCommit1.getTracked().keySet()){
             //切换后
