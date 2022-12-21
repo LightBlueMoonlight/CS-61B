@@ -82,7 +82,6 @@ public class Main {
                 break;
             case "checkout":
                 Repository.checkDir();
-                validateNumArgs(args, 1);
                 switch (args.length) {
                     case 3 :
                         if (!args[1].equals("--")) {
