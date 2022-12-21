@@ -571,8 +571,8 @@ public class Repository implements Serializable {
                         if (cwdList.contains(cwdFile)){
                             NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
                         }else {
-                            Utils.writeContents(cwdFile,NotherUtils.getBytes(blob3B.getBytes()));
                             createNewFile(cwdFile);
+                            Utils.writeContents(cwdFile,NotherUtils.getBytes(blob3B.getBytes()));
                         }
                     }
 
