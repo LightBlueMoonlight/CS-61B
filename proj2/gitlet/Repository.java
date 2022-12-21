@@ -568,10 +568,9 @@ public class Repository implements Serializable {
                         File cwdFile = join(CWD,blob3B.getFilePath());
                         //将要直接写入的时候如果有同名文件（例如1.txt）已经在工作目录中了，说明工作目录中在执行checkout前增加了新的1.txt文件而没有commit，
                         // 这时候gitlet不知道是应该保存用户新添加进来的1.txt还是把Commit3B中的1.txt拿过来overwrite掉，为了避免出现信息丢失，gitlet就会报错
-                        if (cwdList.contains(cwdFile)){
+                        if (cwdList.contains(cwdFile.getName())){
                             NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
                         }else {
-                            createNewFile(cwdFile);
                             Utils.writeContents(cwdFile,NotherUtils.getBytes(blob3B.getBytes()));
                         }
                     }
