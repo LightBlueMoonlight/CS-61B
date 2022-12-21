@@ -566,6 +566,7 @@ public class Repository implements Serializable {
                         }else {
                             Blob blob3B = Blob.fromFile(Commit3BValue);
                             File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
+                            createNewFile(rmAddStageFile2);
                             Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
                         }
                     }
