@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -241,7 +242,7 @@ public class Repository implements Serializable {
                 }
             }
         }
-        List<String> list = parentCommit.getParent();
+        List<String> list = new ArrayList<>();
         list.add(parentCommit.getCommitID());
         //创建新的commit
         Commit newCommit = new Commit(message, list, parentTracked);
@@ -459,6 +460,9 @@ public class Repository implements Serializable {
             File newBranch = join(CWD, fileName);
             Utils.writeContents(newBranch,trackBlobId);
             createNewFile(newBranch);
+            File addBranch = join(ADD_STAGE, fileName);
+            Utils.writeContents(addBranch,trackBlobId);
+            createNewFile(addBranch);
         }else{
             NotherUtils.message("File does not exist in that commit.");
         }
