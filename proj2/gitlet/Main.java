@@ -83,8 +83,8 @@ public class Main {
             case "reset":
                 Repository.checkDir();
                 validateNumArgs(args, 2);
-                String branch = args[1];
-                Repository.checkoutBranch(branch);
+                String resetCommitId = args[1];
+                Repository.checkoutBranch(resetCommitId);
                 break;
             case "checkout":
                 Repository.checkDir();
