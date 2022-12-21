@@ -80,10 +80,14 @@ public class Main {
                 validateNumArgs(args, 1);
                 Repository.setStatus();
                 break;
+            case "reset":
+                Repository.checkDir();
+                validateNumArgs(args, 2);
+                String branch = args[1];
+                Repository.checkoutBranch(branch);
+                break;
             case "checkout":
                 Repository.checkDir();
-                System.out.println("args.length:"+args.length);
-                System.out.println("args:"+args);
                 switch (args.length) {
                     case 3 :
                         if (!args[1].equals("--")) {
