@@ -453,7 +453,7 @@ public class Repository implements Serializable {
             if (cwdList.contains(fileName)) {
                 File rmAddStageFile2 = join(CWD, fileName);
                 //createNewFile(rmAddStageFile2);
-                NotherUtils.rm(rmAddStageFile2);
+                NotherUtils.clearFile(rmAddStageFile2);
             }
             File newBranch = join(CWD, fileName);
             Utils.writeContents(newBranch,trackBlobId);
