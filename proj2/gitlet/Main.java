@@ -16,7 +16,8 @@ public class Main {
             gitlet.Utils.message("Please enter a command.");
             System.exit(0);
         }
-
+        System.out.println("args:"+args);
+        System.out.println("size:"+args.length);
         String firstArg = args[0];
         String text;
         switch (firstArg) {
