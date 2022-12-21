@@ -462,7 +462,7 @@ public class Repository implements Serializable {
                 createNewFile(rmAddStageFile2);
                 Blob oldBlob = new Blob(rmAddStageFile2);
                 String s1 =NotherUtils.getBytes(oldBlob.getBytes());
-                System.out.println("commit内容是："+s1);
+                System.out.println("原始内容是："+s1);
                 NotherUtils.rm(rmAddStageFile2);
             }
             List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
@@ -472,6 +472,9 @@ public class Repository implements Serializable {
             createNewFile(newBranch);
             List<String> addList2 = Utils.plainFilenamesIn(ADD_STAGE);
             System.out.println("addList2:"+addList2);
+            Blob blob3 = Blob.fromFile(addList2.get(0));
+            String s3 = NotherUtils.getBytes(blob3.getBytes());
+            System.out.println("checkout后内容是："+s3);
         }else{
             NotherUtils.message("File does not exist in that commit.");
         }
