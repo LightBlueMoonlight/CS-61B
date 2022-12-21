@@ -485,16 +485,12 @@ public class Repository implements Serializable {
         if(trackBlobId != null){
             Blob blob = Blob.fromFile(trackBlobId);
             List<String> cwdList = Utils.plainFilenamesIn(CWD);
-            System.out.println("cwdList:"+cwdList);
-            System.out.println("fileName:"+fileName);
             if (cwdList.contains(fileName)) {
                 File rmAddStageFile2 = join(CWD, fileName);
                 createNewFile(rmAddStageFile2);
                 NotherUtils.rm(rmAddStageFile2);
             }
-            List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
-            System.out.println("addList:"+addList);
-            File newBranch = join(ADD_STAGE, fileName);
+            File newBranch = join(ADD_STAGE, trackBlobId);
             Utils.writeContents(newBranch,blob.getId());
             createNewFile(newBranch);
         }else{
@@ -519,12 +515,14 @@ public class Repository implements Serializable {
         Commit parentCommit1 = Commit.fromFile(commitId1);
         //未切换前的分支
         Commit parentCommit2 = NotherUtils.getHeadBranchCommitId();
-        File oldBranch = join(HEAD,parentCommit2.commitId());
+        //File oldBranch = join(HEAD,parentCommit2.commitId());
         //createNewFile(oldBranch);
-        NotherUtils.rm(oldBranch);
+        NotherUtils.clearFile(HEAD);
         File newBranch = join(HEADS, branch);
         Utils.writeContents(newBranch,commitId1);
         createNewFile(newBranch);
+        File headBranch = join(HEADS, branch);
+        createNewFile(headBranch);
         List<String> cwdList = Utils.plainFilenamesIn(CWD);
         for (String key : parentCommit1.getTracked().keySet()){
             //切换后
