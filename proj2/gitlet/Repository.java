@@ -294,6 +294,7 @@ public class Repository implements Serializable {
                     File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
                     Utils.writeObject(rmAddStageFile2, blob.blobId());
                     createNewFile(rmAddStageFile2);
+                    NotherUtils.rm(newFile);
                 }
         }
         //NotherUtils.rm(newFile);
