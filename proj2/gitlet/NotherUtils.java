@@ -58,6 +58,8 @@ public class NotherUtils {
         return aa;
     }
 
+    static final int UID_LENGTH = 40;
+
 }
 
 

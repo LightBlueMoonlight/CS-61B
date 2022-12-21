@@ -1,5 +1,7 @@
 package gitlet;
 
+import static gitlet.Utils.UID_LENGTH;
+
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
@@ -100,6 +102,11 @@ public class Main {
                         NotherUtils.message("Incorrect operands.");
                     }
                     String commitId = args[1];
+                    if(commitId.length() < UID_LENGTH){
+                        if (!Repository.COMMIT.exists()) {
+                            NotherUtils.message("No commit with that id exists.");
+                        }
+                    }
                     String fileName2 = args[3];
                     Repository.checkout(commitId, fileName2);
                     break;
