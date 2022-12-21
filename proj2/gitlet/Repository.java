@@ -170,9 +170,6 @@ public class Repository implements Serializable {
             File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
             Utils.writeObject(rmAddStageFile2, blob.blobId());
             createNewFile(rmAddStageFile2);
-//            if (newFile.exists()){
-//                NotherUtils.rm(newFile);
-//            }
         }
     }
 
@@ -311,8 +308,6 @@ public class Repository implements Serializable {
                     NotherUtils.rm(newFile);
                 }
         }
-        //NotherUtils.rm(newFile);
-
         //如果文件既没有被 暂存也没有被 head commit跟踪，打印错误信息No reason to remove the file.
         if (flg) {
             NotherUtils.message("No reason to remove the file.");
@@ -386,9 +381,8 @@ public class Repository implements Serializable {
         //读取headBranch下的内容
         String headBranchText = Utils.readContentsAsString(headBranch);
         //根据commitId生成commit文件
-        Commit parentCommit = Commit.fromFile(headBranchText);
         File newBranch = join(HEADS, branch);
-        Utils.writeContents(newBranch,parentCommit.commitId());
+        Utils.writeContents(newBranch,headBranchText);
         createNewFile(newBranch);
 
     }
@@ -463,9 +457,9 @@ public class Repository implements Serializable {
             File newBranch = join(CWD, fileName);
             Utils.writeContents(newBranch,trackBlobId);
             createNewFile(newBranch);
-            File addBranch = join(ADD_STAGE, trackBlobId);
-            Utils.writeContents(addBranch,trackBlobId);
-            createNewFile(addBranch);
+//            File addBranch = join(ADD_STAGE, trackBlobId);
+//            Utils.writeContents(addBranch,trackBlobId);
+//            createNewFile(addBranch);
         }else{
             NotherUtils.message("File does not exist in that commit.");
         }
@@ -490,9 +484,12 @@ public class Repository implements Serializable {
                 createNewFile(rmAddStageFile2);
                 NotherUtils.rm(rmAddStageFile2);
             }
-            File newBranch = join(ADD_STAGE, trackBlobId);
-            Utils.writeContents(newBranch,blob.getId());
+            File newBranch = join(CWD, fileName);
+            Utils.writeContents(newBranch,trackBlobId);
             createNewFile(newBranch);
+//            File newBranch = join(ADD_STAGE, trackBlobId);
+//            Utils.writeContents(newBranch,blob.getId());
+//            createNewFile(newBranch);
         }else{
             NotherUtils.message("File does not exist in that commit.");
         }
@@ -515,13 +512,12 @@ public class Repository implements Serializable {
         Commit parentCommit1 = Commit.fromFile(commitId1);
         //未切换前的分支
         Commit parentCommit2 = NotherUtils.getHeadBranchCommitId();
-        //File oldBranch = join(HEAD,parentCommit2.commitId());
-        //createNewFile(oldBranch);
+
         NotherUtils.clearFile(HEAD);
         File newBranch = join(HEADS, branch);
         Utils.writeContents(newBranch,commitId1);
         createNewFile(newBranch);
-        File headBranch = join(HEADS, branch);
+        File headBranch = join(HEAD, branch);
         createNewFile(headBranch);
         List<String> cwdList = Utils.plainFilenamesIn(CWD);
         for (String key : parentCommit1.getTracked().keySet()){
