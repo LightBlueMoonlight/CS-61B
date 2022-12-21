@@ -94,32 +94,30 @@ public class Main {
                 break;
             case "checkout":
                 Repository.checkDir();
-                switch (args.length) {
-                    case 3 :
-                        if (!args[1].equals("--")) {
-                            NotherUtils.message("Incorrect operands.");
-                        }
-                        String fileName = args[2];
-                        Repository.checkout(fileName);
-                        break;
-                    case 4 :
-                        if (!args[2].equals("--")) {
-                            NotherUtils.message("Incorrect operands.");
-                        }
-                        String commitId = args[1];
-                        String fileName2 = args[3];
-                        Repository.checkout(commitId, fileName2);
-                        break;
-                    case 2 :
-                        String branch = args[1];
-                        Repository.checkoutBranch(branch);
-                        break;
-                    default :
+                if (args.length == 3){
+                    if (!args[1].equals("--")) {
                         NotherUtils.message("Incorrect operands.");
-                        break;
+                    }
+                    String fileName = args[2];
+                    Repository.checkout(fileName);
+                    break;
                 }
-                Repository.setStatus();
-                break;
+                else if (args.length == 4){
+                    if (!args[2].equals("--")) {
+                        NotherUtils.message("Incorrect operands.");
+                    }
+                    String commitId = args[1];
+                    String fileName2 = args[3];
+                    Repository.checkout(commitId, fileName2);
+                    break;
+                }
+                else if (args.length == 2){
+                    String branch = args[1];
+                    Repository.checkoutBranch(branch);
+                    break;
+                }else{
+                    NotherUtils.message("Incorrect operands.");
+                }
             default:
                 NotherUtils.message("No command with that name exists.");
                 break;
