@@ -16,10 +16,13 @@ public class Main {
             gitlet.Utils.message("Please enter a command.");
             System.exit(0);
         }
-        System.out.println("args:"+args);
-        System.out.println("size:"+args.length);
         String firstArg = args[0];
         String text;
+        if (firstArg.equals("rm-branch")){
+            System.out.println("有输入");
+            System.out.println("args："+args);
+            System.out.println("args1："+args[1]);
+        }
         switch (firstArg) {
             case "init":
                 validateNumArgs(args, 1);
