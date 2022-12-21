@@ -436,7 +436,11 @@ public class Repository implements Serializable {
             NotherUtils.message("Cannot remove the current branch.");
         }
         File headBranch = join(HEADS, text);
+        createNewFile(headBranch);
         NotherUtils.rm(headBranch);
+        if (headBranch.exists()){
+            System.out.println("没删掉哦");
+        }
     }
 
     public static void checkout(String fileName) {
