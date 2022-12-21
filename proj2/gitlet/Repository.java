@@ -448,33 +448,17 @@ public class Repository implements Serializable {
         createNewFile(newFile);
         //如果文件被当前commit所跟踪，则其放入工作目录中（如果工作目录中有同名文件，则替代它）；
         Commit parentCommit = NotherUtils.getHeadBranchCommitId();
-
         String trackBlobId = parentCommit.getTracked().get(newFile.getPath());
         if(trackBlobId != null){
-            Blob blob = Blob.fromFile(trackBlobId);
-            String s = NotherUtils.getBytes(blob.getBytes());
-            System.out.println("commit内容是："+s);
             List<String> cwdList = Utils.plainFilenamesIn(CWD);
-            System.out.println("cwdList:"+cwdList);
-            System.out.println("fileName:"+fileName);
             if (cwdList.contains(fileName)) {
                 File rmAddStageFile2 = join(CWD, fileName);
                 createNewFile(rmAddStageFile2);
-                Blob oldBlob = new Blob(rmAddStageFile2);
-                String s1 =NotherUtils.getBytes(oldBlob.getBytes());
-                System.out.println("原始内容是："+s1);
                 NotherUtils.rm(rmAddStageFile2);
             }
-            List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
-            System.out.println("addList1:"+addList);
-            File newBranch = join(ADD_STAGE, blob.getId());
-            Utils.writeContents(newBranch,blob.getId());
+            File newBranch = join(CWD, fileName);
+            Utils.writeContents(newBranch,trackBlobId);
             createNewFile(newBranch);
-            List<String> addList2 = Utils.plainFilenamesIn(ADD_STAGE);
-            System.out.println("addList2:"+addList2);
-            Blob blob3 = Blob.fromFile(addList2.get(0));
-            String s3 = NotherUtils.getBytes(blob3.getBytes());
-            System.out.println("checkout后内容是："+s3);
         }else{
             NotherUtils.message("File does not exist in that commit.");
         }
