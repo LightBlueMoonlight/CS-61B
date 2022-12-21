@@ -487,7 +487,7 @@ public class Repository implements Serializable {
                 NotherUtils.rm(rmAddStageFile2);
             }
             File newBranch = join(CWD, fileName);
-            Utils.writeContents(newBranch,trackBlobId);
+            Utils.writeContents(newBranch,NotherUtils.getBytes(blob.getBytes()));
             createNewFile(newBranch);
 //            File newBranch = join(ADD_STAGE, trackBlobId);
 //            Utils.writeContents(newBranch,blob.getId());
@@ -537,23 +537,26 @@ public class Repository implements Serializable {
 
                         }else{
                             //相同文件名但blobID不同（也就是内容不同），则用Commit3B种的文件来替代原来的文件
-                            Blob blob3A = Blob.fromFile(Commit3AValue);
                             Blob blob3B = Blob.fromFile(Commit3BValue);
-                            File removeFile = join(BLOB,blob3A.blobId());
-                            createNewFile(removeFile);
-                            NotherUtils.rm(removeFile);
-                            File coverFile = join(BLOB, blob3B.blobId());
-                            Utils.writeContents(coverFile,blob3B.blobId());
-                            createNewFile(coverFile);
+                            if (cwdList.contains(blob3B.getFilePath())) {
+                                File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
+                                createNewFile(rmAddStageFile2);
+                                NotherUtils.rm(rmAddStageFile2);
+                            }
+                            File newBranch1 = join(CWD, blob3B.getFilePath());
+                            Utils.writeContents(newBranch1,NotherUtils.getBytes(blob3B.getBytes()));
+                            createNewFile(newBranch1);
                         }
                     }
                 }
                 //文件名不被Commit3B追踪的文件，而仅被Commit3A追踪，那么直接删除这些文件
                 if (!parentCommit1.getTracked().containsKey(Commit3A)){
                     Blob blob3A = Blob.fromFile(Commit3AValue);
-                    File removeFile = join(BLOB,blob3A.blobId());
-                    createNewFile(removeFile);
-                    NotherUtils.rm(removeFile);
+                    if (cwdList.contains(blob3A.getFilePath())) {
+                        File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
+                        createNewFile(rmAddStageFile2);
+                        NotherUtils.rm(rmAddStageFile2);
+                    }
                 }
 
                 //文件名仅被Commit3B追踪的文件，而不被Commit3A追踪，那么直接将这些文件写入到工作目录。
@@ -565,7 +568,7 @@ public class Repository implements Serializable {
                     if (cwdList.contains(cwdFile)){
                         NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
                     }else {
-                        Utils.writeContents(cwdFile,blob3B.blobId());
+                        Utils.writeContents(cwdFile,NotherUtils.getBytes(blob3B.getBytes()));
                         createNewFile(cwdFile);
                     }
                 }
