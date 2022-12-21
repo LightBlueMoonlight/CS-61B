@@ -566,10 +566,10 @@ public class Repository implements Serializable {
                         }else {
                             Blob blob3B = Blob.fromFile(Commit3BValue);
                             File rmAddStageFile2 = join(CWD, Commit3B);
+                            createNewFile(rmAddStageFile2);
                             Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
                         }
                     }
-
                 }
             }
         }
