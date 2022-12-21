@@ -97,6 +97,7 @@ public class Repository implements Serializable {
             if (!fileParent.exists()){
                 fileParent.mkdir();
             }
+
             newFile.createNewFile();
         } catch (IOException | ClassCastException excp) {
             throw new IllegalArgumentException(excp.getMessage() + "<<:<<" + excp.toString()
@@ -457,8 +458,8 @@ public class Repository implements Serializable {
                 createNewFile(rmAddStageFile2);
                 NotherUtils.rm(rmAddStageFile2);
             }
-            File newBranch = join(CWD, fileName);
-            Utils.writeContents(newBranch,blob.getBytes());
+            File newBranch = join(ADD_STAGE, fileName);
+            Utils.writeContents(newBranch,blob.getId());
             createNewFile(newBranch);
         }else{
             NotherUtils.message("File does not exist in that commit.");
@@ -514,7 +515,7 @@ public class Repository implements Serializable {
         //未切换前的分支
         Commit parentCommit2 = NotherUtils.getHeadBranchCommitId();
         File oldBranch = join(HEAD,parentCommit2.commitId());
-        createNewFile(oldBranch);
+        //createNewFile(oldBranch);
         NotherUtils.rm(oldBranch);
         File newBranch = join(HEADS, branch);
         Utils.writeContents(newBranch,commitId1);
