@@ -550,7 +550,7 @@ public class Repository implements Serializable {
                     if (Commit3AValue != null){
                         Blob blob3A = Blob.fromFile(Commit3AValue);
                         if (cwdList.contains(blob3A.getFilePath())) {
-                            File rmAddStageFile2 = join(CWD, Commit3A);
+                            File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
                             NotherUtils.rm(rmAddStageFile2);
                         }
                     }
@@ -565,8 +565,7 @@ public class Repository implements Serializable {
                             NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
                         }else {
                             Blob blob3B = Blob.fromFile(Commit3BValue);
-                            File rmAddStageFile2 = join(CWD, Commit3B);
-                            createNewFile(rmAddStageFile2);
+                            File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
                             Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
                         }
                     }
