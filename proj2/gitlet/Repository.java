@@ -186,14 +186,19 @@ public class Repository implements Serializable {
 
     //comit时的操作
     public static void setCommit(String message) {
+        //如果addStage目录不存在就创建
+        if (!ADD_STAGE.exists()){
+            ADD_STAGE.mkdir();
+        }
         //查看添加暂存区下目录
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
         //查看删除暂存区下目录
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
-        System.out.println("addStageList:"+addStageList);
-        System.out.println("removeStageList:"+removeStageList);
+        boolean flag = addStageList != null && !addStageList.isEmpty();
         //判断暂存区是否存在，或为空
-        if (addStageList == null || addStageList.isEmpty()) {
+        if (!flag) {
+            System.out.println("addStageList:"+addStageList);
+            System.out.println("removeStageList:"+removeStageList);
             //报错
             NotherUtils.message("No changes added to the commit.");
         }
