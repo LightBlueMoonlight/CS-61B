@@ -95,17 +95,23 @@ public class Main {
                         }
                         String fileName = args[2];
                         Repository.checkout(fileName);
+                        break;
                     case 4 :
+                        System.out.println("进来了1");
                         if (!args[2].equals("--")) {
                             NotherUtils.message("Incorrect operands.");
                         }
                         String commitId = args[1];
                         String fileName2 = args[3];
                         Repository.checkout(commitId, fileName2);
+                        break;
                     case 2 :
+                        System.out.println("进来了2");
                         String branch = args[1];
                         Repository.checkoutBranch(branch);
+                        break;
                     default :
+                        System.out.println("进来了3");
                         NotherUtils.message("Incorrect operands.");
                         break;
                 }

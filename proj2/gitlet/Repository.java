@@ -190,6 +190,8 @@ public class Repository implements Serializable {
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
         //查看删除暂存区下目录
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
+        System.out.println("addStageList:"+addStageList);
+        System.out.println("removeStageList:"+removeStageList);
         //判断暂存区是否存在，或为空
         if (addStageList == null || addStageList.isEmpty()) {
             //报错
