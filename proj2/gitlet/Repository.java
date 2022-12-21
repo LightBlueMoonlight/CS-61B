@@ -444,7 +444,7 @@ public class Repository implements Serializable {
         File newFile = Paths.get(fileName).isAbsolute()
                 ? new File(fileName)
                 : join(CWD, fileName);
-        createNewFile(newFile);
+        //createNewFile(newFile);
         //如果文件被当前commit所跟踪，则其放入工作目录中（如果工作目录中有同名文件，则替代它）；
         Commit parentCommit = NotherUtils.getHeadBranchCommitId();
         String trackBlobId = parentCommit.getTracked().get(newFile.getPath());
@@ -452,7 +452,7 @@ public class Repository implements Serializable {
             List<String> cwdList = Utils.plainFilenamesIn(CWD);
             if (cwdList.contains(fileName)) {
                 File rmAddStageFile2 = join(CWD, fileName);
-                createNewFile(rmAddStageFile2);
+                //createNewFile(rmAddStageFile2);
                 NotherUtils.rm(rmAddStageFile2);
             }
             File newBranch = join(CWD, fileName);
