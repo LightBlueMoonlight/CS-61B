@@ -452,7 +452,7 @@ public class Repository implements Serializable {
         String trackBlobId = parentCommit.getTracked().get(newFile.getPath());
         if(trackBlobId != null){
             Blob blob = Blob.fromFile(trackBlobId);
-            String s = new String(String.valueOf(blob.getBytes()));
+            String s = NotherUtils.getBytes(blob.getBytes());
             System.out.println("commit内容是："+s);
             List<String> cwdList = Utils.plainFilenamesIn(CWD);
             System.out.println("cwdList:"+cwdList);
@@ -461,7 +461,7 @@ public class Repository implements Serializable {
                 File rmAddStageFile2 = join(CWD, fileName);
                 createNewFile(rmAddStageFile2);
                 Blob oldBlob = new Blob(rmAddStageFile2);
-                String s1 = new String(String.valueOf(oldBlob.getBytes()));
+                String s1 =NotherUtils.getBytes(oldBlob.getBytes());
                 System.out.println("commit内容是："+s1);
                 NotherUtils.rm(rmAddStageFile2);
             }

@@ -4,6 +4,7 @@ package gitlet;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import static gitlet.Utils.join;
 
@@ -47,10 +48,14 @@ public class NotherUtils {
         return parentCommit;
     }
 
-//    public static String getBytes(Byte[] bytes){
-//        String s = new String(String.valueOf(bytes));
-//        return new String(bytes, "UTF-8");
-//    }
+    public static String getBytes(byte[] bytes){
+        try {
+            String res = new String(bytes,"UTF-8");
+            System.out.println(res);
+        } catch (UnsupportedEncodingException e) {//有可能会出现不能支持的编码格式，捕捉异常。
+            e.printStackTrace();
+        }
+    }
 
 }
 
