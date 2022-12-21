@@ -49,12 +49,13 @@ public class NotherUtils {
     }
 
     public static String getBytes(byte[] bytes){
+        String aa = "aaaaaaa";
         try {
-            String res = new String(bytes,"UTF-8");
-            System.out.println(res);
+            aa = new String(bytes,"UTF-8");
         } catch (UnsupportedEncodingException e) {//有可能会出现不能支持的编码格式，捕捉异常。
             e.printStackTrace();
         }
+        return aa;
     }
 
 }
