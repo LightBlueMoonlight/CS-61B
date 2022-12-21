@@ -508,30 +508,27 @@ public class Repository implements Serializable {
             NotherUtils.message("No need to checkout the current branch.");
         }
 
-        File file = join(HEADS,branch);
+        File newBranch = join(HEADS,branch);
         //newBranCh的commitID
-        String commitId1 = Utils.readContentsAsString(file);
+        String commitId1 = Utils.readContentsAsString(newBranch);
         Commit parentCommit1 = Commit.fromFile(commitId1);
         //未切换前的分支
         Commit parentCommit2 = NotherUtils.getHeadBranchCommitId();
-
         NotherUtils.clearFile(HEAD);
-        File newBranch = join(HEADS, branch);
-        Utils.writeContents(newBranch,commitId1);
-        createNewFile(newBranch);
         Utils.writeContents(HEAD,branch);
         List<String> cwdList = Utils.plainFilenamesIn(CWD);
         for (String key : parentCommit1.getTracked().keySet()){
-            //切换后
+            //切换后blobId
             String Commit3B = key;
             String Commit3BValue = parentCommit1.getTracked().get(Commit3B);
             for (String key2 : parentCommit2.getTracked().keySet()){
-                //切换前
+                //切换前blobId
                 String Commit3A = key2;
                 String Commit3AValue = parentCommit1.getTracked().get(Commit3A);
-                if (Commit3BValue != null && Commit3AValue != null){
+
                     //文件名既被Commit3B追踪的文件，也被Commit3A追踪
-                    if (Commit3B.equals(Commit3A)){
+                if (Commit3B.equals(Commit3A)){
+                    if (Commit3BValue != null && Commit3AValue != null){
                         //相同文件名并且blobID相同，不进行任何操作
                         if (Commit3BValue.equals(Commit3AValue)){
 
@@ -540,7 +537,6 @@ public class Repository implements Serializable {
                             Blob blob3B = Blob.fromFile(Commit3BValue);
                             if (cwdList.contains(blob3B.getFilePath())) {
                                 File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-                                createNewFile(rmAddStageFile2);
                                 NotherUtils.rm(rmAddStageFile2);
                             }
                             File newBranch1 = join(CWD, blob3B.getFilePath());
@@ -554,8 +550,7 @@ public class Repository implements Serializable {
                     if (Commit3AValue != null){
                         Blob blob3A = Blob.fromFile(Commit3AValue);
                         if (cwdList.contains(blob3A.getFilePath())) {
-                            File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
-                            createNewFile(rmAddStageFile2);
+                            File rmAddStageFile2 = join(CWD, Commit3A);
                             NotherUtils.rm(rmAddStageFile2);
                         }
                     }
@@ -564,14 +559,14 @@ public class Repository implements Serializable {
                 //文件名仅被Commit3B追踪的文件，而不被Commit3A追踪，那么直接将这些文件写入到工作目录。
                 if (!parentCommit2.getTracked().containsKey(Commit3B)){
                     if (Commit3B != null){
-                        Blob blob3B = Blob.fromFile(Commit3BValue);
-                        File cwdFile = join(CWD,blob3B.getFilePath());
                         //将要直接写入的时候如果有同名文件（例如1.txt）已经在工作目录中了，说明工作目录中在执行checkout前增加了新的1.txt文件而没有commit，
                         // 这时候gitlet不知道是应该保存用户新添加进来的1.txt还是把Commit3B中的1.txt拿过来overwrite掉，为了避免出现信息丢失，gitlet就会报错
-                        if (cwdList.contains(cwdFile.getName())){
+                        if (cwdList.contains(Commit3B)){
                             NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
                         }else {
-                            Utils.writeContents(cwdFile,NotherUtils.getBytes(blob3B.getBytes()));
+                            Blob blob3B = Blob.fromFile(Commit3BValue);
+                            File rmAddStageFile2 = join(CWD, Commit3B);
+                            Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
                         }
                     }
 
