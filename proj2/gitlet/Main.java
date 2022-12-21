@@ -18,11 +18,6 @@ public class Main {
         }
         String firstArg = args[0];
         String text;
-        if (firstArg.equals("rm-branch")){
-            System.out.println("有输入");
-            System.out.println("args："+args);
-            System.out.println("args1："+args[1]);
-        }
         switch (firstArg) {
             case "init":
                 validateNumArgs(args, 1);
@@ -74,11 +69,9 @@ public class Main {
                 Repository.setBranch(text);
                 break;
             case "rm-branch":
-                System.out.println("什么情况");
                 Repository.checkDir();
                 validateNumArgs(args, 2);
                 text = args[1];
-                System.out.println("text"+text);
                 Repository.setRmBranch(text);
                 break;
             case "status":

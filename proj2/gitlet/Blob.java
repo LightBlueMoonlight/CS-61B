@@ -78,6 +78,9 @@ public class Blob implements Serializable {
     }
 
     public static File getObjectFile(String id) {
+        if (!Repository.BLOB.exists()){
+            Repository.BLOB.mkdir();
+        }
         File fileBlob = join(Repository.BLOB, id);
         Repository.createNewFile(fileBlob);
         return fileBlob;

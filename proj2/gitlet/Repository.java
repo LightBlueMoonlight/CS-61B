@@ -427,7 +427,6 @@ public class Repository implements Serializable {
     }
 
     public static void setRmBranch(String text) {
-        System.out.println("我真的有进来吗");
         List<String> branchList = Utils.plainFilenamesIn(HEADS);
         if (!branchList.contains(text)) {
             NotherUtils.message("A branch with that name does not exist.");
@@ -439,9 +438,6 @@ public class Repository implements Serializable {
         File headBranch = join(HEADS, text);
         createNewFile(headBranch);
         NotherUtils.rm(headBranch);
-        if (headBranch.exists()){
-            System.out.println("没删掉哦");
-        }
     }
 
     public static void checkout(String fileName) {
