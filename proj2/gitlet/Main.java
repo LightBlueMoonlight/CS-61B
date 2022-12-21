@@ -86,10 +86,6 @@ public class Main {
                 System.out.println("args:"+args);
                 switch (args.length) {
                     case 3 :
-                        System.out.println("进来了");
-                        System.out.println("args0:"+args[0]);
-                        System.out.println("args1:"+args[1]);
-                        System.out.println("args2:"+args[2]);
                         if (!args[1].equals("--")) {
                             NotherUtils.message("Incorrect operands.");
                         }
@@ -97,7 +93,6 @@ public class Main {
                         Repository.checkout(fileName);
                         break;
                     case 4 :
-                        System.out.println("进来了1");
                         if (!args[2].equals("--")) {
                             NotherUtils.message("Incorrect operands.");
                         }
@@ -106,12 +101,10 @@ public class Main {
                         Repository.checkout(commitId, fileName2);
                         break;
                     case 2 :
-                        System.out.println("进来了2");
                         String branch = args[1];
                         Repository.checkoutBranch(branch);
                         break;
                     default :
-                        System.out.println("进来了3");
                         NotherUtils.message("Incorrect operands.");
                         break;
                 }
