@@ -478,14 +478,14 @@ public class Repository implements Serializable {
         String trackBlobId = parentCommit.getTracked().get(newFile.getPath());
         if(trackBlobId != null){
             Blob blob = Blob.fromFile(trackBlobId);
-            List<String> cwdList = Utils.plainFilenamesIn(CWD);
+            List<String> cwdList = Utils.plainFilenamesIn(ADD_STAGE);
             if (cwdList.contains(fileName)) {
-                File rmAddStageFile2 = join(CWD, fileName);
+                File rmAddStageFile2 = join(ADD_STAGE, fileName);
                 createNewFile(rmAddStageFile2);
                 NotherUtils.rm(rmAddStageFile2);
             }
-            File newBranch = join(CWD, fileName);
-            Utils.writeContents(newBranch,blob.getBytes());
+            File newBranch = join(ADD_STAGE, fileName);
+            Utils.writeContents(newBranch,blob.getId());
             createNewFile(newBranch);
         }else{
             NotherUtils.message("File does not exist in that commit.");
