@@ -551,26 +551,31 @@ public class Repository implements Serializable {
                 }
                 //文件名不被Commit3B追踪的文件，而仅被Commit3A追踪，那么直接删除这些文件
                 if (!parentCommit1.getTracked().containsKey(Commit3A)){
-                    Blob blob3A = Blob.fromFile(Commit3AValue);
-                    if (cwdList.contains(blob3A.getFilePath())) {
-                        File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
-                        createNewFile(rmAddStageFile2);
-                        NotherUtils.rm(rmAddStageFile2);
+                    if (Commit3AValue != null){
+                        Blob blob3A = Blob.fromFile(Commit3AValue);
+                        if (cwdList.contains(blob3A.getFilePath())) {
+                            File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
+                            createNewFile(rmAddStageFile2);
+                            NotherUtils.rm(rmAddStageFile2);
+                        }
                     }
                 }
 
                 //文件名仅被Commit3B追踪的文件，而不被Commit3A追踪，那么直接将这些文件写入到工作目录。
                 if (!parentCommit2.getTracked().containsKey(Commit3B)){
-                    Blob blob3B = Blob.fromFile(Commit3BValue);
-                    File cwdFile = join(CWD,blob3B.getFilePath());
-                    //将要直接写入的时候如果有同名文件（例如1.txt）已经在工作目录中了，说明工作目录中在执行checkout前增加了新的1.txt文件而没有commit，
-                    // 这时候gitlet不知道是应该保存用户新添加进来的1.txt还是把Commit3B中的1.txt拿过来overwrite掉，为了避免出现信息丢失，gitlet就会报错
-                    if (cwdList.contains(cwdFile)){
-                        NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
-                    }else {
-                        Utils.writeContents(cwdFile,NotherUtils.getBytes(blob3B.getBytes()));
-                        createNewFile(cwdFile);
+                    if (Commit3B != null){
+                        Blob blob3B = Blob.fromFile(Commit3BValue);
+                        File cwdFile = join(CWD,blob3B.getFilePath());
+                        //将要直接写入的时候如果有同名文件（例如1.txt）已经在工作目录中了，说明工作目录中在执行checkout前增加了新的1.txt文件而没有commit，
+                        // 这时候gitlet不知道是应该保存用户新添加进来的1.txt还是把Commit3B中的1.txt拿过来overwrite掉，为了避免出现信息丢失，gitlet就会报错
+                        if (cwdList.contains(cwdFile)){
+                            NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
+                        }else {
+                            Utils.writeContents(cwdFile,NotherUtils.getBytes(blob3B.getBytes()));
+                            createNewFile(cwdFile);
+                        }
                     }
+
                 }
             }
         }
