@@ -84,7 +84,7 @@ public class Main {
                 Repository.checkDir();
                 validateNumArgs(args, 2);
                 String resetCommitId = args[1];
-                Repository.checkoutBranch(resetCommitId);
+                Repository.setReset(resetCommitId);
                 break;
             case "checkout":
                 Repository.checkDir();

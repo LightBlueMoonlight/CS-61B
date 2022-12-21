@@ -140,10 +140,13 @@ public class Repository implements Serializable {
         boolean flg = true;
         boolean flg2 = false;
         if (trackBlobId != null){
-            flg = false;
-            if (newFile.exists()){
-                NotherUtils.rm(newFile);
+            if (trackBlobId.equals(blob.getId())){
+                flg = false;
+                if (newFile.exists()){
+                    NotherUtils.rm(newFile);
+                }
             }
+
         }
         //查看添加暂存区下目录
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
@@ -204,8 +207,6 @@ public class Repository implements Serializable {
 
         //判断暂存区是否存在，或为空
         if (flag && flag2) {
-            System.out.println("addStageList:"+addStageList);
-            System.out.println("removeStageList:"+removeStageList);
             //报错
             NotherUtils.message("No changes added to the commit.");
         }
@@ -575,5 +576,13 @@ public class Repository implements Serializable {
                 }
             }
         }
+    }
+
+    public static void setReset(String resetCommitId) {
+        List<String> commitList = Utils.plainFilenamesIn(COMMIT);
+        if (!commitList.contains(resetCommitId)){
+            NotherUtils.message("No commit with that id exists.");
+        }
+
     }
 }
