@@ -296,7 +296,7 @@ public class Repository implements Serializable {
                     createNewFile(rmAddStageFile2);
                 }
         }
-        NotherUtils.rm(newFile);
+        //NotherUtils.rm(newFile);
 
         //如果文件既没有被 暂存也没有被 head commit跟踪，打印错误信息No reason to remove the file.
         if (flg) {
