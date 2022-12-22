@@ -524,6 +524,10 @@ public class Repository implements Serializable {
             if (parentCommit3B.getTracked().containsKey(key)){
                 Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key));
                 File rmAddStageFile2 = join(CWD, blob.getFilePath());
+                System.out.println(cwdList);
+                System.out.println(CWD.getPath());
+                System.out.println(rmAddStageFile2.getPath());
+                System.out.println(rmAddStageFile2.getParentFile());
                 createNewFile(rmAddStageFile2);
                 if (cwdList.contains(blob.getFilePath())) {
                     NotherUtils.rm(rmAddStageFile2);
@@ -555,6 +559,10 @@ public class Repository implements Serializable {
                 NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
             }else {
                 File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
+                System.out.println(cwdList);
+                System.out.println(CWD.getPath());
+                System.out.println(rmAddStageFile2.getPath());
+                System.out.println(rmAddStageFile2.getParentFile());
                 Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
             }
         }
