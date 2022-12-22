@@ -524,8 +524,9 @@ public class Repository implements Serializable {
             if (parentCommit3B.getTracked().containsKey(key)){
                 Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key));
                 File rmAddStageFile2 = join(CWD, blob.getFilePath());
+                createNewFile(rmAddStageFile2);
                 if (cwdList.contains(blob.getFilePath())) {
-                    NotherUtils.clearFile(rmAddStageFile2);
+                    NotherUtils.rm(rmAddStageFile2);
                 }
                 Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob.getBytes()));
                 keyList.add(key);
