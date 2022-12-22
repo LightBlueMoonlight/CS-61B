@@ -555,8 +555,6 @@ public class Repository implements Serializable {
                 NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
             }else {
                 File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-                createNewFile(rmAddStageFile2);
-                NotherUtils.clearFile(rmAddStageFile2);
                 Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
             }
         }
