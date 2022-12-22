@@ -515,24 +515,16 @@ public class Repository implements Serializable {
         Commit parentCommit3B = Commit.fromFile(commitId1);
         //未切换前的分支
         Commit parentCommit3A = NotherUtils.getHeadBranchCommitId();
-
-        List<String> cwdList = Utils.plainFilenamesIn(CWD);
-
         List<String> keyList = new ArrayList<>();
         for (String key : parentCommit3A.getTracked().keySet()){
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
             if (parentCommit3B.getTracked().containsKey(key)){
                 Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key));
-                File rmAddStageFile2 = join(CWD, blob.getFilePath());
-                System.out.println(cwdList);
-                System.out.println(CWD.getPath());
-                System.out.println(rmAddStageFile2.getPath());
-                System.out.println(rmAddStageFile2.getParentFile());
-                createNewFile(rmAddStageFile2);
-                if (cwdList.contains(blob.getFilePath())) {
-                    NotherUtils.rm(rmAddStageFile2);
+                File blobFile= new File(blob.getFilePath());
+                if (blobFile.exists()) {
+                    NotherUtils.rm(blobFile);
                 }
-                Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob.getBytes()));
+                Utils.writeContents(blobFile,NotherUtils.getBytes(blob.getBytes()));
                 keyList.add(key);
             }
         }
@@ -545,9 +537,9 @@ public class Repository implements Serializable {
         //仅被当前commit跟踪（删除文件）
         for (String key : parentCommit3A.getTracked().keySet()){
             Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key));
-            if (cwdList.contains(blob3A.getFilePath())) {
-                File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
-                NotherUtils.rm(rmAddStageFile2);
+            File blob3AFile= new File(blob3A.getFilePath());
+            if (blob3AFile.exists()){
+                NotherUtils.rm(blob3AFile);
             }
         }
         //仅被checked branch跟踪的文件又可以分为两类：
@@ -555,15 +547,11 @@ public class Repository implements Serializable {
         //已经存在于当前工作目录的文件（打印错误信息）
         for (String key : parentCommit3B.getTracked().keySet()){
             Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
-            if (cwdList.contains(blob3B.getFilePath())){
+            File blob3BFile= new File(blob3B.getFilePath());
+            if (blob3BFile.exists()){
                 NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
             }else {
-                File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-                System.out.println(cwdList);
-                System.out.println(CWD.getPath());
-                System.out.println(rmAddStageFile2.getPath());
-                System.out.println(rmAddStageFile2.getParentFile());
-                Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
+                Utils.writeContents(blob3BFile,NotherUtils.getBytes(blob3B.getBytes()));
             }
         }
         //更改HEAD指向Commit3B，最后清空缓存区。
@@ -653,12 +641,12 @@ public class Repository implements Serializable {
         for (String key : parentCommit3A.getTracked().keySet()){
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
             if (parentCommit3B.getTracked().containsKey(key)){
-                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
-                File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-                if (cwdList.contains(blob3B.getFilePath())) {
-                    NotherUtils.clearFile(rmAddStageFile2);
+                Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key));
+                File blobFile= new File(blob.getFilePath());
+                if (blobFile.exists()) {
+                    NotherUtils.rm(blobFile);
                 }
-                Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
+                Utils.writeContents(blobFile,NotherUtils.getBytes(blob.getBytes()));
                 keyList.add(key);
             }
         }
@@ -671,9 +659,9 @@ public class Repository implements Serializable {
         //仅被当前commit跟踪（删除文件）
         for (String key : parentCommit3A.getTracked().keySet()){
             Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key));
-            if (cwdList.contains(blob3A.getFilePath())) {
-                File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
-                NotherUtils.rm(rmAddStageFile2);
+            File blob3AFile= new File(blob3A.getFilePath());
+            if (blob3AFile.exists()){
+                NotherUtils.rm(blob3AFile);
             }
         }
         //仅被checked branch跟踪的文件又可以分为两类：
@@ -681,13 +669,11 @@ public class Repository implements Serializable {
         //已经存在于当前工作目录的文件（打印错误信息）
         for (String key : parentCommit3B.getTracked().keySet()){
             Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
-            if (cwdList.contains(blob3B.getFilePath())){
+            File blob3BFile= new File(blob3B.getFilePath());
+            if (blob3BFile.exists()){
                 NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
             }else {
-                File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-                NotherUtils.clearFile(rmAddStageFile2);
-                //createNewFile(rmAddStageFile2);
-                Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
+                Utils.writeContents(blob3BFile,NotherUtils.getBytes(blob3B.getBytes()));
             }
         }
         //更改HEAD指向Commit3B，最后清空缓存区。
