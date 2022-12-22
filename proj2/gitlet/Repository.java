@@ -472,6 +472,7 @@ public class Repository implements Serializable {
                 ? new File(fileName)
                 : join(CWD, fileName);
         createNewFile(newFile);
+        System.out.println(commitId);
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
         if (!commitList.contains(commitId)) {
             NotherUtils.message("No commit with that id exists.");

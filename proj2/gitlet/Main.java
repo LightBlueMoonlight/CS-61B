@@ -104,10 +104,16 @@ public class Main {
                         NotherUtils.message("Incorrect operands.");
                     }
                     String commitId = args[1];
+
                     if(commitId.length() < UID_LENGTH){
                         List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT);
+                        System.out.println(commitId);
                         for (String str : commitList) {
+                            System.out.println("str1:"+commitId);
+
                             str = str.substring(0,commitId.length());
+                            System.out.println("str2:"+commitId);
+
                             if (str.equals(commitId)){
                                 commitId = str;
                                 break;
