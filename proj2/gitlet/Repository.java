@@ -512,62 +512,119 @@ public class Repository implements Serializable {
         //newBranCh的commitID
         String commitId1 = Utils.readContentsAsString(newBranch);
         //newbranch
-        Commit parentCommit1 = Commit.fromFile(commitId1);
+        Commit parentCommit3B = Commit.fromFile(commitId1);
         //未切换前的分支
-        Commit parentCommit2 = NotherUtils.getHeadBranchCommitId();
-        NotherUtils.clearFile(HEAD);
-        Utils.writeContents(HEAD,branch);
+        Commit parentCommit3A = NotherUtils.getHeadBranchCommitId();
+
         List<String> cwdList = Utils.plainFilenamesIn(CWD);
-        for (String key : parentCommit1.getTracked().keySet()){
-            //切换后blobId
-            String Commit3B = key;
-            String Commit3BValue = parentCommit1.getTracked().get(Commit3B);
-            for (String key2 : parentCommit2.getTracked().keySet()){
-                //切换前blobId
-                String Commit3A = key2;
-                String Commit3AValue = parentCommit1.getTracked().get(Commit3A);
 
-                //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
-                if (Commit3BValue != null && Commit3AValue != null){
-                    //相同文件名并且blobID相同，不进行任何操作
-                    if (Commit3BValue.equals(Commit3AValue)){
-
-                    }else{
-                        //相同文件名但blobID不同（也就是内容不同），则用Commit3B种的文件来替代原来的文件
-                        Blob blob3B = Blob.fromFile(Commit3BValue);
-                        File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-                        if (cwdList.contains(blob3B.getFilePath())) {
-                            NotherUtils.clearFile(rmAddStageFile2);
-                        }
-                        Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
-                    }
+        List<String> keyList = new ArrayList<>();
+        for (String key : parentCommit3A.getTracked().keySet()){
+            //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
+            if (parentCommit3B.getTracked().containsKey(key)){
+                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
+                File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
+                if (cwdList.contains(blob3B.getFilePath())) {
+                    NotherUtils.clearFile(rmAddStageFile2);
                 }
-
-                //文件名不被Commit3B追踪的文件，而仅被Commit3A追踪，那么直接删除这些文件
-                if (!parentCommit1.getTracked().containsKey(Commit3A)){
-                        Blob blob3A = Blob.fromFile(Commit3AValue);
-                        if (cwdList.contains(blob3A.getFilePath())) {
-                            File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
-                            NotherUtils.rm(rmAddStageFile2);
-                        }
-                }
-
-                //文仅被checked branch跟踪的文件又可以分为两类
-                if (!parentCommit2.getTracked().containsKey(Commit3B)){
-                    Blob blob3B = Blob.fromFile(Commit3BValue);
-                    //将要直接写入的时候如果有同名文件（例如1.txt）已经在工作目录中了，说明工作目录中在执行checkout前增加了新的1.txt文件而没有commit，
-                        // 这时候gitlet不知道是应该保存用户新添加进来的1.txt还是把Commit3B中的1.txt拿过来overwrite掉，为了避免出现信息丢失，gitlet就会报错
-                        if (cwdList.contains(blob3B.getFilePath())){
-                            NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
-                        }else {
-                            File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-                            NotherUtils.clearFile(rmAddStageFile2);
-                            //createNewFile(rmAddStageFile2);
-                            Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
-                        }
-                }
+                Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
+                keyList.add(key);
             }
         }
+        if (keyList != null && !keyList.isEmpty()){
+            for (String key : keyList){
+                parentCommit3A.getTracked().remove(key);
+                parentCommit3B.getTracked().remove(key);
+            }
+        }
+        //仅被当前commit跟踪（删除文件）
+        for (String key : parentCommit3A.getTracked().keySet()){
+            Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key));
+            if (cwdList.contains(blob3A.getFilePath())) {
+                File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
+                NotherUtils.rm(rmAddStageFile2);
+            }
+        }
+        //仅被checked branch跟踪的文件又可以分为两类：
+        //不存在于当前工作目录（覆写）
+        //已经存在于当前工作目录的文件（打印错误信息）
+        for (String key : parentCommit3B.getTracked().keySet()){
+            Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
+            if (cwdList.contains(blob3B.getFilePath())){
+                NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
+            }else {
+                File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
+                NotherUtils.clearFile(rmAddStageFile2);
+                //createNewFile(rmAddStageFile2);
+                Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
+            }
+        }
+        //更改HEAD指向Commit3B，最后清空缓存区。
+        NotherUtils.clearFile(HEAD);
+        Utils.writeContents(HEAD,branch);
+        if (REMOVE_STAGE.exists()) {
+            NotherUtils.rm(REMOVE_STAGE);
+            //创建removeStage文件目录
+            REMOVE_STAGE.mkdir();
+        }
+        if (ADD_STAGE.exists()) {
+            NotherUtils.rm(ADD_STAGE);
+            //创建removeStage文件目录
+            ADD_STAGE.mkdir();
+        }
+
+
+//        for (String key : parentCommit1.getTracked().keySet()){
+//            //切换后blobId
+//            String Commit3B = key;
+//            String Commit3BValue = parentCommit1.getTracked().get(Commit3B);
+//            for (String key2 : parentCommit2.getTracked().keySet()){
+//                //切换前blobId
+//                String Commit3A = key2;
+//                String Commit3AValue = parentCommit1.getTracked().get(Commit3A);
+//
+//                //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
+//                if (Commit3BValue != null && Commit3AValue != null){
+//                    //相同文件名并且blobID相同，不进行任何操作
+//                    if (Commit3BValue.equals(Commit3AValue)){
+//
+//                    }else{
+//                        //相同文件名但blobID不同（也就是内容不同），则用Commit3B种的文件来替代原来的文件
+//                        Blob blob3B = Blob.fromFile(Commit3BValue);
+//                        File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
+//                        if (cwdList.contains(blob3B.getFilePath())) {
+//                            NotherUtils.clearFile(rmAddStageFile2);
+//                        }
+//                        Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
+//                    }
+//                }
+//
+//                //文件名不被Commit3B追踪的文件，而仅被Commit3A追踪，那么直接删除这些文件
+//                if (!parentCommit1.getTracked().containsKey(Commit3A)){
+//                    System.out.println("Commit3AValue:"+Commit3AValue);
+//                        Blob blob3A = Blob.fromFile(Commit3AValue);
+//                        if (cwdList.contains(blob3A.getFilePath())) {
+//                            File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
+//                            NotherUtils.rm(rmAddStageFile2);
+//                        }
+//                }
+//
+//                //文仅被checked branch跟踪的文件又可以分为两类
+//                if (!parentCommit2.getTracked().containsKey(Commit3B)){
+//                    Blob blob3B = Blob.fromFile(Commit3BValue);
+//                    //将要直接写入的时候如果有同名文件（例如1.txt）已经在工作目录中了，说明工作目录中在执行checkout前增加了新的1.txt文件而没有commit，
+//                        // 这时候gitlet不知道是应该保存用户新添加进来的1.txt还是把Commit3B中的1.txt拿过来overwrite掉，为了避免出现信息丢失，gitlet就会报错
+//                        if (cwdList.contains(blob3B.getFilePath())){
+//                            NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
+//                        }else {
+//                            File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
+//                            NotherUtils.clearFile(rmAddStageFile2);
+//                            //createNewFile(rmAddStageFile2);
+//                            Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
+//                        }
+//                }
+//            }
+//        }
     }
 
     public static void setReset(String resetCommitId) {
@@ -581,59 +638,63 @@ public class Repository implements Serializable {
         NotherUtils.clearFile(newBranch);
         Utils.writeContents(newBranch,resetCommitId);
 
-        Commit parentCommit1 = Commit.fromFile(commitId1);
+        Commit parentCommit3A = Commit.fromFile(commitId1);
         //未切换前的分支
-        Commit parentCommit2 = NotherUtils.getHeadBranchCommitId();
+        Commit parentCommit3B = Commit.fromFile(resetCommitId);
         List<String> cwdList = Utils.plainFilenamesIn(CWD);
-        for (String key : parentCommit1.getTracked().keySet()){
-            //切换后blobId
-            String Commit3B = key;
-            String Commit3BValue = parentCommit1.getTracked().get(Commit3B);
-            for (String key2 : parentCommit2.getTracked().keySet()){
-                //切换前blobId
-                String Commit3A = key2;
-                String Commit3AValue = parentCommit1.getTracked().get(Commit3A);
-
-                //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
-                if (Commit3BValue != null && Commit3AValue != null){
-                    //相同文件名并且blobID相同，不进行任何操作
-                    if (Commit3BValue.equals(Commit3AValue)){
-
-                    }else{
-                        //相同文件名但blobID不同（也就是内容不同），则用Commit3B种的文件来替代原来的文件
-                        Blob blob3B = Blob.fromFile(Commit3BValue);
-                        File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-                        if (cwdList.contains(blob3B.getFilePath())) {
-                            NotherUtils.clearFile(rmAddStageFile2);
-                        }
-                        Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
-                    }
+        List<String> keyList = new ArrayList<>();
+        for (String key : parentCommit3A.getTracked().keySet()){
+            //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
+            if (parentCommit3B.getTracked().containsKey(key)){
+                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
+                File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
+                if (cwdList.contains(blob3B.getFilePath())) {
+                    NotherUtils.clearFile(rmAddStageFile2);
                 }
-
-                //文件名不被Commit3B追踪的文件，而仅被Commit3A追踪，那么直接删除这些文件
-                if (!parentCommit1.getTracked().containsKey(Commit3A)){
-                    Blob blob3A = Blob.fromFile(Commit3AValue);
-                    if (cwdList.contains(blob3A.getFilePath())) {
-                        File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
-                        NotherUtils.rm(rmAddStageFile2);
-                    }
-                }
-
-                //文仅被checked branch跟踪的文件又可以分为两类
-                if (!parentCommit2.getTracked().containsKey(Commit3B)){
-                    Blob blob3B = Blob.fromFile(Commit3BValue);
-                    //将要直接写入的时候如果有同名文件（例如1.txt）已经在工作目录中了，说明工作目录中在执行checkout前增加了新的1.txt文件而没有commit，
-                    // 这时候gitlet不知道是应该保存用户新添加进来的1.txt还是把Commit3B中的1.txt拿过来overwrite掉，为了避免出现信息丢失，gitlet就会报错
-                    if (cwdList.contains(blob3B.getFilePath())){
-                        NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
-                    }else {
-                        File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-                        NotherUtils.clearFile(rmAddStageFile2);
-                        //createNewFile(rmAddStageFile2);
-                        Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
-                    }
-                }
+                Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
+                keyList.add(key);
             }
+        }
+        if (keyList != null && !keyList.isEmpty()){
+            for (String key : keyList){
+                parentCommit3A.getTracked().remove(key);
+                parentCommit3B.getTracked().remove(key);
+            }
+        }
+        //仅被当前commit跟踪（删除文件）
+        for (String key : parentCommit3A.getTracked().keySet()){
+            Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key));
+            if (cwdList.contains(blob3A.getFilePath())) {
+                File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
+                NotherUtils.rm(rmAddStageFile2);
+            }
+        }
+        //仅被checked branch跟踪的文件又可以分为两类：
+        //不存在于当前工作目录（覆写）
+        //已经存在于当前工作目录的文件（打印错误信息）
+        for (String key : parentCommit3B.getTracked().keySet()){
+            Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
+            if (cwdList.contains(blob3B.getFilePath())){
+                NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
+            }else {
+                File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
+                NotherUtils.clearFile(rmAddStageFile2);
+                //createNewFile(rmAddStageFile2);
+                Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
+            }
+        }
+        //更改HEAD指向Commit3B，最后清空缓存区。
+        NotherUtils.clearFile(HEAD);
+        Utils.writeContents(HEAD,branch);
+        if (REMOVE_STAGE.exists()) {
+            NotherUtils.rm(REMOVE_STAGE);
+            //创建removeStage文件目录
+            REMOVE_STAGE.mkdir();
+        }
+        if (ADD_STAGE.exists()) {
+            NotherUtils.rm(ADD_STAGE);
+            //创建removeStage文件目录
+            ADD_STAGE.mkdir();
         }
     }
 }
