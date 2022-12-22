@@ -37,7 +37,8 @@ public class Blob implements Serializable {
         File dir = file.getParentFile();
         if (!dir.exists()) {
             if (!dir.mkdir()) {
-                throw new IllegalArgumentException(String.format("mkdir: %s: Failed to create.", dir.getPath()));
+                throw new IllegalArgumentException
+                        (String.format("mkdir: %s: Failed to create.", dir.getPath()));
             }
         }
         writeObject(file, obj);
@@ -57,7 +58,7 @@ public class Blob implements Serializable {
     public static String getBlobId(File file) {
         Repository.createNewFile(file);
         byte[] bytes2 = Utils.readContents(file);
-        return Utils.sha1( bytes2);
+        return Utils.sha1(bytes2);
     }
 
     public File getBlobSaveFileName() {
@@ -78,7 +79,7 @@ public class Blob implements Serializable {
     }
 
     public static File getObjectFile(String id) {
-        if (!Repository.BLOB.exists()){
+        if (!Repository.BLOB.exists()) {
             Repository.BLOB.mkdir();
         }
         File fileBlob = join(Repository.BLOB, id);

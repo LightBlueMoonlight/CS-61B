@@ -32,7 +32,8 @@ public class NotherUtils {
 
     public static void rm(File file) {
         if (!file.delete()) {
-            throw new IllegalArgumentException(String.format("rm: %s: Failed to delete.", file.getPath()));
+            throw new IllegalArgumentException
+                    (String.format("rm: %s: Failed to delete.", file.getPath()));
         }
     }
 
@@ -48,11 +49,11 @@ public class NotherUtils {
         return parentCommit;
     }
 
-    public static String getBytes(byte[] bytes){
+    public static String getBytes(byte[] bytes) {
         String aa = "aaaaaaa";
         try {
-            aa = new String(bytes,"UTF-8");
-        } catch (UnsupportedEncodingException e) {//有可能会出现不能支持的编码格式，捕捉异常。
+            aa = new String(bytes, "UTF-8");
+        } catch (UnsupportedEncodingException e) { //有可能会出现不能支持的编码格式，捕捉异常。
             e.printStackTrace();
         }
         return aa;

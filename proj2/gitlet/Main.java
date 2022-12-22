@@ -1,5 +1,7 @@
 package gitlet;
 
+import java.util.List;
+
 import static gitlet.Utils.UID_LENGTH;
 
 /**
@@ -103,8 +105,13 @@ public class Main {
                     }
                     String commitId = args[1];
                     if(commitId.length() < UID_LENGTH){
-                        if (!Repository.COMMIT.exists()) {
-                            NotherUtils.message("No commit with that id exists.");
+                        List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT);
+                        for (String str : commitList) {
+                            str = str.substring(0,commitId.length());
+                            if (str.equals(commitId)){
+                                commitId = str;
+                                break;
+                            }
                         }
                     }
                     String fileName2 = args[3];

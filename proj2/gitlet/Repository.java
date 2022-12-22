@@ -1,3 +1,4 @@
+
 package gitlet;
 
 import java.io.File;
@@ -5,7 +6,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static gitlet.Utils.*;
@@ -95,7 +95,7 @@ public class Repository implements Serializable {
     public static void createNewFile(File newFile) {
         try {
             File fileParent = newFile.getParentFile();
-            if (!fileParent.exists()){
+            if (!fileParent.exists()) {
                 fileParent.mkdir();
             }
 
@@ -134,15 +134,15 @@ public class Repository implements Serializable {
         Blob blob = new Blob(newFile);
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
         //如果addStage目录不存在就创建
-        if (!ADD_STAGE.exists()){
+        if (!ADD_STAGE.exists()) {
             ADD_STAGE.mkdir();
         }
         boolean flg = true;
         boolean flg2 = false;
-        if (trackBlobId != null){
-            if (trackBlobId.equals(blob.getId())){
+        if (trackBlobId != null) {
+            if (trackBlobId.equals(blob.getId())) {
                 flg = false;
-                if (newFile.exists()){
+                if (newFile.exists()) {
                     NotherUtils.rm(newFile);
                 }
             }
@@ -150,15 +150,15 @@ public class Repository implements Serializable {
         }
         //查看添加暂存区下目录
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        if (!addStageList.contains(blob.blobId()) && flg){
+        if (!addStageList.contains(blob.blobId()) && flg) {
             flg2 = true;
         }
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
-        if (removeStageList != null && !removeStageList.isEmpty()){
-            for (String str : removeStageList){
+        if (removeStageList != null && !removeStageList.isEmpty()) {
+            for (String str : removeStageList) {
                 Blob blob1 = Blob.fromFile(str);
-                if (blob1.getFileName().equals(blob.getFileName())){
-                    File rmAddStageFile1 = join(REMOVE_STAGE,str);
+                if (blob1.getFileName().equals(blob.getFileName())) {
+                    File rmAddStageFile1 = join(REMOVE_STAGE, str);
                     createNewFile(rmAddStageFile1);
                     NotherUtils.rm(rmAddStageFile1);
                     flg2 = false;
@@ -166,8 +166,8 @@ public class Repository implements Serializable {
             }
         }
         //flg2为true才创建
-        if (flg2){
-            File rmAddStageFile2 = join(ADD_STAGE,blob.blobId());
+        if (flg2) {
+            File rmAddStageFile2 = join(ADD_STAGE, blob.blobId());
             Utils.writeObject(rmAddStageFile2, blob.blobId());
             createNewFile(rmAddStageFile2);
         }
@@ -189,10 +189,10 @@ public class Repository implements Serializable {
     //comit时的操作
     public static void setCommit(String message) {
         //如果addStage目录不存在就创建
-        if (!ADD_STAGE.exists()){
+        if (!ADD_STAGE.exists()) {
             ADD_STAGE.mkdir();
         }
-        if (!REMOVE_STAGE.exists()){
+        if (!REMOVE_STAGE.exists()) {
             REMOVE_STAGE.mkdir();
         }
         //查看添加暂存区下目录
@@ -235,7 +235,7 @@ public class Repository implements Serializable {
                 File removeFile = join(REMOVE_STAGE, str);
                 //创建bolb文件
                 Blob blobFile = Blob.fromFile(str);
-                if (parentTracked !=null){
+                if (parentTracked != null) {
                     parentTracked.remove(blobFile.getFilePath());
                     //删除removeStage下的暂存文件
                     NotherUtils.rm(removeFile);
@@ -249,7 +249,7 @@ public class Repository implements Serializable {
         //先删除在创建
         NotherUtils.rm(headBranch);
         //重新创建
-        makeBranch(headFileString,newCommit.getCommitID());
+        makeBranch(headFileString, newCommit.getCommitID());
     }
 
     public static void setRM(String removeFile) {
@@ -283,11 +283,11 @@ public class Repository implements Serializable {
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         //文件刚被add进addstage而没有commit，直接删除addstage中的Blob就可以
-        if (addStageList != null && !addStageList.isEmpty()){
-            for (String str : addStageList){
+        if (addStageList != null && !addStageList.isEmpty()) {
+            for (String str : addStageList) {
                 Blob blob1 = Blob.fromFile(str);
-                if (blob1.getFileName().equals(blob.getFileName())){
-                    File rmAddStageFile1 = join(ADD_STAGE,str);
+                if (blob1.getFileName().equals(blob.getFileName())) {
+                    File rmAddStageFile1 = join(ADD_STAGE, str);
                     createNewFile(rmAddStageFile1);
                     NotherUtils.rm(rmAddStageFile1);
                     flg = false;
@@ -297,16 +297,16 @@ public class Repository implements Serializable {
         //文件被当前Commit追踪并且存在于工作目录中，那么就将及放入removestage并且在工作目录中删除此文件。在下次commit中进行记录。
         //文件被当前Commit追踪并且不存在于工作目录中，那么就将及放入removestage并即可
         //不为null说明当前commit文件包含当前删除blob文件路径
-        if (trackBlobId != null){
+        if (trackBlobId != null) {
             //blobid相等 commit有引用，添加到removeStage 删除目录中的文件
-                flg = false;
-                //removeStage不包含直接添加
-                if (!removeStageList.contains(blob.blobId())){
-                    File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
-                    Utils.writeObject(rmAddStageFile2, blob.blobId());
-                    createNewFile(rmAddStageFile2);
-                    NotherUtils.rm(newFile);
-                }
+            flg = false;
+            //removeStage不包含直接添加
+            if (!removeStageList.contains(blob.blobId())){
+                File rmAddStageFile2 = join(REMOVE_STAGE,blob.blobId());
+                Utils.writeObject(rmAddStageFile2, blob.blobId());
+                createNewFile(rmAddStageFile2);
+                NotherUtils.rm(newFile);
+            }
         }
         //如果文件既没有被 暂存也没有被 head commit跟踪，打印错误信息No reason to remove the file.
         if (flg) {
@@ -382,7 +382,7 @@ public class Repository implements Serializable {
         String headBranchText = Utils.readContentsAsString(headBranch);
         //根据commitId生成commit文件
         File newBranch = join(HEADS, branch);
-        Utils.writeContents(newBranch,headBranchText);
+        Utils.writeContents(newBranch, headBranchText);
         //createNewFile(newBranch);
 
     }
@@ -392,7 +392,7 @@ public class Repository implements Serializable {
         //读取HEAD下的分支 例如：master
         String headFileString = Utils.readContentsAsString(HEAD);
         List<String> branchList = Utils.plainFilenamesIn(HEADS);
-        for (String branchName : branchList){
+        for (String branchName : branchList) {
             if (branchName.equals(headFileString)){
                 Utils.message("*" + branchName);
                 continue;
@@ -402,8 +402,8 @@ public class Repository implements Serializable {
         System.out.println();
         Utils.message("=== Staged Files ===");
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        if (addStageList !=null && !addStageList.isEmpty()){
-            for (String branchName : addStageList){
+        if (addStageList != null && !addStageList.isEmpty()) {
+            for (String branchName : addStageList) {
                 //根据blobId还原blob文件
                 Blob blobFromFile = Blob.fromFile(branchName);
                 Utils.message(blobFromFile.getFileName().getName());
@@ -412,8 +412,8 @@ public class Repository implements Serializable {
         System.out.println();
         Utils.message("=== Removed Files ===");
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
-        if (removeStageList !=null && !removeStageList.isEmpty()){
-            for (String branchName : removeStageList){
+        if (removeStageList != null && !removeStageList.isEmpty()) {
+            for (String branchName : removeStageList) {
                 //根据blobId还原blob文件
                 Blob blobFromFile = Blob.fromFile(branchName);
                 Utils.message(blobFromFile.getFileName().getName());
@@ -432,7 +432,7 @@ public class Repository implements Serializable {
             NotherUtils.message("A branch with that name does not exist.");
         }
         String head = Utils.readContentsAsString(HEAD);
-        if (head.equals(text)){
+        if (head.equals(text)) {
             NotherUtils.message("Cannot remove the current branch.");
         }
         File headBranch = join(HEADS, text);
@@ -448,7 +448,7 @@ public class Repository implements Serializable {
         //如果文件被当前commit所跟踪，则其放入工作目录中（如果工作目录中有同名文件，则替代它）；
         Commit parentCommit = NotherUtils.getHeadBranchCommitId();
         String trackBlobId = parentCommit.getTracked().get(newFile.getPath());
-        if(trackBlobId != null){
+        if(trackBlobId != null) {
             List<String> cwdList = Utils.plainFilenamesIn(CWD);
             if (cwdList.contains(fileName)) {
                 File rmAddStageFile2 = join(CWD, fileName);
@@ -457,12 +457,12 @@ public class Repository implements Serializable {
             }
             File newBranch = join(CWD, fileName);
             Blob blob = Blob.fromFile(trackBlobId);
-            Utils.writeContents(newBranch,NotherUtils.getBytes(blob.getBytes()));
+            Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
             createNewFile(newBranch);
 //            File addBranch = join(ADD_STAGE, trackBlobId);
 //            Utils.writeContents(addBranch,trackBlobId);
 //            createNewFile(addBranch);
-        }else{
+        } else {
             NotherUtils.message("File does not exist in that commit.");
         }
     }
@@ -473,12 +473,12 @@ public class Repository implements Serializable {
                 : join(CWD, fileName);
         createNewFile(newFile);
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
-        if (!commitList.contains(commitId)){
+        if (!commitList.contains(commitId)) {
             NotherUtils.message("No commit with that id exists.");
         }
         Commit parentCommit = Commit.fromFile(commitId);
         String trackBlobId = parentCommit.getTracked().get(newFile.getPath());
-        if(trackBlobId != null){
+        if (trackBlobId != null) {
             Blob blob = Blob.fromFile(trackBlobId);
             List<String> cwdList = Utils.plainFilenamesIn(CWD);
             if (cwdList.contains(fileName)) {
@@ -487,12 +487,12 @@ public class Repository implements Serializable {
                 NotherUtils.rm(rmAddStageFile2);
             }
             File newBranch = join(CWD, fileName);
-            Utils.writeContents(newBranch,NotherUtils.getBytes(blob.getBytes()));
+            Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
             createNewFile(newBranch);
 //            File newBranch = join(ADD_STAGE, trackBlobId);
 //            Utils.writeContents(newBranch,blob.getId());
 //            createNewFile(newBranch);
-        }else{
+        } else {
             NotherUtils.message("File does not exist in that commit.");
         }
     }
@@ -500,15 +500,16 @@ public class Repository implements Serializable {
     public static void checkoutBranch(String branch) {
         //如果checked branch不存在，输出错误信息
         List<String> headsList = Utils.plainFilenamesIn(HEADS);
-        if (!headsList.contains(branch)){
+        if (!headsList.contains(branch)) {
             NotherUtils.message("No such branch exists.");
         }
         String headFileString = Utils.readContentsAsString(HEAD);
-        if (headFileString.equals(branch)){
-            NotherUtils.message("No need to checkout the current branch.");
+        if (headFileString.equals(branch)) {
+            NotherUtils.message("No need to checkout " +
+                    "the current branch.");
         }
 
-        File newBranch = join(HEADS,branch);
+        File newBranch = join(HEADS, branch);
         //newBranCh的commitID
         String commitId1 = Utils.readContentsAsString(newBranch);
         //newbranch
@@ -516,9 +517,9 @@ public class Repository implements Serializable {
         //未切换前的分支
         Commit parentCommit3A = NotherUtils.getHeadBranchCommitId();
         List<String> keyList = new ArrayList<>();
-        for (String key : parentCommit3A.getTracked().keySet()){
+        for (String key : parentCommit3A.getTracked().keySet()) {
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
-            if (parentCommit3B.getTracked().containsKey(key)){
+            if (parentCommit3B.getTracked().containsKey(key)) {
                 Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key));
                 File blobFile= new File(blob.getFilePath());
                 if (blobFile.exists()) {
@@ -528,119 +529,73 @@ public class Repository implements Serializable {
                 keyList.add(key);
             }
         }
-        if (keyList != null && !keyList.isEmpty()){
+        if (keyList != null && !keyList.isEmpty()) {
             for (String key : keyList){
                 parentCommit3A.getTracked().remove(key);
                 parentCommit3B.getTracked().remove(key);
             }
         }
         //仅被当前commit跟踪（删除文件）
-        for (String key : parentCommit3A.getTracked().keySet()){
+        for (String key : parentCommit3A.getTracked().keySet()) {
             Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key));
             File blob3AFile= new File(blob3A.getFilePath());
-            if (blob3AFile.exists()){
+            if (blob3AFile.exists()) {
                 NotherUtils.rm(blob3AFile);
             }
         }
         //仅被checked branch跟踪的文件又可以分为两类：
         //不存在于当前工作目录（覆写）
         //已经存在于当前工作目录的文件（打印错误信息）
-        for (String key : parentCommit3B.getTracked().keySet()){
+        for (String key : parentCommit3B.getTracked().keySet()) {
             Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
             File blob3BFile= new File(blob3B.getFilePath());
-            if (blob3BFile.exists()){
-                NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
+            if (blob3BFile.exists()) {
+                NotherUtils.message("There is an untracked file in the way; " +
+                        "delete it, or add and commit it first.");
             }else {
-                Utils.writeContents(blob3BFile,NotherUtils.getBytes(blob3B.getBytes()));
+                Utils.writeContents(blob3BFile, NotherUtils.getBytes(blob3B.getBytes()));
             }
         }
         //更改HEAD指向Commit3B，最后清空缓存区。
         NotherUtils.clearFile(HEAD);
-        Utils.writeContents(HEAD,branch);
-        if (REMOVE_STAGE.exists()) {
-            NotherUtils.rm(REMOVE_STAGE);
-            //创建removeStage文件目录
-            REMOVE_STAGE.mkdir();
+        Utils.writeContents(HEAD, branch);
+        List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
+        List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
+        if ((ADD_STAGE.exists())) {
+            for (String addStageFile : addStageList) {
+                File addFile = join(ADD_STAGE, addStageFile);
+                //删除addStage下的暂存文件
+                NotherUtils.rm(addFile);
+            }
         }
-        if (ADD_STAGE.exists()) {
-            NotherUtils.rm(ADD_STAGE);
-            //创建removeStage文件目录
-            ADD_STAGE.mkdir();
+        //如果删除区存在
+        if ((REMOVE_STAGE.exists())) {
+            for (String str : removeStageList) {
+                File addFile = join(REMOVE_STAGE, str);
+                //删除addStage下的暂存文件
+                NotherUtils.rm(addFile);
+            }
         }
-
-
-//        for (String key : parentCommit1.getTracked().keySet()){
-//            //切换后blobId
-//            String Commit3B = key;
-//            String Commit3BValue = parentCommit1.getTracked().get(Commit3B);
-//            for (String key2 : parentCommit2.getTracked().keySet()){
-//                //切换前blobId
-//                String Commit3A = key2;
-//                String Commit3AValue = parentCommit1.getTracked().get(Commit3A);
-//
-//                //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
-//                if (Commit3BValue != null && Commit3AValue != null){
-//                    //相同文件名并且blobID相同，不进行任何操作
-//                    if (Commit3BValue.equals(Commit3AValue)){
-//
-//                    }else{
-//                        //相同文件名但blobID不同（也就是内容不同），则用Commit3B种的文件来替代原来的文件
-//                        Blob blob3B = Blob.fromFile(Commit3BValue);
-//                        File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-//                        if (cwdList.contains(blob3B.getFilePath())) {
-//                            NotherUtils.clearFile(rmAddStageFile2);
-//                        }
-//                        Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
-//                    }
-//                }
-//
-//                //文件名不被Commit3B追踪的文件，而仅被Commit3A追踪，那么直接删除这些文件
-//                if (!parentCommit1.getTracked().containsKey(Commit3A)){
-//                    System.out.println("Commit3AValue:"+Commit3AValue);
-//                        Blob blob3A = Blob.fromFile(Commit3AValue);
-//                        if (cwdList.contains(blob3A.getFilePath())) {
-//                            File rmAddStageFile2 = join(CWD, blob3A.getFilePath());
-//                            NotherUtils.rm(rmAddStageFile2);
-//                        }
-//                }
-//
-//                //文仅被checked branch跟踪的文件又可以分为两类
-//                if (!parentCommit2.getTracked().containsKey(Commit3B)){
-//                    Blob blob3B = Blob.fromFile(Commit3BValue);
-//                    //将要直接写入的时候如果有同名文件（例如1.txt）已经在工作目录中了，说明工作目录中在执行checkout前增加了新的1.txt文件而没有commit，
-//                        // 这时候gitlet不知道是应该保存用户新添加进来的1.txt还是把Commit3B中的1.txt拿过来overwrite掉，为了避免出现信息丢失，gitlet就会报错
-//                        if (cwdList.contains(blob3B.getFilePath())){
-//                            NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
-//                        }else {
-//                            File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-//                            NotherUtils.clearFile(rmAddStageFile2);
-//                            //createNewFile(rmAddStageFile2);
-//                            Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
-//                        }
-//                }
-//            }
-//        }
     }
 
     public static void setReset(String resetCommitId) {
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
-        if (!commitList.contains(resetCommitId)){
+        if (!commitList.contains(resetCommitId)) {
             NotherUtils.message("No commit with that id exists.");
         }
         String branch = Utils.readContentsAsString(HEAD);
-        File newBranch = join(HEADS,branch);
+        File newBranch = join(HEADS, branch);
         String commitId1 = Utils.readContentsAsString(newBranch);
         NotherUtils.clearFile(newBranch);
-        Utils.writeContents(newBranch,resetCommitId);
+        Utils.writeContents(newBranch, resetCommitId);
 
         Commit parentCommit3A = Commit.fromFile(commitId1);
         //未切换前的分支
         Commit parentCommit3B = Commit.fromFile(resetCommitId);
-        List<String> cwdList = Utils.plainFilenamesIn(CWD);
         List<String> keyList = new ArrayList<>();
-        for (String key : parentCommit3A.getTracked().keySet()){
+        for (String key : parentCommit3A.getTracked().keySet()) {
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
-            if (parentCommit3B.getTracked().containsKey(key)){
+            if (parentCommit3B.getTracked().containsKey(key)) {
                 Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key));
                 File blobFile= new File(blob.getFilePath());
                 if (blobFile.exists()) {
@@ -650,44 +605,52 @@ public class Repository implements Serializable {
                 keyList.add(key);
             }
         }
-        if (keyList != null && !keyList.isEmpty()){
-            for (String key : keyList){
+        if (keyList != null && !keyList.isEmpty()) {
+            for (String key : keyList) {
                 parentCommit3A.getTracked().remove(key);
                 parentCommit3B.getTracked().remove(key);
             }
         }
         //仅被当前commit跟踪（删除文件）
-        for (String key : parentCommit3A.getTracked().keySet()){
+        for (String key : parentCommit3A.getTracked().keySet()) {
             Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key));
             File blob3AFile= new File(blob3A.getFilePath());
-            if (blob3AFile.exists()){
+            if (blob3AFile.exists()) {
                 NotherUtils.rm(blob3AFile);
             }
         }
         //仅被checked branch跟踪的文件又可以分为两类：
         //不存在于当前工作目录（覆写）
         //已经存在于当前工作目录的文件（打印错误信息）
-        for (String key : parentCommit3B.getTracked().keySet()){
+        for (String key : parentCommit3B.getTracked().keySet()) {
             Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
-            File blob3BFile= new File(blob3B.getFilePath());
-            if (blob3BFile.exists()){
-                NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
+            File blob3BFile = new File(blob3B.getFilePath());
+            if (blob3BFile.exists()) {
+                NotherUtils.message("There is an untracked file in the way;" +
+                        " delete it, or add and commit it first.");
             }else {
-                Utils.writeContents(blob3BFile,NotherUtils.getBytes(blob3B.getBytes()));
+                Utils.writeContents(blob3BFile, NotherUtils.getBytes(blob3B.getBytes()));
             }
         }
         //更改HEAD指向Commit3B，最后清空缓存区。
         NotherUtils.clearFile(HEAD);
-        Utils.writeContents(HEAD,branch);
-        if (REMOVE_STAGE.exists()) {
-            NotherUtils.rm(REMOVE_STAGE);
-            //创建removeStage文件目录
-            REMOVE_STAGE.mkdir();
+        Utils.writeContents(HEAD, branch);
+        List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
+        List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
+        if ((ADD_STAGE.exists())) {
+            for (String addStageFile : addStageList) {
+                File addFile = join(ADD_STAGE, addStageFile);
+                //删除addStage下的暂存文件
+                NotherUtils.rm(addFile);
+            }
         }
-        if (ADD_STAGE.exists()) {
-            NotherUtils.rm(ADD_STAGE);
-            //创建removeStage文件目录
-            ADD_STAGE.mkdir();
+        //如果删除区存在
+        if ((REMOVE_STAGE.exists())) {
+            for (String str : removeStageList) {
+                File addFile = join(REMOVE_STAGE, str);
+                //删除addStage下的暂存文件
+                NotherUtils.rm(addFile);
+            }
         }
     }
 }
