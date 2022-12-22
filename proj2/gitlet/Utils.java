@@ -143,7 +143,7 @@ class Utils {
             }
             str.close();
         } catch (IOException | ClassCastException excp) {
-            throw new IllegalArgumentException(excp.getMessage());
+            throw new IllegalArgumentException(excp.getMessage() + excp.getLocalizedMessage());
         }
     }
 

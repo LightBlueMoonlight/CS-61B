@@ -522,12 +522,12 @@ public class Repository implements Serializable {
         for (String key : parentCommit3A.getTracked().keySet()){
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
             if (parentCommit3B.getTracked().containsKey(key)){
-                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
-                File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
-                if (cwdList.contains(blob3B.getFilePath())) {
+                Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key));
+                File rmAddStageFile2 = join(CWD, blob.getFilePath());
+                if (cwdList.contains(blob.getFilePath())) {
                     NotherUtils.clearFile(rmAddStageFile2);
                 }
-                Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
+                Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob.getBytes()));
                 keyList.add(key);
             }
         }
@@ -554,8 +554,8 @@ public class Repository implements Serializable {
                 NotherUtils.message("There is an untracked file in the way; delete it, or add and commit it first.");
             }else {
                 File rmAddStageFile2 = join(CWD, blob3B.getFilePath());
+                createNewFile(rmAddStageFile2);
                 NotherUtils.clearFile(rmAddStageFile2);
-                //createNewFile(rmAddStageFile2);
                 Utils.writeContents(rmAddStageFile2,NotherUtils.getBytes(blob3B.getBytes()));
             }
         }
