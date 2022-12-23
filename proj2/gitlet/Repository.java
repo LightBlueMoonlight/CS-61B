@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import static gitlet.Utils.*;
 
 public class Repository implements Serializable {
@@ -168,6 +169,8 @@ public class Repository implements Serializable {
             File rmAddStageFile2 = join(ADD_STAGE, blob.blobId());
             Utils.writeObject(rmAddStageFile2, blob.blobId());
             createNewFile(rmAddStageFile2);
+            File rmFile = join(CWD, blob.getFilePath());
+            NotherUtils.rm(rmFile);
         }
     }
 
@@ -538,8 +541,7 @@ public class Repository implements Serializable {
             }
         }
         //仅被checked branch跟踪的文件又可以分为两类：
-        //不存在于当前工作目录（覆写）
-        //已经存在于当前工作目录的文件（打印错误信息）
+        //不存在于当前工作目录（覆写）已经存在于当前工作目录的文件（打印错误信息）
         if (parentCommit3B.getTracked() != null && !parentCommit3B.getTracked().isEmpty()) {
             for (String key : parentCommit3B.getTracked().keySet()) {
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
@@ -548,9 +550,9 @@ public class Repository implements Serializable {
                     List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
                     Blob blobcwd = new Blob(blobcwdFile);
                     if (!blobcwd.getId().equals(blob3B.getId())
-                            && !addList.contains(blob3B.getFileName().getName())){
-//                        NotherUtils.message("There is an untracked file in the way; "
-//                                + "delete it, or add and commit it first.");
+                            && !addList.contains(blob3B.getFileName().getName())) {
+                        NotherUtils.message("There is an untracked file in the way; "
+                                + "delete it, or add and commit it first.");
                     }
                 } else {
                     File blob3BFile = new File(blob3B.getFilePath());
@@ -558,7 +560,6 @@ public class Repository implements Serializable {
                 }
             }
         }
-
         //更改HEAD指向Commit3B，最后清空缓存区。
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
@@ -569,7 +570,6 @@ public class Repository implements Serializable {
                 NotherUtils.rm(addFile);
             }
         }
-        //如果删除区存在
         if ((REMOVE_STAGE.exists())) {
             for (String str : removeStageList) {
                 File addFile = join(REMOVE_STAGE, str);
@@ -589,7 +589,6 @@ public class Repository implements Serializable {
         String commitId1 = Utils.readContentsAsString(newBranch);
         NotherUtils.clearFile(newBranch);
         Utils.writeContents(newBranch, resetCommitId);
-
         Commit parentCommit3A = Commit.fromFile(commitId1);
         //未切换前的分支
         Commit parentCommit3B = Commit.fromFile(resetCommitId);
@@ -621,8 +620,7 @@ public class Repository implements Serializable {
             }
         }
         //仅被checked branch跟踪的文件又可以分为两类：
-        //不存在于当前工作目录（覆写）
-        //已经存在于当前工作目录的文件（打印错误信息）
+        //不存在于当前工作目录（覆写）已经存在于当前工作目录的文件（打印错误信息）
         if (parentCommit3B.getTracked() != null && !parentCommit3B.getTracked().isEmpty()) {
             for (String key : parentCommit3B.getTracked().keySet()) {
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
@@ -631,9 +629,9 @@ public class Repository implements Serializable {
                     List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
                     Blob blobcwd = new Blob(blobcwdFile);
                     if (!blobcwd.getId().equals(blob3B.getId())
-                            && !addList.contains(blob3B.getFileName().getName())){
-//                        NotherUtils.message("There is an untracked file in the way; "
-//                                + "delete it, or add and commit it first.");
+                            && !addList.contains(blob3B.getFileName().getName())) {
+                        NotherUtils.message("There is an untracked file in the way; "
+                                + "delete it, or add and commit it first.");
                     }
                 } else {
                     File blob3BFile = new File(blob3B.getFilePath());
@@ -653,7 +651,6 @@ public class Repository implements Serializable {
                 NotherUtils.rm(addFile);
             }
         }
-        //如果删除区存在
         if ((REMOVE_STAGE.exists())) {
             for (String str : removeStageList) {
                 File addFile = join(REMOVE_STAGE, str);
