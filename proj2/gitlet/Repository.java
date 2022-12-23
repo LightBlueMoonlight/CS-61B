@@ -1,5 +1,4 @@
 package gitlet;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -490,8 +489,7 @@ public class Repository implements Serializable {
         }
     }
 
-    public static void checkoutBranch
-        (String branch) {
+    public static void checkoutBranch(String branch) {
         //如果checked branch不存在，输出错误信息
         List<String> headsList = Utils.plainFilenamesIn(HEADS);
         if (!headsList.contains(branch)) {
@@ -502,14 +500,16 @@ public class Repository implements Serializable {
             NotherUtils.message("No need to checkout "
                     + "the current branch.");
         }
-
+        //未切换前的分支
+        Commit parentCommit3A = NotherUtils.getHeadBranchCommitId();
         File newBranch = join(HEADS, branch);
+        NotherUtils.clearFile(HEAD);
+        Utils.writeContents(HEAD, branch);
         //newBranCh的commitID
         String commitId1 = Utils.readContentsAsString(newBranch);
         //newbranch
         Commit parentCommit3B = Commit.fromFile(commitId1);
-        //未切换前的分支
-        Commit parentCommit3A = NotherUtils.getHeadBranchCommitId();
+
         List<String> keyList = new ArrayList<>();
         for (String key : parentCommit3A.getTracked().keySet()) {
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
@@ -544,14 +544,15 @@ public class Repository implements Serializable {
             for (String key : parentCommit3B.getTracked().keySet()) {
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
                 if (blob3B.getFileName().exists()) {
-                    File blobcwdFile = join(CWD,blob3B.getFileName().getName());
+                    File blobcwdFile = join(CWD, blob3B.getFileName().getName());
                     List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
                     Blob blobcwd = new Blob(blobcwdFile);
-                    if (!blobcwd.getId().equals(blob3B.getId()) && !addList.contains(blob3B.getFileName().getName())){
-                        NotherUtils.message("There is an untracked file in the way; " +
-                                "delete it, or add and commit it first.");
+                    if (!blobcwd.getId().equals(blob3B.getId())
+                            && !addList.contains(blob3B.getFileName().getName())){
+//                        NotherUtils.message("There is an untracked file in the way; "
+//                                + "delete it, or add and commit it first.");
                     }
-                }else {
+                } else {
                     File blob3BFile = new File(blob3B.getFilePath());
                     Utils.writeContents(blob3BFile, NotherUtils.getBytes(blob3B.getBytes()));
                 }
@@ -559,8 +560,6 @@ public class Repository implements Serializable {
         }
 
         //更改HEAD指向Commit3B，最后清空缓存区。
-        NotherUtils.clearFile(HEAD);
-        Utils.writeContents(HEAD, branch);
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
         if ((ADD_STAGE.exists())) {
@@ -628,14 +627,15 @@ public class Repository implements Serializable {
             for (String key : parentCommit3B.getTracked().keySet()) {
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
                 if (blob3B.getFileName().exists()) {
-                    File blobcwdFile = join(CWD,blob3B.getFileName().getName());
+                    File blobcwdFile = join(CWD, blob3B.getFileName().getName());
                     List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
                     Blob blobcwd = new Blob(blobcwdFile);
-                    if (!blobcwd.getId().equals(blob3B.getId()) && !addList.contains(blob3B.getFileName().getName())){
-                        NotherUtils.message("There is an untracked file in the way; " +
-                                "delete it, or add and commit it first.");
+                    if (!blobcwd.getId().equals(blob3B.getId())
+                            && !addList.contains(blob3B.getFileName().getName())){
+//                        NotherUtils.message("There is an untracked file in the way; "
+//                                + "delete it, or add and commit it first.");
                     }
-                }else {
+                } else {
                     File blob3BFile = new File(blob3B.getFilePath());
                     Utils.writeContents(blob3BFile, NotherUtils.getBytes(blob3B.getBytes()));
                 }
