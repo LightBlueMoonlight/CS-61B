@@ -33,7 +33,7 @@ public class NotherUtils {
     public static void rm(File file) {
         if (!file.delete()) {
             throw new IllegalArgumentException
-                    (String.format("rm: %s: Failed to delete.", file.getPath()));
+            (String.format("rm: %s: Failed to delete.", file.getPath()));
         }
     }
 

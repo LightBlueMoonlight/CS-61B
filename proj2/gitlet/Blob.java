@@ -38,7 +38,7 @@ public class Blob implements Serializable {
         if (!dir.exists()) {
             if (!dir.mkdir()) {
                 throw new IllegalArgumentException
-                    (String.format("mkdir: %s: Failed to create.", dir.getPath()));
+                (String.format("mkdir: %s: Failed to create.", dir.getPath()));
             }
         }
         writeObject(file, obj);
