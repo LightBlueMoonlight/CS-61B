@@ -243,10 +243,6 @@ public class Repository implements Serializable {
                     parentTracked.remove(blobFile.getFilePath());
                     //删除removeStage下的暂存文件
                     NotherUtils.rm(removeFile);
-                    File cwdFile = join(CWD, blobFile.getFilePath());
-                    if (cwdFile.exists()){
-                        NotherUtils.rm(cwdFile);
-                    }
                 }
             }
         }
@@ -669,5 +665,10 @@ public class Repository implements Serializable {
                 NotherUtils.rm(addFile);
             }
         }
+    }
+
+    public static void setMerge(String text) {
+        Commit commitA = NotherUtils.getHeadBranchCommitId();
+        Commit commitB = NotherUtils.getBranch(text);
     }
 }

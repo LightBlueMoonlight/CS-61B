@@ -49,6 +49,15 @@ public class NotherUtils {
         return parentCommit;
     }
 
+    public static Commit getBranch(String branch) {
+        File headBranch = join(Repository.HEADS, branch);
+        //读取headBranch下的内容
+        String headBranchText = Utils.readContentsAsString(headBranch);
+        //根据commitId生成commit文件
+        Commit parentCommit = Commit.fromFile(headBranchText);
+        return parentCommit;
+    }
+
     public static String getBytes(byte[] bytes) {
         String aa = "aaaaaaa";
         try {

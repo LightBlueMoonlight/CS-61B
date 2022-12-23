@@ -78,6 +78,12 @@ public class Main {
                 text = args[1];
                 Repository.setRmBranch(text);
                 break;
+            case "merge":
+                Repository.checkDir();
+                validateNumArgs(args, 2);
+                text = args[1];
+                Repository.setMerge(text);
+                break;
             case "status":
                 Repository.checkDir();
                 validateNumArgs(args, 1);
