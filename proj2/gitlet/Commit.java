@@ -105,7 +105,8 @@ public class Commit implements Serializable {
         File dir = file.getParentFile();
         if (!dir.exists()) {
             if (!dir.mkdir()) {
-                throw new IllegalArgumentException(String.format("mkdir: %s: Failed to create.", dir.getPath()));
+                throw new IllegalArgumentException
+                    (String.format("mkdir: %s: Failed to create.", dir.getPath()));
             }
         }
         writeObject(file, obj);
