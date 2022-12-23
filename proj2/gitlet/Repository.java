@@ -546,16 +546,19 @@ public class Repository implements Serializable {
         //仅被checked branch跟踪的文件又可以分为两类：
         //不存在于当前工作目录（覆写）
         //已经存在于当前工作目录的文件（打印错误信息）
-        for (String key : parentCommit3B.getTracked().keySet()) {
-            Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
-            File blob3BFile= new File(blob3B.getFilePath());
-            if (blob3BFile.exists()) {
-                NotherUtils.message("There is an untracked file in the way; " +
-                        "delete it, or add and commit it first.");
-            }else {
-                Utils.writeContents(blob3BFile, NotherUtils.getBytes(blob3B.getBytes()));
+        if (parentCommit3B.getTracked() != null && !parentCommit3B.getTracked().isEmpty()){
+            for (String key : parentCommit3B.getTracked().keySet()) {
+                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
+                File blob3BFile= new File(blob3B.getFilePath());
+                if (blob3BFile.exists()) {
+                    NotherUtils.message("There is an untracked file in the way; " +
+                            "delete it, or add and commit it first.");
+                }else {
+                    Utils.writeContents(blob3BFile, NotherUtils.getBytes(blob3B.getBytes()));
+                }
             }
         }
+
         //更改HEAD指向Commit3B，最后清空缓存区。
         NotherUtils.clearFile(HEAD);
         Utils.writeContents(HEAD, branch);
