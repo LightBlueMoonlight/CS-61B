@@ -1,4 +1,5 @@
 package gitlet;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -226,6 +227,10 @@ public class Repository implements Serializable {
                 File addFile = join(ADD_STAGE, addStageFile);
                 //删除addStage下的暂存文件
                 NotherUtils.rm(addFile);
+                File cwdFile = join(CWD, addStageFile);
+                if (cwdFile.exists()){
+                    NotherUtils.rm(cwdFile);
+                }
             }
         }
         //如果删除区存在
@@ -238,6 +243,10 @@ public class Repository implements Serializable {
                     parentTracked.remove(blobFile.getFilePath());
                     //删除removeStage下的暂存文件
                     NotherUtils.rm(removeFile);
+                    File cwdFile = join(CWD, blobFile.getFilePath());
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
                 }
             }
         }
@@ -530,17 +539,24 @@ public class Repository implements Serializable {
             }
         }
         //仅被当前commit跟踪（删除文件）
-        for (String key : parentCommit3A.getTracked().keySet()) {
-            Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key));
-            File blob3AFile = new File(blob3A.getFilePath());
-            if (blob3AFile.exists()) {
-                NotherUtils.rm(blob3AFile);
+        for (String key1 : parentCommit3A.getTracked().keySet()) {
+            if (parentCommit3A.getTracked() != null && !parentCommit3A.getTracked().isEmpty()){}{
+                if (!parentCommit3A.getTracked().containsKey(key1)){
+                    Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key1));
+                    File blob3AFile = new File(blob3A.getFilePath());
+                    if (blob3AFile.exists()) {
+                        NotherUtils.rm(blob3AFile);
+                    }
+                }
             }
         }
         //仅被checked branch跟踪的文件又可以分为两类：不存在于当前工作目录（覆写）已经存在于当前工作目录的文件（打印错误信息）
         if (parentCommit3B.getTracked() != null && !parentCommit3B.getTracked().isEmpty()) {
-            for (String key : parentCommit3B.getTracked().keySet()) {
-                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
+            for (String key2 : parentCommit3B.getTracked().keySet()) {
+                if (parentCommit3A.getTracked().containsKey(key2)){
+                    continue;
+                }
+                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key2));
                 if (blob3B.getFileName().exists()) {
                     File blobcwdFile = join(CWD, blob3B.getFileName().getName());
                     List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
