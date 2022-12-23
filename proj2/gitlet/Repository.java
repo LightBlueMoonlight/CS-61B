@@ -169,8 +169,6 @@ public class Repository implements Serializable {
             File rmAddStageFile2 = join(ADD_STAGE, blob.blobId());
             Utils.writeObject(rmAddStageFile2, blob.blobId());
             createNewFile(rmAddStageFile2);
-            File rmFile = join(CWD, blob.getFilePath());
-            NotherUtils.rm(rmFile);
         }
     }
 
@@ -512,7 +510,6 @@ public class Repository implements Serializable {
         String commitId1 = Utils.readContentsAsString(newBranch);
         //newbranch
         Commit parentCommit3B = Commit.fromFile(commitId1);
-
         List<String> keyList = new ArrayList<>();
         for (String key : parentCommit3A.getTracked().keySet()) {
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
@@ -540,8 +537,7 @@ public class Repository implements Serializable {
                 NotherUtils.rm(blob3AFile);
             }
         }
-        //仅被checked branch跟踪的文件又可以分为两类：
-        //不存在于当前工作目录（覆写）已经存在于当前工作目录的文件（打印错误信息）
+        //仅被checked branch跟踪的文件又可以分为两类：不存在于当前工作目录（覆写）已经存在于当前工作目录的文件（打印错误信息）
         if (parentCommit3B.getTracked() != null && !parentCommit3B.getTracked().isEmpty()) {
             for (String key : parentCommit3B.getTracked().keySet()) {
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
@@ -619,8 +615,7 @@ public class Repository implements Serializable {
                 NotherUtils.rm(blob3AFile);
             }
         }
-        //仅被checked branch跟踪的文件又可以分为两类：
-        //不存在于当前工作目录（覆写）已经存在于当前工作目录的文件（打印错误信息）
+        //仅被checked branch跟踪的文件又可以分为两类：不存在于当前工作目录（覆写）已经存在于当前工作目录的文件（打印错误信息）
         if (parentCommit3B.getTracked() != null && !parentCommit3B.getTracked().isEmpty()) {
             for (String key : parentCommit3B.getTracked().keySet()) {
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
