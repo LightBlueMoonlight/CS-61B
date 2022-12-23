@@ -632,6 +632,9 @@ public class Repository implements Serializable {
             Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
             File blob3BFile = new File(blob3B.getFilePath());
             if (blob3BFile.exists()) {
+                System.out.println("resetblob3BFile.getName():" + blob3BFile.getName());
+                List<String> cWDList = Utils.plainFilenamesIn(CWD);
+                System.out.println("resetCWD:" + cWDList);
                 NotherUtils.message("There is an untracked file in the way;"
                         + " delete it, or add and commit it first.");
             } else {
