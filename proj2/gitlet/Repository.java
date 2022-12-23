@@ -458,9 +458,6 @@ public class Repository implements Serializable {
             Blob blob = Blob.fromFile(trackBlobId);
             Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
             createNewFile(newBranch);
-//            File addBranch = join(ADD_STAGE, trackBlobId);
-//            Utils.writeContents(addBranch,trackBlobId);
-//            createNewFile(addBranch);
         } else {
             NotherUtils.message("File does not exist in that commit.");
         }
@@ -488,9 +485,6 @@ public class Repository implements Serializable {
             File newBranch = join(CWD, fileName);
             Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
             createNewFile(newBranch);
-//            File newBranch = join(ADD_STAGE, trackBlobId);
-//            Utils.writeContents(newBranch,blob.getId());
-//            createNewFile(newBranch);
         } else {
             NotherUtils.message("File does not exist in that commit.");
         }
@@ -549,11 +543,11 @@ public class Repository implements Serializable {
         if (parentCommit3B.getTracked() != null && !parentCommit3B.getTracked().isEmpty()) {
             for (String key : parentCommit3B.getTracked().keySet()) {
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
-                List<String> cwdList = Utils.plainFilenamesIn(CWD);
-                if (cwdList.contains(blob3B.getFileName().getName())) {
+                if (blob3B.getFileName().exists()) {
                     File blobcwdFile = join(CWD,blob3B.getFileName().getName());
+                    List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
                     Blob blobcwd = new Blob(blobcwdFile);
-                    if (!blobcwd.getId().equals(blob3B.getId())){
+                    if (!blobcwd.getId().equals(blob3B.getId()) && !addList.contains(blob3B.getFileName().getName())){
                         NotherUtils.message("There is an untracked file in the way; " +
                                 "delete it, or add and commit it first.");
                     }
@@ -633,11 +627,11 @@ public class Repository implements Serializable {
         if (parentCommit3B.getTracked() != null && !parentCommit3B.getTracked().isEmpty()) {
             for (String key : parentCommit3B.getTracked().keySet()) {
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
-                List<String> cwdList = Utils.plainFilenamesIn(CWD);
-                if (cwdList.contains(blob3B.getFileName().getName())) {
+                if (blob3B.getFileName().exists()) {
                     File blobcwdFile = join(CWD,blob3B.getFileName().getName());
+                    List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
                     Blob blobcwd = new Blob(blobcwdFile);
-                    if (!blobcwd.getId().equals(blob3B.getId())){
+                    if (!blobcwd.getId().equals(blob3B.getId()) && !addList.contains(blob3B.getFileName().getName())){
                         NotherUtils.message("There is an untracked file in the way; " +
                                 "delete it, or add and commit it first.");
                     }

@@ -87,6 +87,16 @@ public class Main {
                 Repository.checkDir();
                 validateNumArgs(args, 2);
                 String resetCommitId = args[1];
+                if(resetCommitId.length() < UID_LENGTH){
+                    List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT);
+                    for (String str : commitList) {
+                        str = str.substring(0,resetCommitId.length());
+                        if (str.equals(resetCommitId)){
+                            resetCommitId = str;
+                            break;
+                        }
+                    }
+                }
                 Repository.setReset(resetCommitId);
                 break;
             case "checkout":
