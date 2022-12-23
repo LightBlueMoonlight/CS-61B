@@ -227,10 +227,6 @@ public class Repository implements Serializable {
                 File addFile = join(ADD_STAGE, addStageFile);
                 //删除addStage下的暂存文件
                 NotherUtils.rm(addFile);
-                File cwdFile = join(CWD, addStageFile);
-                if (cwdFile.exists()){
-                    NotherUtils.rm(cwdFile);
-                }
             }
         }
         //如果删除区存在
