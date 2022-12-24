@@ -752,14 +752,7 @@ public class Repository implements Serializable {
                     Utils.writeObject(addStageFile, otherKey);
                     createNewFile(addStageFile);
                 }
-//                //2.split存在 head存在 other存在 head改变 不做改变
-//                if (splitKey.equals(otherKey) && !splitKey.equals(masterKey)) {
-//
-//                }
-//                //3.master 和other都改变 master=other 不做改变
-//                if (masterKey.equals(otherKey) && !splitKey.equals(masterKey)) {
-//
-//                }
+
                 //3.master 和other都改变 master!=other 写冲突
                 if (!masterKey.equals(otherKey) && !splitKey.equals(masterKey)
                         && !splitKey.equals(otherKey)) {
@@ -770,6 +763,7 @@ public class Repository implements Serializable {
                     NotherUtils.message(">>>>>>>");
                 }
             }
+
             if (splitKey == null && masterKey != null && otherKey != null) {
                 if (!masterKey.equals(otherKey)) {
                     NotherUtils.message("<<<<<<< HEAD");
@@ -779,14 +773,18 @@ public class Repository implements Serializable {
                     NotherUtils.message(">>>>>>>");
                 }
             }
+
             if (splitKey == null && masterKey == null && otherKey != null) {
                 File addStageFile = join(ADD_STAGE, otherKey);
                 Utils.writeObject(addStageFile, otherKey);
                 createNewFile(addStageFile);
             }
-//            if (splitKey == null && masterKey == null && otherKey != null) {
-//
-//            }
+
+            if (splitKey == null && masterKey != null && otherKey == null) {
+                File addStageFile = join(ADD_STAGE, masterKey);
+                Utils.writeObject(addStageFile, masterKey);
+                createNewFile(addStageFile);
+            }
             if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)) {
                     File removeStageFile = join(REMOVE_STAGE, masterKey);
