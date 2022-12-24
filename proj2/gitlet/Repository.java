@@ -658,19 +658,8 @@ public class Repository implements Serializable {
         }
         //HEAD
         Commit commitA = NotherUtils.getHeadBranchCommitId();
-        System.out.println("commitA.getTracked():" + commitA.getTracked());
-        System.out.println("commitA.getMessage():" + commitA.getMessage());
-        System.out.println("commitA.getParent():" + commitA.getParent());
-        Commit parentCommit = Commit.fromFile(commitA.getParent().get(0));
-        System.out.println("parentCommit.getTracked():" + parentCommit.getTracked());
-        System.out.println("parentCommit.getMessage():" + parentCommit.getMessage());
-        System.out.println("parentCommit.getCommitID():" + parentCommit.getCommitID());
-
         //OTHER
         Commit commitB = NotherUtils.getBranch(text);
-        System.out.println("commitB.getTracked():" + commitB.getTracked());
-        System.out.println("commitB.getMessage():" + commitB.getMessage());
-        System.out.println("commitB.getParent():" + commitB.getParent());
         Map<String, Integer> commA = new HashMap<>();
         Map<String, Integer> commB = new HashMap<>();
         Map<String, Integer> finSplitMap = new HashMap<>();
@@ -734,6 +723,10 @@ public class Repository implements Serializable {
         , Map<String, String> masterMap, Map<String, String> otherMap,Map<String, String> splitMap) {
         //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
         //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
+        System.out.println("allfileMap:" + allfileMap.keySet());
+        System.out.println("masterMap:" + masterMap.keySet());
+        System.out.println("otherMap:" + otherMap.keySet());
+        System.out.println("splitMap:" + splitMap.keySet());
         Map<String, String> parentTracked = new HashMap<>();
         for (String blobId : allfileMap.keySet()) {
             if (!REMOVE_STAGE.exists()) {
@@ -749,6 +742,9 @@ public class Repository implements Serializable {
             String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
             String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
+            System.out.println("masterKey:" + masterKey);
+            System.out.println("otherKey:" + otherKey);
+            System.out.println("splitKey:" + splitKey);
             if (splitKey != null && masterKey != null && otherKey != null) {
                 //1.split存在 head存在 other存在 other改变 addother
                 if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)) {
@@ -833,6 +829,7 @@ public class Repository implements Serializable {
                 }
             }
         }
+        System.out.println("parentTracked:" + parentTracked);
         return parentTracked;
     }
 
