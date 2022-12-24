@@ -856,9 +856,11 @@ public class Repository implements Serializable {
         }
         System.out.println("commB.keySet():" +commB.keySet());
         String key = "0";
-        int value = 0;
+        int value = 999999999;
         for (String str : commA.keySet()) {
+            System.out.println("str: " + str);
             if (commB.containsKey(str)) {
+                System.out.println(": " + commA.get(str));
                 if (commA.get(str) < value) {
                     value = commA.get(str);
                     key = str;
