@@ -839,13 +839,9 @@ public class Repository implements Serializable {
 
     private static void finSplit(Map<String, Integer> finSplitMap, Commit commitA, Commit commitB, Map<String, Integer> commA, Map<String, Integer> commB) {
         int n = 0;
-        while (commitA.getParent() !=null){
+        while (commitA.getParent() !=null && !commitA.getParent().isEmpty()){
             n = n + 1;
             commA.put(commitA.getCommitID(), n);
-            System.out.println("commitA.commitId())" + commitA.commitId());
-            System.out.println("commitA.getTracked()" + commitA.getTracked());
-            System.out.println("commitA.getParent()" + commitA.getParent());
-            System.out.println("commitA.getMessage()" + commitA.getMessage());
             commitA = Commit.fromFile(commitA.getParent().get(0));
         }
         int m = 0;
