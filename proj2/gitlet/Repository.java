@@ -781,12 +781,7 @@ public class Repository implements Serializable {
                 }
             }
 
-            if (splitKey == null && masterKey != null && otherKey == null) {
-                if (ADD_STAGE.exists()){
-                    System.out.println("存在");
-                }
-                System.out.println(ADD_STAGE.getPath());
-                System.out.println(ADD_STAGE.getParent());
+            if (splitKey == null && masterKey == null && otherKey != null) {
                 File addStageFile = join(ADD_STAGE, otherKey);
                 Utils.writeObject(addStageFile, otherKey);
                 createNewFile(addStageFile);
