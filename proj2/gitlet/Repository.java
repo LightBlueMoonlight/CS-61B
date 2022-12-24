@@ -524,8 +524,15 @@ public class Repository implements Serializable {
                 }
             }
         }
-
+        System.out.println("checkoutBranch:");
+        System.out.println("parentCommit3B.getTracked():" + parentCommit3B.getTracked());
+        System.out.println("parentCommit3B.commitId():" + parentCommit3B.commitId());
+        System.out.println("parentCommit3B.getMessage():" + parentCommit3B.getMessage());
+        System.out.println("parentCommit3A.getTracked():" + parentCommit3A.getTracked());
+        List<String> CWDlist = Utils.plainFilenamesIn(CWD);
+        System.out.println("CWDlist:" + CWDlist);
         for (String key1 : parentCommit3B.getTracked().keySet()) {
+            System.out.println("key1:" + key1);
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
             if (parentCommit3A.getTracked().containsKey(key1)) {
                 Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key1));
@@ -538,6 +545,7 @@ public class Repository implements Serializable {
                 //仅被当前跟踪
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key1));
                 File blob3AFile = new File(blob3B.getFilePath());
+                System.out.println("blob3AFile:" + blob3AFile);
                 if (blob3AFile.exists()) {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
@@ -597,8 +605,15 @@ public class Repository implements Serializable {
                 }
             }
         }
-
+        System.out.println("reset:");
+        System.out.println("parentCommit3B.getTracked():" + parentCommit3B.getTracked());
+        System.out.println("parentCommit3B.commitId():" + parentCommit3B.commitId());
+        System.out.println("parentCommit3B.getMessage():" + parentCommit3B.getMessage());
+        System.out.println("parentCommit3A.getTracked():" + parentCommit3A.getTracked());
+        List<String> CWDlist = Utils.plainFilenamesIn(CWD);
+        System.out.println("CWDlist:" + CWDlist);
         for (String key1 : parentCommit3B.getTracked().keySet()) {
+            System.out.println("key1:" + key1);
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
             if (parentCommit3A.getTracked().containsKey(key1)) {
                 Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key1));
@@ -611,6 +626,7 @@ public class Repository implements Serializable {
                 //仅被当前跟踪
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key1));
                 File blob3AFile = new File(blob3B.getFilePath());
+                System.out.println("blob3AFile:" + blob3AFile);
                 if (blob3AFile.exists()) {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
@@ -691,6 +707,7 @@ public class Repository implements Serializable {
         Map<String, String> splitMap = new HashMap<>();
 
         for (String splitKey : finSplitMap.keySet()) {
+            System.out.println("splitKey:" + splitKey);
             Commit splitCommit = Commit.fromFile(splitKey);
             for (String str : splitCommit.getTracked().keySet()) {
                 String splitvalue = splitCommit.getTracked().get(str);
@@ -712,7 +729,7 @@ public class Repository implements Serializable {
             otherMap.put(mastevalue, otherKey);
         }
         Map<String, String> parentTracked = new HashMap<>();
-        parentTracked = compareFile(allfileMap, masterMap, otherMap,splitMap);
+        parentTracked = compareFile(allfileMap, masterMap, otherMap, splitMap);
         Commit newCommit = new Commit(message, list, parentTracked);
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
         String headFileString = Utils.readContentsAsString(HEAD);
@@ -723,8 +740,8 @@ public class Repository implements Serializable {
         }
     }
 
-    private static Map<String, String> compareFile(Map<String, String> allfileMap, Map<String, String> masterMap,
-       Map<String, String> otherMap,Map<String, String> splitMap) {
+    private static Map<String, String> compareFile(Map<String, String> allfileMap, Map<String
+        , String> masterMap, Map<String, String> otherMap,Map<String, String> splitMap) {
         //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
         //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
         Map<String, String> parentTracked = new HashMap<>();
@@ -751,19 +768,19 @@ public class Repository implements Serializable {
                     createNewFile(addStageFile);
                 }
 
-                //2.split存在 head存在 other存在 head改变 不做改变
-                if (splitKey.equals(otherKey) && !splitKey.equals(masterKey)) {
-
-                }
-
-                //3.master 和other都改变 master=other 不做改变
-                if (masterKey.equals(otherKey) && !splitKey.equals(masterKey)) {
-
-                }
+//                //2.split存在 head存在 other存在 head改变 不做改变
+//                if (splitKey.equals(otherKey) && !splitKey.equals(masterKey)) {
+//
+//                }
+//
+//                //3.master 和other都改变 master=other 不做改变
+//                if (masterKey.equals(otherKey) && !splitKey.equals(masterKey)) {
+//
+//                }
 
                 //3.master 和other都改变 master!=other 写冲突
                 if (!masterKey.equals(otherKey) && !splitKey.equals(masterKey)
-                        && !splitKey.equals(otherKey)){
+                        && !splitKey.equals(otherKey)) {
                     NotherUtils.message("<<<<<<< HEAD");
                     NotherUtils.message("contents of file in current branch");
                     NotherUtils.message("=======");
@@ -782,17 +799,17 @@ public class Repository implements Serializable {
                 }
             }
 
-            if(splitKey == null && masterKey != null && otherKey == null) {
+            if (splitKey == null && masterKey != null && otherKey == null) {
                 File addStageFile = join(ADD_STAGE, otherKey);
                 Utils.writeObject(addStageFile, otherKey);
                 createNewFile(addStageFile);
             }
 
-            if(splitKey == null && masterKey == null && otherKey != null) {
+//            if (splitKey == null && masterKey == null && otherKey != null) {
+//
+//            }
 
-            }
-
-            if(splitKey != null && masterKey != null && otherKey == null) {
+            if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)) {
                     File removeStageFile = join(REMOVE_STAGE, masterKey);
                     Utils.writeObject(removeStageFile, masterKey);
@@ -800,7 +817,7 @@ public class Repository implements Serializable {
                 }
             }
 
-            if(splitKey != null && masterKey == null && otherKey != null) {
+            if (splitKey != null && masterKey == null && otherKey != null) {
                 if (splitKey.equals(otherKey)) {
                     File removeStageFile = join(REMOVE_STAGE, otherKey);
                     Utils.writeObject(removeStageFile, otherKey);
@@ -839,24 +856,25 @@ public class Repository implements Serializable {
         return parentTracked;
     }
 
-    private static void finSplit(Map<String, Integer> finSplitMap, Commit commitA, Commit commitB, Map<String, Integer> commA, Map<String, Integer> commB) {
+    private static void finSplit(Map<String, Integer> finSplitMap, Commit commitA
+        , Commit commitB, Map<String, Integer> commA, Map<String, Integer> commB) {
         int n = 0;
-        while (commitA.getParent() !=null && !commitA.getParent().isEmpty()){
+        while (commitA.getParent() != null && !commitA.getParent().isEmpty()) {
             n = n + 1;
             commA.put(commitA.getCommitID(), n);
             commitA = Commit.fromFile(commitA.getParent().get(0));
         }
         int m = 0;
-        while (commitB.getParent() !=null && !commitA.getParent().isEmpty()){
+        while (commitB.getParent() != null && !commitA.getParent().isEmpty()) {
             m = m + 1;
             commB.put(commitB.getCommitID(), m);
             commitB = Commit.fromFile(commitB.getParent().get(0));
         }
         String key ="0";
         int value = 0;
-        for (String str : commA.keySet()){
+        for (String str : commA.keySet()) {
             if (commB.containsKey(str)){
-                if (commA.get(str) < value){
+                if (commA.get(str) < value) {
                     value = commA.get(str);
                     key = str;
                 }
