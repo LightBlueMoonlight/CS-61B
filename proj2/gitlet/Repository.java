@@ -216,9 +216,6 @@ public class Repository implements Serializable {
             for (String addStageFile : addStageList) {
                 //根据blobid直接创建bolb文件
                 Blob blobFile = Blob.fromFile(addStageFile);
-                System.out.println("add");
-                System.out.println("blobFile.getFilePath():" + blobFile.getFilePath());
-                System.out.println("blobFile.getId():" + blobFile.getId());
                 //增加缓存去的blobId添加到tracked
                 parentTracked.put(blobFile.getFilePath(), blobFile.getId());
                 File addFile = join(ADD_STAGE, addStageFile);
@@ -232,9 +229,6 @@ public class Repository implements Serializable {
                 File removeFile = join(REMOVE_STAGE, str);
                 //创建bolb文件
                 Blob blobFile = Blob.fromFile(str);
-                System.out.println("remove");
-                System.out.println("blobFile.getFilePath():" + blobFile.getFilePath());
-                System.out.println("blobFile.getId():" + blobFile.getId());
                 if (parentTracked != null) {
                     parentTracked.remove(blobFile.getFilePath());
                     //删除removeStage下的暂存文件
@@ -242,7 +236,6 @@ public class Repository implements Serializable {
                 }
             }
         }
-        System.out.println("cpmmit前parentTracked:" + parentTracked);
         List<String> list = new ArrayList<>();
         list.add(parentCommit.getCommitID());
         //创建新的commit
@@ -558,6 +551,7 @@ public class Repository implements Serializable {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
+                    System.out.println("这次一定成功");
                     Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }

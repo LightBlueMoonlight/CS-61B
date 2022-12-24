@@ -51,14 +51,14 @@ public class Blob implements Serializable {
 
     //文件名（key）：根据源文件内容生成的SHA1哈希值。（只与文件内容有关，与文件名等无关）
     public String blobId() {
-        return Utils.sha1(bytes);
+        return Utils.sha1(bytes, filePath);
     }
 
     //算出调用文件的blobid
     public static String getBlobId(File file) {
         Repository.createNewFile(file);
         byte[] bytes2 = Utils.readContents(file);
-        return Utils.sha1(bytes2);
+        return Utils.sha1(bytes2, file.getPath());
     }
 
     public File getBlobSaveFileName() {
