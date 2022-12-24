@@ -123,10 +123,15 @@ public class Main {
 
                     if(commitId.length() < UID_LENGTH){
                         List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT);
+                        System.out.println("外面commitId" + commitId);
+                        System.out.println("外面commitList" + commitList);
+                        System.out.println("commitId.length()-1" + commitId.length());
                         for (String str : commitList) {
                             str = str.substring(0,commitId.length()-1);
+                            System.out.println("str" + str);
                             if (str.equals(commitId)){
                                 commitId = str;
+
                                 break;
                             }
                         }

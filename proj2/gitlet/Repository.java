@@ -465,6 +465,7 @@ public class Repository implements Serializable {
         createNewFile(newFile);
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
         if (!commitList.contains(commitId)) {
+            System.out.println("commitId:" + commitId);
             System.out.println("commitList:" + commitList);
             System.out.println("shotId checkout :");
             NotherUtils.message("No commit with that id exists.");
@@ -692,7 +693,6 @@ public class Repository implements Serializable {
         Map<String, String> splitMap = new HashMap<>();
 
         for (String splitKey : finSplitMap.keySet()) {
-            System.out.println("splitKey:" + splitKey);
             Commit splitCommit = Commit.fromFile(splitKey);
             for (String str : splitCommit.getTracked().keySet()) {
                 String splitvalue = splitCommit.getTracked().get(str);
