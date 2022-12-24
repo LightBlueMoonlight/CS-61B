@@ -540,14 +540,15 @@ public class Repository implements Serializable {
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key1));
                 File blob3AFile = new File(blob3B.getFilePath());
                 System.out.println("checkoutBranch:");
+                System.out.println("key1:" + key1);
                 System.out.println("parentCommit3B.getTracked():" + parentCommit3B.getTracked());
                 System.out.println("parentCommit3B.commitId():" + parentCommit3B.commitId());
                 System.out.println("parentCommit3B.getMessage():" + parentCommit3B.getMessage());
                 System.out.println("parentCommit3A.getTracked():" + parentCommit3A.getTracked());
-                List<String> cWDlist = Utils.plainFilenamesIn(CWD);
-                System.out.println("cWDlist:" + cWDlist);
+                List<String> cwdlist = Utils.plainFilenamesIn(CWD);
+                System.out.println("cwdlist:" + cwdlist);
                 System.out.println("blob3AFile:" + blob3AFile);
-                if (blob3AFile.exists()) {
+                if (cwdlist.contains(blob3AFile.getName())) {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
@@ -607,7 +608,6 @@ public class Repository implements Serializable {
             }
         }
         for (String key1 : parentCommit3B.getTracked().keySet()) {
-            System.out.println("key1:" + key1);
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
             if (parentCommit3A.getTracked().containsKey(key1)) {
                 Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key1));
@@ -620,14 +620,6 @@ public class Repository implements Serializable {
                 //仅被当前跟踪
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key1));
                 File blob3AFile = new File(blob3B.getFilePath());
-                System.out.println("reset:");
-                System.out.println("parentCommit3B.getTracked():" + parentCommit3B.getTracked());
-                System.out.println("parentCommit3B.commitId():" + parentCommit3B.commitId());
-                System.out.println("parentCommit3B.getMessage():" + parentCommit3B.getMessage());
-                System.out.println("parentCommit3A.getTracked():" + parentCommit3A.getTracked());
-                List<String> cWDlist = Utils.plainFilenamesIn(CWD);
-                System.out.println("cWDlist:" + cWDlist);
-                System.out.println("blob3AFile:" + blob3AFile);
                 if (blob3AFile.exists()) {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
