@@ -524,13 +524,7 @@ public class Repository implements Serializable {
                 }
             }
         }
-        System.out.println("checkoutBranch:");
-        System.out.println("parentCommit3B.getTracked():" + parentCommit3B.getTracked());
-        System.out.println("parentCommit3B.commitId():" + parentCommit3B.commitId());
-        System.out.println("parentCommit3B.getMessage():" + parentCommit3B.getMessage());
-        System.out.println("parentCommit3A.getTracked():" + parentCommit3A.getTracked());
-        List<String> CWDlist = Utils.plainFilenamesIn(CWD);
-        System.out.println("CWDlist:" + CWDlist);
+
         for (String key1 : parentCommit3B.getTracked().keySet()) {
             System.out.println("key1:" + key1);
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
@@ -545,6 +539,13 @@ public class Repository implements Serializable {
                 //仅被当前跟踪
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key1));
                 File blob3AFile = new File(blob3B.getFilePath());
+                System.out.println("checkoutBranch:");
+                System.out.println("parentCommit3B.getTracked():" + parentCommit3B.getTracked());
+                System.out.println("parentCommit3B.commitId():" + parentCommit3B.commitId());
+                System.out.println("parentCommit3B.getMessage():" + parentCommit3B.getMessage());
+                System.out.println("parentCommit3A.getTracked():" + parentCommit3A.getTracked());
+                List<String> cWDlist = Utils.plainFilenamesIn(CWD);
+                System.out.println("cWDlist:" + cWDlist);
                 System.out.println("blob3AFile:" + blob3AFile);
                 if (blob3AFile.exists()) {
                     NotherUtils.message("There is an untracked file in the way; "
@@ -605,13 +606,6 @@ public class Repository implements Serializable {
                 }
             }
         }
-        System.out.println("reset:");
-        System.out.println("parentCommit3B.getTracked():" + parentCommit3B.getTracked());
-        System.out.println("parentCommit3B.commitId():" + parentCommit3B.commitId());
-        System.out.println("parentCommit3B.getMessage():" + parentCommit3B.getMessage());
-        System.out.println("parentCommit3A.getTracked():" + parentCommit3A.getTracked());
-        List<String> CWDlist = Utils.plainFilenamesIn(CWD);
-        System.out.println("CWDlist:" + CWDlist);
         for (String key1 : parentCommit3B.getTracked().keySet()) {
             System.out.println("key1:" + key1);
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
@@ -626,6 +620,13 @@ public class Repository implements Serializable {
                 //仅被当前跟踪
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key1));
                 File blob3AFile = new File(blob3B.getFilePath());
+                System.out.println("reset:");
+                System.out.println("parentCommit3B.getTracked():" + parentCommit3B.getTracked());
+                System.out.println("parentCommit3B.commitId():" + parentCommit3B.commitId());
+                System.out.println("parentCommit3B.getMessage():" + parentCommit3B.getMessage());
+                System.out.println("parentCommit3A.getTracked():" + parentCommit3A.getTracked());
+                List<String> cWDlist = Utils.plainFilenamesIn(CWD);
+                System.out.println("cWDlist:" + cWDlist);
                 System.out.println("blob3AFile:" + blob3AFile);
                 if (blob3AFile.exists()) {
                     NotherUtils.message("There is an untracked file in the way; "
@@ -740,8 +741,8 @@ public class Repository implements Serializable {
         }
     }
 
-    private static Map<String, String> compareFile(Map<String, String> allfileMap, Map<String
-        , String> masterMap, Map<String, String> otherMap,Map<String, String> splitMap) {
+    private static Map<String, String> compareFile(Map<String, String> allfileMap
+        , Map<String, String> masterMap, Map<String, String> otherMap,Map<String, String> splitMap) {
         //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
         //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
         Map<String, String> parentTracked = new HashMap<>();
@@ -856,8 +857,8 @@ public class Repository implements Serializable {
         return parentTracked;
     }
 
-    private static void finSplit(Map<String, Integer> finSplitMap, Commit commitA
-        , Commit commitB, Map<String, Integer> commA, Map<String, Integer> commB) {
+    private static void finSplit(Map<String, Integer> finSplitMap
+        , Commit commitA, Commit commitB, Map<String, Integer> commA, Map<String, Integer> commB) {
         int n = 0;
         while (commitA.getParent() != null && !commitA.getParent().isEmpty()) {
             n = n + 1;
@@ -870,10 +871,10 @@ public class Repository implements Serializable {
             commB.put(commitB.getCommitID(), m);
             commitB = Commit.fromFile(commitB.getParent().get(0));
         }
-        String key ="0";
+        String key = "0";
         int value = 0;
         for (String str : commA.keySet()) {
-            if (commB.containsKey(str)){
+            if (commB.containsKey(str)) {
                 if (commA.get(str) < value) {
                     value = commA.get(str);
                     key = str;
