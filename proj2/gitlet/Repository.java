@@ -465,6 +465,8 @@ public class Repository implements Serializable {
         createNewFile(newFile);
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
         if (!commitList.contains(commitId)) {
+            System.out.println("commitList:" + commitList);
+            System.out.println("shotId checkout :");
             NotherUtils.message("No commit with that id exists.");
         }
         Commit parentCommit = Commit.fromFile(commitId);
@@ -569,6 +571,8 @@ public class Repository implements Serializable {
     public static void setReset(String resetCommitId) {
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
         if (!commitList.contains(resetCommitId)) {
+            System.out.println("commitList:" + commitList);
+            System.out.println("shotId reset :");
             NotherUtils.message("No commit with that id exists.");
         }
         String branch = Utils.readContentsAsString(HEAD);
