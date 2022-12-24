@@ -658,8 +658,19 @@ public class Repository implements Serializable {
         }
         //HEAD
         Commit commitA = NotherUtils.getHeadBranchCommitId();
+        System.out.println("commitA.getTracked():" + commitA.getTracked());
+        System.out.println("commitA.getMessage():" + commitA.getMessage());
+        System.out.println("commitA.getParent():" + commitA.getParent());
+        Commit parentCommit = Commit.fromFile(commitA.getParent().get(0));
+        System.out.println("parentCommit.getTracked():" + parentCommit.getTracked());
+        System.out.println("parentCommit.getMessage():" + parentCommit.getMessage());
+        System.out.println("parentCommit.getCommitID():" + parentCommit.getCommitID());
+
         //OTHER
         Commit commitB = NotherUtils.getBranch(text);
+        System.out.println("commitB.getTracked():" + commitB.getTracked());
+        System.out.println("commitB.getMessage():" + commitB.getMessage());
+        System.out.println("commitB.getParent():" + commitB.getParent());
         Map<String, Integer> commA = new HashMap<>();
         Map<String, Integer> commB = new HashMap<>();
         Map<String, Integer> finSplitMap = new HashMap<>();
@@ -685,11 +696,13 @@ public class Repository implements Serializable {
         Map<String, String> splitMap = new HashMap<>();
 
         for (String splitKey : finSplitMap.keySet()) {
-            Commit splitCommit = Commit.fromFile(splitKey);
-            for (String str : splitCommit.getTracked().keySet()) {
-                String splitvalue = splitCommit.getTracked().get(str);
-                allfileMap.put(splitvalue, str);
-                splitMap.put(splitvalue, str);
+            if (!splitKey.equals("0")) {
+                Commit splitCommit = Commit.fromFile(splitKey);
+                for (String str : splitCommit.getTracked().keySet()) {
+                    String splitvalue = splitCommit.getTracked().get(str);
+                    allfileMap.put(splitvalue, str);
+                    splitMap.put(splitvalue, str);
+                }
             }
         }
 
