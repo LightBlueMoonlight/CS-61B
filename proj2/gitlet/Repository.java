@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gitlet.Utils.*;
 
@@ -511,7 +509,7 @@ public class Repository implements Serializable {
         String commitId1 = Utils.readContentsAsString(newBranch);
         //newbranch
         Commit parentCommit3B = Commit.fromFile(commitId1);
-        List<String> keyList = new ArrayList<>();
+
         for (String key : parentCommit3A.getTracked().keySet()) {
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
             if (parentCommit3B.getTracked().containsKey(key)) {
@@ -521,49 +519,38 @@ public class Repository implements Serializable {
                     NotherUtils.rm(blobFile);
                 }
                 Utils.writeContents(blobFile, NotherUtils.getBytes(blob.getBytes()));
-                keyList.add(key);
-            }
-        }
-        if (keyList != null && !keyList.isEmpty()) {
-            for (String key : keyList) {
-                parentCommit3A.getTracked().remove(key);
-                parentCommit3B.getTracked().remove(key);
-            }
-        }
-        //仅被当前commit跟踪（删除文件）
-        for (String key1 : parentCommit3A.getTracked().keySet()) {
-            if (parentCommit3A.getTracked() != null && !parentCommit3A.getTracked().isEmpty()){}{
-                if (!parentCommit3A.getTracked().containsKey(key1)){
-                    Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key1));
-                    File blob3AFile = new File(blob3A.getFilePath());
-                    if (blob3AFile.exists()) {
-                        NotherUtils.rm(blob3AFile);
-                    }
+            } else{
+                //仅被当前跟踪
+                Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key));
+                File blob3AFile = new File(blob3A.getFilePath());
+                if (blob3AFile.exists()) {
+                    NotherUtils.rm(blob3AFile);
                 }
             }
         }
-        //仅被checked branch跟踪的文件又可以分为两类：不存在于当前工作目录（覆写）已经存在于当前工作目录的文件（打印错误信息）
-        if (parentCommit3B.getTracked() != null && !parentCommit3B.getTracked().isEmpty()) {
-            for (String key2 : parentCommit3B.getTracked().keySet()) {
-                if (parentCommit3A.getTracked().containsKey(key2)){
-                    continue;
+
+        for (String key1 : parentCommit3B.getTracked().keySet()) {
+            //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
+            if (parentCommit3A.getTracked().containsKey(key1)) {
+                Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key1));
+                File blobFile = new File(blob.getFilePath());
+                if (blobFile.exists()) {
+                    NotherUtils.rm(blobFile);
                 }
-                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key2));
-                if (blob3B.getFileName().exists()) {
-                    File blobcwdFile = join(CWD, blob3B.getFileName().getName());
-                    List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
-                    Blob blobcwd = new Blob(blobcwdFile);
-                    if (!blobcwd.getId().equals(blob3B.getId())
-                            && !addList.contains(blob3B.getFileName().getName())) {
-                        NotherUtils.message("There is an untracked file in the way; "
-                                + "delete it, or add and commit it first.");
-                    }
-                } else {
-                    File blob3BFile = new File(blob3B.getFilePath());
-                    Utils.writeContents(blob3BFile, NotherUtils.getBytes(blob3B.getBytes()));
+                Utils.writeContents(blobFile, NotherUtils.getBytes(blob.getBytes()));
+            } else{
+                //仅被当前跟踪
+                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key1));
+                File blob3AFile = new File(blob3B.getFilePath());
+                if (blob3AFile.exists()) {
+                    NotherUtils.message("There is an untracked file in the way; "
+                            + "delete it, or add and commit it first.");
+                }else{
+                    Utils.writeContents(blob3AFile, NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
         }
+
         //更改HEAD指向Commit3B，最后清空缓存区。
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
@@ -596,7 +583,6 @@ public class Repository implements Serializable {
         Commit parentCommit3A = Commit.fromFile(commitId1);
         //未切换前的分支
         Commit parentCommit3B = Commit.fromFile(resetCommitId);
-        List<String> keyList = new ArrayList<>();
         for (String key : parentCommit3A.getTracked().keySet()) {
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
             if (parentCommit3B.getTracked().containsKey(key)) {
@@ -606,42 +592,39 @@ public class Repository implements Serializable {
                     NotherUtils.rm(blobFile);
                 }
                 Utils.writeContents(blobFile, NotherUtils.getBytes(blob.getBytes()));
-                keyList.add(key);
-            }
-        }
-        if (keyList != null && !keyList.isEmpty()) {
-            for (String key : keyList) {
-                parentCommit3A.getTracked().remove(key);
-                parentCommit3B.getTracked().remove(key);
-            }
-        }
-        //仅被当前commit跟踪（删除文件）
-        for (String key : parentCommit3A.getTracked().keySet()) {
-            Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key));
-            File blob3AFile = new File(blob3A.getFilePath());
-            if (blob3AFile.exists()) {
-                NotherUtils.rm(blob3AFile);
-            }
-        }
-        //仅被checked branch跟踪的文件又可以分为两类：不存在于当前工作目录（覆写）已经存在于当前工作目录的文件（打印错误信息）
-        if (parentCommit3B.getTracked() != null && !parentCommit3B.getTracked().isEmpty()) {
-            for (String key : parentCommit3B.getTracked().keySet()) {
-                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key));
-                if (blob3B.getFileName().exists()) {
-                    File blobcwdFile = join(CWD, blob3B.getFileName().getName());
-                    List<String> addList = Utils.plainFilenamesIn(ADD_STAGE);
-                    Blob blobcwd = new Blob(blobcwdFile);
-                    if (!blobcwd.getId().equals(blob3B.getId())
-                            && !addList.contains(blob3B.getFileName().getName())) {
-                        NotherUtils.message("There is an untracked file in the way; "
-                                + "delete it, or add and commit it first.");
-                    }
-                } else {
-                    File blob3BFile = new File(blob3B.getFilePath());
-                    Utils.writeContents(blob3BFile, NotherUtils.getBytes(blob3B.getBytes()));
+            } else{
+                //仅被当前跟踪
+                Blob blob3A = Blob.fromFile(parentCommit3A.getTracked().get(key));
+                File blob3AFile = new File(blob3A.getFilePath());
+                if (blob3AFile.exists()) {
+                    NotherUtils.rm(blob3AFile);
                 }
             }
         }
+
+        for (String key1 : parentCommit3B.getTracked().keySet()) {
+            //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
+            if (parentCommit3A.getTracked().containsKey(key1)) {
+                Blob blob = Blob.fromFile(parentCommit3B.getTracked().get(key1));
+                File blobFile = new File(blob.getFilePath());
+                if (blobFile.exists()) {
+                    NotherUtils.rm(blobFile);
+                }
+                Utils.writeContents(blobFile, NotherUtils.getBytes(blob.getBytes()));
+            } else{
+                //仅被当前跟踪
+                Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key1));
+                File blob3AFile = new File(blob3B.getFilePath());
+                if (blob3AFile.exists()) {
+                    NotherUtils.message("There is an untracked file in the way; "
+                            + "delete it, or add and commit it first.");
+                }else{
+                    Utils.writeContents(blob3AFile, NotherUtils.getBytes(blob3B.getBytes()));
+                }
+            }
+        }
+
+
         //更改HEAD指向Commit3B，最后清空缓存区。
         NotherUtils.clearFile(HEAD);
         Utils.writeContents(HEAD, branch);
@@ -664,7 +647,43 @@ public class Repository implements Serializable {
     }
 
     public static void setMerge(String text) {
+        //HEAD
         Commit commitA = NotherUtils.getHeadBranchCommitId();
+        //OTHER
         Commit commitB = NotherUtils.getBranch(text);
+        Map<String, Integer> commA = new HashMap<>();
+        Map<String, Integer> commB = new HashMap<>();
+        Map<String, Integer> finSplitMap = new HashMap<>();
+        finSplit(finSplitMap, commitA, commitB, commA, commB);
+
+
     }
+
+    private static void finSplit(Map<String, Integer> finSplitMap, Commit commitA, Commit commitB, Map<String, Integer> commA, Map<String, Integer> commB) {
+        int n = 0;
+        while (commitA.getParent() !=null){
+            n = n + 1;
+            commA.put(commitA.getCommitID(), n);
+            commitA = Commit.fromFile(commitA.getParent().get(0));
+        }
+        int m = 0;
+        while (commitB.getParent() !=null){
+            m = m + 1;
+            commB.put(commitB.getCommitID(), m);
+            commitB = Commit.fromFile(commitB.getParent().get(0));
+        }
+        String key ="0";
+        int value = 0;
+        for (String str : commA.keySet()){
+            if (commB.containsKey(str)){
+                if (commA.get(str) < value){
+                    value = commA.get(str);
+                    key = str;
+                }
+            }
+        }
+        finSplitMap.put(key, value);
+    }
+
+
 }
