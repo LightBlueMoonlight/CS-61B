@@ -842,6 +842,10 @@ public class Repository implements Serializable {
         while (commitA.getParent() !=null){
             n = n + 1;
             commA.put(commitA.getCommitID(), n);
+            System.out.println("commitA.commitId())" + commitA.commitId());
+            System.out.println("commitA.getTracked()" + commitA.getTracked());
+            System.out.println("commitA.getParent()" + commitA.getParent());
+            System.out.println("commitA.getMessage()" + commitA.getMessage());
             commitA = Commit.fromFile(commitA.getParent().get(0));
         }
         int m = 0;
