@@ -465,9 +465,6 @@ public class Repository implements Serializable {
         createNewFile(newFile);
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
         if (!commitList.contains(commitId)) {
-            System.out.println("commitId:" + commitId);
-            System.out.println("commitList:" + commitList);
-            System.out.println("shotId checkout :");
             NotherUtils.message("No commit with that id exists.");
         }
         Commit parentCommit = Commit.fromFile(commitId);
@@ -572,8 +569,6 @@ public class Repository implements Serializable {
     public static void setReset(String resetCommitId) {
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
         if (!commitList.contains(resetCommitId)) {
-            System.out.println("commitList:" + commitList);
-            System.out.println("shotId reset :");
             NotherUtils.message("No commit with that id exists.");
         }
         String branch = Utils.readContentsAsString(HEAD);
@@ -719,6 +714,8 @@ public class Repository implements Serializable {
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
         String headFileString = Utils.readContentsAsString(HEAD);
         File masterFile = join(HEADS, headFileString);
+        System.out.println("masterFile:" + masterFile.getPath());
+        System.out.println("masterFile:" + masterFile.getParentFile());
         Utils.writeContents(masterFile, newCommit.commitId());
         if (!masterFile.exists()) {
             createNewFile(masterFile);

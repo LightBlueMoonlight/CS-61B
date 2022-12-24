@@ -96,8 +96,8 @@ public class Main {
                 if(resetCommitId.length() < UID_LENGTH){
                     List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT);
                     for (String str : commitList) {
-                        str = str.substring(0,resetCommitId.length()-1);
-                        if (str.equals(resetCommitId)){
+                        String str1 = str.substring(0,resetCommitId.length());
+                        if (str1.equals(commitList)){
                             resetCommitId = str;
                             break;
                         }
@@ -120,18 +120,12 @@ public class Main {
                         NotherUtils.message("Incorrect operands.");
                     }
                     String commitId = args[1];
-
                     if(commitId.length() < UID_LENGTH){
                         List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT);
-                        System.out.println("外面commitId" + commitId);
-                        System.out.println("外面commitList" + commitList);
-                        System.out.println("commitId.length()-1" + commitId.length());
                         for (String str : commitList) {
-                            str = str.substring(0,commitId.length()-1);
-                            System.out.println("str" + str);
-                            if (str.equals(commitId)){
+                            String str1 = str.substring(0,commitId.length());
+                            if (str1.equals(commitId)){
                                 commitId = str;
-
                                 break;
                             }
                         }
