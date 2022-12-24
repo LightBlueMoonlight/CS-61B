@@ -723,10 +723,6 @@ public class Repository implements Serializable {
         , Map<String, String> masterMap, Map<String, String> otherMap,Map<String, String> splitMap) {
         //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
         //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
-        System.out.println("allfileMap:" + allfileMap.keySet());
-        System.out.println("masterMap:" + masterMap.keySet());
-        System.out.println("otherMap:" + otherMap.keySet());
-        System.out.println("splitMap:" + splitMap.keySet());
         Map<String, String> parentTracked = new HashMap<>();
         for (String blobId : allfileMap.keySet()) {
             if (!REMOVE_STAGE.exists()) {
@@ -742,9 +738,11 @@ public class Repository implements Serializable {
             String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
             String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
-            System.out.println("masterKey:" + masterKey);
-            System.out.println("otherKey:" + otherKey);
-            System.out.println("splitKey:" + splitKey);
+            String modified = "<<<<<<< HEAD" +"\r\n"
+                    + "contents of file in current branch" +"\r\n"
+                    + "=======" +"\r\n"
+                    + "contents of file in given branch" +"\r\n"
+                    + ">>>>>>>";
             if (splitKey != null && masterKey != null && otherKey != null) {
                 //1.split存在 head存在 other存在 other改变 addother
                 if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)) {
@@ -756,21 +754,19 @@ public class Repository implements Serializable {
                 //3.master 和other都改变 master!=other 写冲突
                 if (!masterKey.equals(otherKey) && !splitKey.equals(masterKey)
                         && !splitKey.equals(otherKey)) {
-                    NotherUtils.message("<<<<<<< HEAD");
-                    NotherUtils.message("contents of file in current branch");
-                    NotherUtils.message("=======");
-                    NotherUtils.message("contents of file in given branch");
-                    NotherUtils.message(">>>>>>>");
+                    Blob masterKeyBlob = Blob.fromFile(masterKey);
+                    Blob otherKeyBlob = Blob.fromFile(otherKey);
+                    Utils.writeContents(masterKeyBlob.getFileName(), modified);
+                    Utils.writeContents(otherKeyBlob.getFileName(), modified);
                 }
             }
 
             if (splitKey == null && masterKey != null && otherKey != null) {
                 if (!masterKey.equals(otherKey)) {
-                    NotherUtils.message("<<<<<<< HEAD");
-                    NotherUtils.message("contents of file in current branch");
-                    NotherUtils.message("=======");
-                    NotherUtils.message("contents of file in given branch");
-                    NotherUtils.message(">>>>>>>");
+                    Blob masterKeyBlob = Blob.fromFile(masterKey);
+                    Blob otherKeyBlob = Blob.fromFile(otherKey);
+                    Utils.writeContents(masterKeyBlob.getFileName(), modified);
+                    Utils.writeContents(otherKeyBlob.getFileName(), modified);
                 }
             }
 
@@ -827,7 +823,6 @@ public class Repository implements Serializable {
                 }
             }
         }
-        System.out.println("parentTracked:" + parentTracked);
         return parentTracked;
     }
 
