@@ -796,7 +796,6 @@ public class Repository implements Serializable {
                 }
             }
             List<String> cwdList = Utils.plainFilenamesIn(CWD);
-            System.out.println("cwdList:"+cwdList);
             if (splitKey !=null) {
                 Blob splitKeyBlob = Blob.fromFile(splitKey);
                 if (cwdList.contains(splitKeyBlob.getFileName().getName())) {
