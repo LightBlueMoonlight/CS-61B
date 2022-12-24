@@ -542,7 +542,8 @@ public class Repository implements Serializable {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
-                    Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
+                    Utils.writeContents(blob3B.getFileName()
+                        , NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
         }
@@ -655,7 +656,6 @@ public class Repository implements Serializable {
         if (!NotherUtils.isHeadBranch()) {
             NotherUtils.message("You have uncommitted changes.");
         }
-
         //HEAD
         Commit commitA = NotherUtils.getHeadBranchCommitId();
         //OTHER
@@ -674,13 +674,10 @@ public class Repository implements Serializable {
                 NotherUtils.message("Given branch is an ancestor of the current branch.");
             }
         }
-
-
         List<String> list = new ArrayList<>();
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
         String message = "Merged" + text + "into" + head;
-
         //id为key filename为value
         Map<String, String> allfileMap = new HashMap<>();
         Map<String, String> masterMap = new HashMap<>();
@@ -714,8 +711,6 @@ public class Repository implements Serializable {
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
         String headFileString = Utils.readContentsAsString(HEAD);
         File masterFile = join(HEADS, headFileString);
-        System.out.println("masterFile:" + masterFile.getPath());
-        System.out.println("masterFile:" + masterFile.getParentFile());
         Utils.writeContents(masterFile, newCommit.commitId());
         if (!masterFile.exists()) {
             createNewFile(masterFile);
@@ -741,7 +736,6 @@ public class Repository implements Serializable {
             String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
             String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
-
             if (splitKey != null && masterKey != null && otherKey != null) {
                 //1.split存在 head存在 other存在 other改变 addother
                 if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)) {
@@ -749,17 +743,14 @@ public class Repository implements Serializable {
                     Utils.writeObject(addStageFile, otherKey);
                     createNewFile(addStageFile);
                 }
-
 //                //2.split存在 head存在 other存在 head改变 不做改变
 //                if (splitKey.equals(otherKey) && !splitKey.equals(masterKey)) {
 //
 //                }
-//
 //                //3.master 和other都改变 master=other 不做改变
 //                if (masterKey.equals(otherKey) && !splitKey.equals(masterKey)) {
 //
 //                }
-
                 //3.master 和other都改变 master!=other 写冲突
                 if (!masterKey.equals(otherKey) && !splitKey.equals(masterKey)
                         && !splitKey.equals(otherKey)) {
@@ -770,7 +761,6 @@ public class Repository implements Serializable {
                     NotherUtils.message(">>>>>>>");
                 }
             }
-
             if (splitKey == null && masterKey != null && otherKey != null) {
                 if (!masterKey.equals(otherKey)) {
                     NotherUtils.message("<<<<<<< HEAD");
@@ -780,17 +770,14 @@ public class Repository implements Serializable {
                     NotherUtils.message(">>>>>>>");
                 }
             }
-
             if (splitKey == null && masterKey == null && otherKey != null) {
                 File addStageFile = join(ADD_STAGE, otherKey);
                 Utils.writeObject(addStageFile, otherKey);
                 createNewFile(addStageFile);
             }
-
 //            if (splitKey == null && masterKey == null && otherKey != null) {
 //
 //            }
-
             if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)) {
                     File removeStageFile = join(REMOVE_STAGE, masterKey);
@@ -798,7 +785,6 @@ public class Repository implements Serializable {
                     createNewFile(removeStageFile);
                 }
             }
-
             if (splitKey != null && masterKey == null && otherKey != null) {
                 if (splitKey.equals(otherKey)) {
                     File removeStageFile = join(REMOVE_STAGE, otherKey);
@@ -806,7 +792,6 @@ public class Repository implements Serializable {
                     createNewFile(removeStageFile);
                 }
             }
-
             //查看添加暂存区下目录
             List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
             List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
@@ -864,6 +849,4 @@ public class Repository implements Serializable {
         }
         finSplitMap.put(key, value);
     }
-
-
 }
