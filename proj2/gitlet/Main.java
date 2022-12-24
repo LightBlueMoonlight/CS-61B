@@ -96,7 +96,7 @@ public class Main {
                 if(resetCommitId.length() < UID_LENGTH){
                     List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT);
                     for (String str : commitList) {
-                        str = str.substring(0,resetCommitId.length());
+                        str = str.substring(0,resetCommitId.length()-1);
                         if (str.equals(resetCommitId)){
                             resetCommitId = str;
                             break;
@@ -124,7 +124,7 @@ public class Main {
                     if(commitId.length() < UID_LENGTH){
                         List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT);
                         for (String str : commitList) {
-                            str = str.substring(0,commitId.length());
+                            str = str.substring(0,commitId.length()-1);
                             if (str.equals(commitId)){
                                 commitId = str;
                                 break;
