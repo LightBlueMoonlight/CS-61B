@@ -91,8 +91,8 @@ public class NotherUtils {
 
     public static String getKey(Map<String, String> map, String value) {
         List<String> list = new ArrayList<>();
-        for (String key : map.keySet()){
-            if (map.get(key).equals(value)){
+        for (String key : map.keySet()) {
+            if (map.get(key).equals(value)) {
                 list.add(key);
             }
         }
