@@ -96,7 +96,10 @@ public class NotherUtils {
                 list.add(key);
             }
         }
-        return list.get(0);
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
     }
 
 }

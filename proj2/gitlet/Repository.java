@@ -840,27 +840,21 @@ public class Repository implements Serializable {
     private static void finSplit(Map<String, Integer> finSplitMap
         , Commit commitA, Commit commitB, Map<String, Integer> commA, Map<String, Integer> commB) {
         int n = 0;
-        System.out.println("commitA.getParent():" + commitA.getParent());
         while (commitA.getParent() != null && !commitA.getParent().isEmpty()) {
             n = n + 1;
             commA.put(commitA.getCommitID(), n);
             commitA = Commit.fromFile(commitA.getParent().get(0));
         }
-        System.out.println("commA.keySet():" +commA.keySet());
         int m = 0;
-        System.out.println("commitB.getParent():" + commitB.getParent());
         while (commitB.getParent() != null && !commitB.getParent().isEmpty()) {
             m = m + 1;
             commB.put(commitB.getCommitID(), m);
             commitB = Commit.fromFile(commitB.getParent().get(0));
         }
-        System.out.println("commB.keySet():" +commB.keySet());
         String key = "0";
         int value = 999999999;
         for (String str : commA.keySet()) {
-            System.out.println("str: " + str);
             if (commB.containsKey(str)) {
-                System.out.println(": " + commA.get(str));
                 if (commA.get(str) < value) {
                     value = commA.get(str);
                     key = str;
@@ -868,7 +862,6 @@ public class Repository implements Serializable {
             }
         }
         finSplitMap.put(key, value);
-        System.out.println("finSplitMap.keySet():" + finSplitMap.keySet());
     }
 
 
