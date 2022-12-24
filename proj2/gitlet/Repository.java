@@ -795,6 +795,15 @@ public class Repository implements Serializable {
                     createNewFile(removeStageFile);
                 }
             }
+            List<String> cwdList = Utils.plainFilenamesIn(CWD);
+
+            if (splitKey !=null) {
+                Blob splitKeyBlob = Blob.fromFile(splitKey);
+                if (cwdList.contains(splitKeyBlob)) {
+                    File cwdFile = join(CWD ,splitKeyBlob.getFilePath());
+                    NotherUtils.rm(cwdFile);
+                }
+            }
             //查看添加暂存区下目录
             List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
             List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
