@@ -193,18 +193,14 @@ public class Repository implements Serializable {
         if (!REMOVE_STAGE.exists()) {
             REMOVE_STAGE.mkdir();
         }
-        //查看添加暂存区下目录
-        List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-        //查看删除暂存区下目录
-        List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
-        boolean flag = addStageList == null || addStageList.isEmpty();
-        boolean flag2 = removeStageList == null || removeStageList.isEmpty();
-
-        //判断暂存区是否存在，或为空
-        if (flag && flag2) {
-            //报错
+        //暂存区为空
+        if(NotherUtils.isHeadBranch()){
             NotherUtils.message("No changes added to the commit.");
         }
+        //查看添加暂存区下目录
+        List<String> addStageList = Utils.plainFilenamesIn(Repository.ADD_STAGE);
+        //查看删除暂存区下目录
+        List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
         //读取HEAD下的分支 例如：master
         String headFileString = Utils.readContentsAsString(HEAD);
         //因为分支都在heads下，所以用HEAD读取到的分支名做一个拼接，用来读取当前分支下的内容
@@ -647,6 +643,22 @@ public class Repository implements Serializable {
     }
 
     public static void setMerge(String text) {
+        //如果给定的branch不存在，输出错误信息：
+        List<String> headsList = Utils.plainFilenamesIn(HEADS);
+        if (!headsList.contains(text)) {
+            NotherUtils.message("A branch with that name does not exist.");
+        }
+        //如果给定的branch和当前branch相同，输出错误信息
+        String head = Utils.readContentsAsString(HEAD);
+        if (head.equals(text)) {
+            NotherUtils.message("Cannot merge a branch with itself.");
+        }
+        ////如果缓存区还有blob（文件存在），输出错误信息：
+        //暂存区为空
+        if(!NotherUtils.isHeadBranch()){
+            NotherUtils.message("You have uncommitted changes.");
+        }
+
         //HEAD
         Commit commitA = NotherUtils.getHeadBranchCommitId();
         //OTHER
@@ -655,8 +667,174 @@ public class Repository implements Serializable {
         Map<String, Integer> commB = new HashMap<>();
         Map<String, Integer> finSplitMap = new HashMap<>();
         finSplit(finSplitMap, commitA, commitB, commA, commB);
+        //如果split point和HEAD分支的Commit相同，意味着otherbranch与HEAD在一个分支上并且超前于HEAD
+        //此时直接将HEAD更新到otherbranch的当前Commit，并且输出Current branch fast-forwarded.
+        for (String splitKey: finSplitMap.keySet()){
+            if (commitA.commitId().equals(splitKey)){
+                NotherUtils.message("Current branch fast-forwarded.");
+            }
+            if (commitB.commitId().equals(splitKey)){
+                NotherUtils.message("Given branch is an ancestor of the current branch.");
+            }
+        }
 
 
+        List<String> list = new ArrayList<>();
+        list.add(commitA.getCommitID());
+        list.add(commitB.getCommitID());
+        String message = "Merged" + text + "into" + head;
+
+        //id为key filename为value
+        Map<String, String> allfileMap = new HashMap<>();
+        Map<String, String> masterMap = new HashMap<>();
+        Map<String, String> otherMap = new HashMap<>();
+        Map<String, String> splitMap = new HashMap<>();
+
+        for (String splitKey: finSplitMap.keySet()){
+            Commit splitCommit = Commit.fromFile(splitKey);
+            for (String str: splitCommit.getTracked().keySet()){
+                String splitvalue = splitCommit.getTracked().get(str);
+                allfileMap.put(splitvalue, str);
+                splitMap.put(splitvalue, str);
+            }
+        }
+
+        for (String masterKey: commitA.getTracked().keySet()){
+            String mastevalue = commitA.getTracked().get(masterKey);
+            allfileMap.put(mastevalue, masterKey);
+            masterMap.put(mastevalue, masterKey);
+
+        }
+
+        for (String otherKey: commitB.getTracked().keySet()){
+            String mastevalue = commitB.getTracked().get(otherKey);
+            allfileMap.put(mastevalue, otherKey);
+            otherMap.put(mastevalue, otherKey);
+        }
+        Map<String, String> parentTracked = new HashMap<>();
+        parentTracked = compareFile(allfileMap, masterMap,otherMap,splitMap);
+        Commit newCommit = new Commit(message, list, parentTracked);
+        //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
+        String headFileString = Utils.readContentsAsString(HEAD);
+        File masterFile = join(HEADS, headFileString);
+        Utils.writeContents(masterFile, newCommit.commitId());
+        if (!masterFile.exists()) {
+            createNewFile(masterFile);
+        }
+    }
+
+    private static Map<String, String> compareFile(Map<String, String> allfileMap, Map<String, String> masterMap, Map<String, String> otherMap,Map<String, String> splitMap) {
+        //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
+        //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
+        Map<String, String> parentTracked = new HashMap<>();
+        for (String blobId : allfileMap.keySet()){
+            if (!REMOVE_STAGE.exists()) {
+                //创建removeStage文件目录
+                REMOVE_STAGE.mkdir();
+            }
+            if (!ADD_STAGE.exists()) {
+                //创建removeStage文件目录
+                ADD_STAGE.mkdir();
+            }
+            Blob compareBlib = Blob.fromFile(blobId);
+            //根据value获取对应的key
+            String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
+            String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
+            String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
+
+            if (splitKey != null && masterKey != null && otherKey !=null){
+                //1.split存在 head存在 other存在 other改变 addother
+                if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)){
+                    File addStageFile = join(ADD_STAGE, otherKey);
+                    Utils.writeObject(addStageFile, otherKey);
+                    createNewFile(addStageFile);
+                }
+
+                //2.split存在 head存在 other存在 head改变 不做改变
+                if (splitKey.equals(otherKey) && !splitKey.equals(masterKey)){
+
+                }
+
+                //3.master 和other都改变 master=other 不做改变
+                if (masterKey.equals(otherKey) && !splitKey.equals(masterKey)){
+
+                }
+
+                //3.master 和other都改变 master!=other 写冲突
+                if (!masterKey.equals(otherKey) && !splitKey.equals(masterKey) && !splitKey.equals(otherKey)){
+                    NotherUtils.message("<<<<<<< HEAD");
+                    NotherUtils.message("contents of file in current branch");
+                    NotherUtils.message("=======");
+                    NotherUtils.message("contents of file in given branch");
+                    NotherUtils.message(">>>>>>>");
+                }
+            }
+
+            if (splitKey == null && masterKey != null && otherKey !=null){
+                if (!masterKey.equals(otherKey)){
+                    NotherUtils.message("<<<<<<< HEAD");
+                    NotherUtils.message("contents of file in current branch");
+                    NotherUtils.message("=======");
+                    NotherUtils.message("contents of file in given branch");
+                    NotherUtils.message(">>>>>>>");
+                }
+            }
+
+            if(splitKey == null && masterKey != null && otherKey ==null){
+                File addStageFile = join(ADD_STAGE, otherKey);
+                Utils.writeObject(addStageFile, otherKey);
+                createNewFile(addStageFile);
+            }
+
+            if(splitKey == null && masterKey == null && otherKey !=null){
+
+            }
+
+            if(splitKey != null && masterKey != null && otherKey ==null){
+                if (splitKey.equals(masterKey)){
+                    File removeStageFile = join(REMOVE_STAGE, masterKey);
+                    Utils.writeObject(removeStageFile, masterKey);
+                    createNewFile(removeStageFile);
+                }
+            }
+
+            if(splitKey != null && masterKey == null && otherKey !=null){
+                if (splitKey.equals(otherKey)){
+                    File removeStageFile = join(REMOVE_STAGE, otherKey);
+                    Utils.writeObject(removeStageFile, otherKey);
+                    createNewFile(removeStageFile);
+                }
+            }
+
+            //查看添加暂存区下目录
+            List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
+            List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
+            if ((ADD_STAGE.exists())) {
+                for (String addStageFile : addStageList) {
+                    //根据blobid直接创建bolb文件
+                    Blob blobFile = Blob.fromFile(addStageFile);
+                    //增加缓存去的blobId添加到tracked
+                    parentTracked.put(blobFile.getFilePath(), blobFile.getId());
+                    File addFile = join(ADD_STAGE, addStageFile);
+                    //删除addStage下的暂存文件
+                    NotherUtils.rm(addFile);
+                }
+            }
+            //如果删除区存在
+            if ((REMOVE_STAGE.exists())) {
+                for (String str : removeStageList) {
+                    File removeFile = join(REMOVE_STAGE, str);
+                    //创建bolb文件
+                    Blob blobFile = Blob.fromFile(str);
+                    if (parentTracked != null) {
+                        parentTracked.remove(blobFile.getFilePath());
+                        //删除removeStage下的暂存文件
+                        NotherUtils.rm(removeFile);
+                    }
+                }
+            }
+        }
+        return parentTracked;
     }
 
     private static void finSplit(Map<String, Integer> finSplitMap, Commit commitA, Commit commitB, Map<String, Integer> commA, Map<String, Integer> commB) {

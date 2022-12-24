@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static gitlet.Utils.join;
 
@@ -69,6 +72,32 @@ public class NotherUtils {
     }
 
     static final int UID_LENGTH = 40;
+
+    public static boolean isHeadBranch() {
+        //查看添加暂存区下目录
+        List<String> addStageList = Utils.plainFilenamesIn(Repository.ADD_STAGE);
+        //查看删除暂存区下目录
+        List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
+        boolean flag = addStageList == null || addStageList.isEmpty();
+        boolean flag2 = removeStageList == null || removeStageList.isEmpty();
+
+        //判断暂存区是否存在，或为空
+        if (flag && flag2) {
+            //报错
+            return true;
+        }
+        return false;
+    }
+
+    public static String getKey(Map<String, String> map, String value) {
+        List<String> list = new ArrayList<>();
+        for (String key : map.keySet()){
+            if (map.get(key).equals(value)){
+                list.add(key);
+            }
+        }
+        return list.get(0);
+    }
 
 }
 
