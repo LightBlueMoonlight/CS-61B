@@ -537,21 +537,11 @@ public class Repository implements Serializable {
             } else {
                 //仅被当前跟踪
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key1));
-                System.out.println("checkoutBranch:");
-                System.out.println("key1:" + key1);
-                System.out.println("parentCommit3B.getTracked():" + parentCommit3B.getTracked());
-                System.out.println("parentCommit3B.getMessage():" + parentCommit3B.getMessage());
-                System.out.println("parentCommit3A.getTracked():" + parentCommit3A.getTracked());
-                System.out.println("parentCommit3A.getMessage():" + parentCommit3A.getMessage());
                 List<String> cwdlist = Utils.plainFilenamesIn(CWD);
-                System.out.println("cwdlist:" + cwdlist);
-                System.out.println("blob3B.getFileName().getName():" + blob3B.getFileName().getName());
-                System.out.println("blob3B.getFilePath():" + blob3B.getFilePath());
                 if (cwdlist.contains(blob3B.getFileName().getName())) {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
-                    System.out.println("这次一定成功");
                     Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
@@ -619,17 +609,15 @@ public class Repository implements Serializable {
             } else {
                 //仅被当前跟踪
                 Blob blob3B = Blob.fromFile(parentCommit3B.getTracked().get(key1));
-                File blob3AFile = new File(blob3B.getFilePath());
-                if (blob3AFile.exists()) {
+                List<String> cwdlist = Utils.plainFilenamesIn(CWD);
+                if (cwdlist.contains(blob3B.getFileName().getName())) {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
-                    Utils.writeContents(blob3AFile, NotherUtils.getBytes(blob3B.getBytes()));
+                    Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
         }
-
-
         //更改HEAD指向Commit3B，最后清空缓存区。
         NotherUtils.clearFile(HEAD);
         Utils.writeContents(HEAD, branch);
