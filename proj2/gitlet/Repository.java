@@ -804,7 +804,8 @@ public class Repository implements Serializable {
 
             if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)){
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    Blob blob = Blob.fromFile(masterKey);
+                    File cwdFile = join(CWD ,blob.getFileName().getName());
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
