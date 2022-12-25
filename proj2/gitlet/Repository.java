@@ -758,7 +758,7 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
+                    //Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
 
                 //文件内容是other的
@@ -798,7 +798,7 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
-                    //Utils.writeContents(cwdFile, modified);
+                    Utils.writeContents(cwdFile, modified);
                 }
             }
 
