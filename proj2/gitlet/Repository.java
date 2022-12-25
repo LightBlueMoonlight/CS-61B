@@ -800,6 +800,7 @@ public class Repository implements Serializable {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, modified);
+                    NotherUtils.message("Encountered a merge conflict.");
                 }
             }
 
@@ -826,7 +827,7 @@ public class Repository implements Serializable {
             if (splitKey != null && masterKey == null && otherKey != null) {
                 if (splitKey.equals(otherKey)){
                     Blob blob = Blob.fromFile(otherKey);
-                    NotherUtils.rm(blob.getFileName());
+                    NotherUtils.remove(blob.getFileName());
                     File cwdFile = join(CWD ,compareBlib.getFileName().getName());
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
@@ -859,6 +860,7 @@ public class Repository implements Serializable {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, modified);
+                    NotherUtils.message("Encountered a merge conflict.");
                 }
 
                 if (masterKey.equals(otherKey)) {
