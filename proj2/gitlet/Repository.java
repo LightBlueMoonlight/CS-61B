@@ -798,7 +798,7 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
-                    Utils.writeContents(cwdFile, modified);
+                    //Utils.writeContents(cwdFile, modified);
                 }
             }
 
@@ -816,7 +816,7 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
-                    //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 }
             }
 
