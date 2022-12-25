@@ -811,7 +811,7 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
-                    NotherUtils.rm(blob.getFileName());
+                    NotherUtils.remove(blob);
                 }
 
                 if (!splitKey.equals(masterKey)){
@@ -827,7 +827,7 @@ public class Repository implements Serializable {
             if (splitKey != null && masterKey == null && otherKey != null) {
                 if (splitKey.equals(otherKey)){
                     Blob blob = Blob.fromFile(otherKey);
-                    NotherUtils.remove(blob.getFileName());
+                    NotherUtils.remove(blob);
                     File cwdFile = join(CWD ,compareBlib.getFileName().getName());
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);

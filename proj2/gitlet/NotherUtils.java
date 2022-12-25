@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -129,8 +130,8 @@ public class NotherUtils {
         }
     }
 
-    public static void remove(File newFile) {
-        Blob blob = new Blob(newFile);
+    public static void remove(Blob removeBlob) {
+        Blob blob = removeBlob;
         Commit parentCommit = getHeadBranchCommitId();
         List<String> addStageList = Utils.plainFilenamesIn(Repository.ADD_STAGE);
         //获取相对路径的value
@@ -150,6 +151,10 @@ public class NotherUtils {
         //文件被当前Commit追踪并且存在于工作目录中，那么就将及放入removestage并且在工作目录中删除此文件。在下次commit中进行记录。
         //文件被当前Commit追踪并且不存在于工作目录中，那么就将及放入removestage并即可
         //不为null说明当前commit文件包含当前删除blob文件路径
+        File newFile = Paths.get(blob.getFileName().getName()).isAbsolute()
+                ? new File(blob.getFileName().getName())
+                : join(Repository.CWD, blob.getFileName().getName());
+        Repository.createNewFile(newFile);
         if (trackBlobId != null) {
             //blobid相等 commit有引用，添加到removeStage 删除目录中的文件
             //removeStage不包含直接添加
