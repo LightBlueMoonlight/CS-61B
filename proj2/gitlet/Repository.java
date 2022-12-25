@@ -718,6 +718,8 @@ public class Repository implements Serializable {
         if (!masterFile.exists()) {
             createNewFile(masterFile);
         }
+        printLog(newCommit.commitId());
+        setStatus();
     }
 
     private static Map<String, String> compareFile(Map<String, String> allfileMap
