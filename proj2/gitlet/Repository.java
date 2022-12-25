@@ -772,15 +772,10 @@ public class Repository implements Serializable {
                 Utils.writeObject(addStageFile, otherKey);
                 createNewFile(addStageFile);
                 Blob blob = Blob.fromFile(otherKey);
-                List<String> cwdlist = Utils.plainFilenamesIn(CWD);
-                if (cwdlist.contains(blob.getFileName().getName())) {
-                    NotherUtils.message("There is an untracked file in the way; "
-                            + "delete it, or add and commit it first.");
-                } else {
-                    File newBranch = join(CWD, blob.getFileName().getName());
-                    Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
-                    createNewFile(newBranch);
-                }
+                File newBranch = join(CWD, blob.getFileName().getName());
+                Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
+                createNewFile(newBranch);
+
             }
 
             if (splitKey == null && masterKey != null && otherKey == null) {
@@ -788,15 +783,10 @@ public class Repository implements Serializable {
                 Utils.writeObject(addStageFile, masterKey);
                 createNewFile(addStageFile);
                 Blob blob = Blob.fromFile(masterKey);
-                List<String> cwdlist = Utils.plainFilenamesIn(CWD);
-                if (cwdlist.contains(blob.getFileName().getName())) {
-                    NotherUtils.message("There is an untracked file in the way; "
-                            + "delete it, or add and commit it first.");
-                } else {
-                    File newBranch = join(CWD, blob.getFileName().getName());
-                    Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
-                    createNewFile(newBranch);
-                }
+                File newBranch = join(CWD, blob.getFileName().getName());
+                Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
+                createNewFile(newBranch);
+
             }
             if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)) {
@@ -812,14 +802,14 @@ public class Repository implements Serializable {
                     createNewFile(removeStageFile);
                 }
             }
-            List<String> cwdList = Utils.plainFilenamesIn(CWD);
-            if (splitKey !=null) {
-                Blob splitKeyBlob = Blob.fromFile(splitKey);
-                if (cwdList.contains(splitKeyBlob.getFileName().getName())) {
-                    File cwdFile = join(CWD ,splitKeyBlob.getFileName().getName());
-                    NotherUtils.rm(cwdFile);
-                }
-            }
+//            List<String> cwdList = Utils.plainFilenamesIn(CWD);
+//            if (splitKey !=null) {
+//                Blob splitKeyBlob = Blob.fromFile(splitKey);
+//                if (cwdList.contains(splitKeyBlob.getFileName().getName())) {
+//                    File cwdFile = join(CWD ,splitKeyBlob.getFileName().getName());
+//                    NotherUtils.rm(cwdFile);
+//                }
+//            }
             //查看添加暂存区下目录
             List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
             List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
