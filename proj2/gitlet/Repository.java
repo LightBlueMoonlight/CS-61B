@@ -893,6 +893,8 @@ public class Repository implements Serializable {
                     NotherUtils.rm(cwdFile);
                 }
                 Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                System.out.println("k:"+cwdFile);
+                System.out.println("k:"+NotherUtils.getBytes(blob.getBytes()));
                 NotherUtils.add(blob);
             }
 
