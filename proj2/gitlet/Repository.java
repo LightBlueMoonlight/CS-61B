@@ -715,7 +715,7 @@ public class Repository implements Serializable {
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
         String headFileString = Utils.readContentsAsString(HEAD);
-        String message = "Merged " + text + "into " + headFileString;
+        String message = "Merged " + text + " into " + headFileString;
         Commit newCommit = new Commit(message, list, parentTracked);
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
 
