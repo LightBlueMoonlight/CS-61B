@@ -102,6 +102,98 @@ public class NotherUtils {
         return null;
     }
 
+    public static void add(Blob blob) {
+        boolean flg2 = false;
+
+        List<String> addStageList = Utils.plainFilenamesIn(Repository.ADD_STAGE);
+        if (!addStageList.contains(blob.blobId())) {
+            flg2 = true;
+        }
+        List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
+        if (removeStageList != null && !removeStageList.isEmpty()) {
+            for (String str : removeStageList) {
+                Blob blob1 = Blob.fromFile(str);
+                if (blob1.getFileName().equals(blob.getFileName())) {
+                    File rmAddStageFile1 = join(Repository.REMOVE_STAGE, str);
+                    Repository.createNewFile(rmAddStageFile1);
+                    NotherUtils.rm(rmAddStageFile1);
+                    flg2 = false;
+                }
+            }
+        }
+        //flg2为true才创建
+        if (flg2) {
+            File rmAddStageFile2 = join(Repository.ADD_STAGE, blob.blobId());
+            Utils.writeObject(rmAddStageFile2, blob.blobId());
+            Repository.createNewFile(rmAddStageFile2);
+        }
+    }
+
+    public static void remove(File newFile) {
+        Blob blob = new Blob(newFile);
+        Commit parentCommit = getHeadBranchCommitId();
+        List<String> addStageList = Utils.plainFilenamesIn(Repository.ADD_STAGE);
+        //获取相对路径的value
+        String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
+        List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
+        //文件刚被add进addstage而没有commit，直接删除addstage中的Blob就可以
+        if (addStageList != null && !addStageList.isEmpty()) {
+            for (String str : addStageList) {
+                Blob blob1 = Blob.fromFile(str);
+                if (blob1.getFileName().equals(blob.getFileName())) {
+                    File rmAddStageFile1 = join(Repository.ADD_STAGE, str);
+                    Repository.createNewFile(rmAddStageFile1);
+                    NotherUtils.rm(rmAddStageFile1);
+                }
+            }
+        }
+        //文件被当前Commit追踪并且存在于工作目录中，那么就将及放入removestage并且在工作目录中删除此文件。在下次commit中进行记录。
+        //文件被当前Commit追踪并且不存在于工作目录中，那么就将及放入removestage并即可
+        //不为null说明当前commit文件包含当前删除blob文件路径
+        if (trackBlobId != null) {
+            //blobid相等 commit有引用，添加到removeStage 删除目录中的文件
+            //removeStage不包含直接添加
+            if (!removeStageList.contains(blob.blobId())) {
+                File rmAddStageFile2 = join(Repository.REMOVE_STAGE, blob.blobId());
+                Utils.writeObject(rmAddStageFile2, blob.blobId());
+                Repository.createNewFile(rmAddStageFile2);
+                NotherUtils.rm(newFile);
+            }
+        }
+    }
+
+    public static Map<String, String> commit(Map<String, String> tracked) {
+        //遍历addStage,将blob的文件名和blobId做出hashMap进行映射
+        List<String> addStageList = Utils.plainFilenamesIn(Repository.ADD_STAGE);
+        Map<String, String> parentTracked = tracked;
+        if ((Repository.ADD_STAGE.exists())) {
+            for (String addStageFile : addStageList) {
+                //根据blobid直接创建bolb文件
+                Blob blobFile = Blob.fromFile(addStageFile);
+                //增加缓存去的blobId添加到tracked
+                parentTracked.put(blobFile.getFilePath(), blobFile.getId());
+                File addFile = join(Repository.ADD_STAGE, addStageFile);
+                //删除addStage下的暂存文件
+                NotherUtils.rm(addFile);
+            }
+        }
+        //如果删除区存在
+        List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
+        if ((Repository.REMOVE_STAGE.exists())) {
+            for (String str : removeStageList) {
+                File removeFile = join(Repository.REMOVE_STAGE, str);
+                //创建bolb文件
+                Blob blobFile = Blob.fromFile(str);
+                if (parentTracked != null) {
+                    parentTracked.remove(blobFile.getFilePath());
+                    //删除removeStage下的暂存文件
+                    NotherUtils.rm(removeFile);
+                }
+            }
+        }
+        return parentTracked;
+    }
+
 }
 
 

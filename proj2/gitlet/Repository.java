@@ -769,6 +769,7 @@ public class Repository implements Serializable {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                    NotherUtils.add(blob);
                 }
 
                 //文件内容master
@@ -803,15 +804,13 @@ public class Repository implements Serializable {
             }
 
             if (splitKey != null && masterKey != null && otherKey == null) {
-                System.out.println("我觉得");
-                System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
                 if (splitKey.equals(masterKey)){
                     Blob blob = Blob.fromFile(masterKey);
-                    System.out.println("blob.getFileName().getName():" + blob.getFileName().getName());
                     File cwdFile = join(CWD ,blob.getFileName().getName());
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
+                    NotherUtils.rm(blob.getFileName());
                 }
 
                 if (!splitKey.equals(masterKey)){
@@ -830,6 +829,8 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
+                    Blob blob = Blob.fromFile(otherKey);
+                    NotherUtils.rm(blob.getFileName());
                     //删除了Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
 
@@ -879,23 +880,20 @@ public class Repository implements Serializable {
                     NotherUtils.rm(cwdFile);
                 }
                 Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                NotherUtils.add(blob);
             }
 
             //可以了
             if (splitKey == null && masterKey != null && otherKey == null) {
-                System.out.println("来这里");
-                System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
-
                 File cwdFile = join(CWD ,compareBlib.getFileName().getName());
                 Blob blob = Blob.fromFile(masterKey);
-                System.out.println("blob.getFileName().getName():" + blob.getFileName().getName());
-
                 if (cwdFile.exists()){
                     NotherUtils.rm(cwdFile);
                 }
                 Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
         }
+        parentTracked = NotherUtils.commit(parentTracked);
         return parentTracked;
     }
 
