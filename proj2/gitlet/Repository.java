@@ -755,18 +755,14 @@ public class Repository implements Serializable {
                 if (!masterKey.equals(otherKey) && !splitKey.equals(masterKey)
                         && !splitKey.equals(otherKey)) {
                     Blob masterKeyBlob = Blob.fromFile(masterKey);
-                    Blob otherKeyBlob = Blob.fromFile(otherKey);
                     Utils.writeContents(masterKeyBlob.getFileName(), modified);
-                    Utils.writeContents(otherKeyBlob.getFileName(), modified);
                 }
             }
 
             if (splitKey == null && masterKey != null && otherKey != null) {
                 if (!masterKey.equals(otherKey)) {
                     Blob masterKeyBlob = Blob.fromFile(masterKey);
-                    Blob otherKeyBlob = Blob.fromFile(otherKey);
                     Utils.writeContents(masterKeyBlob.getFileName(), modified);
-                    Utils.writeContents(otherKeyBlob.getFileName(), modified);
                 }
             }
 
