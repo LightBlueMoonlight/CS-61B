@@ -803,8 +803,11 @@ public class Repository implements Serializable {
             }
 
             if (splitKey != null && masterKey != null && otherKey == null) {
+                System.out.println("我觉得");
+                System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
                 if (splitKey.equals(masterKey)){
                     Blob blob = Blob.fromFile(masterKey);
+                    System.out.println("blob.getFileName().getName():" + blob.getFileName().getName());
                     File cwdFile = join(CWD ,blob.getFileName().getName());
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
@@ -880,8 +883,13 @@ public class Repository implements Serializable {
 
             //可以了
             if (splitKey == null && masterKey != null && otherKey == null) {
+                System.out.println("来这里");
+                System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
+
                 File cwdFile = join(CWD ,compareBlib.getFileName().getName());
                 Blob blob = Blob.fromFile(masterKey);
+                System.out.println("blob.getFileName().getName():" + blob.getFileName().getName());
+
                 if (cwdFile.exists()){
                     NotherUtils.rm(cwdFile);
                 }
