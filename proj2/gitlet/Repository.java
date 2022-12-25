@@ -677,7 +677,7 @@ public class Repository implements Serializable {
         List<String> list = new ArrayList<>();
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
-        String message = "Merged" + text + "into" + head;
+        String message = "Merged " + text + " into " + head;
         //id为key filename为value
         Map<String, String> allfileMap = new HashMap<>();
         Map<String, String> masterMap = new HashMap<>();
