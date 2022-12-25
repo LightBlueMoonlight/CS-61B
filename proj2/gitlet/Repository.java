@@ -752,11 +752,6 @@ public class Repository implements Serializable {
             String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
             String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
-            System.out.println("compareBlib.getFilePath():" + compareBlib.getFilePath());
-            System.out.println("masterKey:" + masterKey);
-            System.out.println("otherKey:" + otherKey);
-            System.out.println("otherKey:" + otherKey);
-
             if (splitKey != null && masterKey != null && otherKey != null) {
                 //没改变继续引用
                 if (splitKey.equals(masterKey) && splitKey.equals(otherKey)){
@@ -850,6 +845,7 @@ public class Repository implements Serializable {
                         NotherUtils.rm(cwdFile);
                     }
                     //删除了Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 }
 
                 if (!splitKey.equals(otherKey)){
