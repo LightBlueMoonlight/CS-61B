@@ -714,7 +714,7 @@ public class Repository implements Serializable {
         List<String> list = new ArrayList<>();
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
-        String message = "Merged " + text + " into " + head;
+        String message = "Merged [given branch name] into [current branch name].";
         Commit newCommit = new Commit(message, list, parentTracked);
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
         String headFileString = Utils.readContentsAsString(HEAD);
@@ -874,7 +874,7 @@ public class Repository implements Serializable {
                 if (cwdFile.exists()){
                     NotherUtils.rm(cwdFile);
                 }
-                //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
 
             //可以了
