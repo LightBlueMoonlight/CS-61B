@@ -766,11 +766,6 @@ public class Repository implements Serializable {
             if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)){
                     parentTracked.put(compareBlib.getFilePath(), masterKey);
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
-                    if (cwdFile.exists()){
-                        NotherUtils.rm(cwdFile);
-                    }
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
             }
 
