@@ -137,20 +137,6 @@ public class NotherUtils {
         //获取相对路径的value
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
         List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
-        //文件刚被add进addstage而没有commit，直接删除addstage中的Blob就可以
-        if (addStageList != null && !addStageList.isEmpty()) {
-            for (String str : addStageList) {
-                Blob blob1 = Blob.fromFile(str);
-                if (blob1.getFileName().equals(blob.getFileName())) {
-                    File rmAddStageFile1 = join(Repository.ADD_STAGE, str);
-                    Repository.createNewFile(rmAddStageFile1);
-                    NotherUtils.rm(rmAddStageFile1);
-                }
-            }
-        }
-        //文件被当前Commit追踪并且存在于工作目录中，那么就将及放入removestage并且在工作目录中删除此文件。在下次commit中进行记录。
-        //文件被当前Commit追踪并且不存在于工作目录中，那么就将及放入removestage并即可
-        //不为null说明当前commit文件包含当前删除blob文件路径
         File newFile = Paths.get(blob.getFileName().getName()).isAbsolute()
                 ? new File(blob.getFileName().getName())
                 : join(Repository.CWD, blob.getFileName().getName());

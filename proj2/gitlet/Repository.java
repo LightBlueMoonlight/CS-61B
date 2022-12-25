@@ -807,11 +807,17 @@ public class Repository implements Serializable {
             if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)){
                     Blob blob = Blob.fromFile(masterKey);
+                    List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
+                    if (!removeStageList.contains(blob.blobId())) {
+                        File rmAddStageFile2 = join(Repository.REMOVE_STAGE, blob.blobId());
+                        Utils.writeObject(rmAddStageFile2, blob.blobId());
+                        Repository.createNewFile(rmAddStageFile2);
+                    }
                     File cwdFile = join(CWD ,blob.getFileName().getName());
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
-                    NotherUtils.remove(blob);
+
                 }
 
                 if (!splitKey.equals(masterKey)){
@@ -827,7 +833,12 @@ public class Repository implements Serializable {
             if (splitKey != null && masterKey == null && otherKey != null) {
                 if (splitKey.equals(otherKey)){
                     Blob blob = Blob.fromFile(otherKey);
-                    NotherUtils.remove(blob);
+                    List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
+                    if (!removeStageList.contains(blob.blobId())) {
+                        File rmAddStageFile2 = join(Repository.REMOVE_STAGE, blob.blobId());
+                        Utils.writeObject(rmAddStageFile2, blob.blobId());
+                        Repository.createNewFile(rmAddStageFile2);
+                    }
                     File cwdFile = join(CWD ,compareBlib.getFileName().getName());
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
