@@ -825,12 +825,12 @@ public class Repository implements Serializable {
 
             if (splitKey != null && masterKey == null && otherKey != null) {
                 if (splitKey.equals(otherKey)){
+                    Blob blob = Blob.fromFile(otherKey);
+                    NotherUtils.rm(blob.getFileName());
                     File cwdFile = join(CWD ,compareBlib.getFileName().getName());
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
-                    Blob blob = Blob.fromFile(otherKey);
-                    NotherUtils.rm(blob.getFileName());
                     //删除了Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
 
