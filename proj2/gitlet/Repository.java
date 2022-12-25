@@ -754,18 +754,69 @@ public class Repository implements Serializable {
             if (splitKey != null && masterKey != null && otherKey != null) {
                 //没改变继续引用
                 if (splitKey.equals(masterKey) && splitKey.equals(otherKey)){
-                    parentTracked.put(compareBlib.getFilePath(), masterKey);
                     File cwdFile = join(CWD ,compareBlib.getFileName().getName());
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
+
+                //文件内容是other的
+                if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)){
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    Blob blob = Blob.fromFile(otherKey);
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                }
+
+                //文件内容master
+                if (!splitKey.equals(masterKey) && splitKey.equals(otherKey)){
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    Blob blob = Blob.fromFile(masterKey);
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                }
+
+                //文件内容master
+                if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey) && masterKey.equals(otherKey)){
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    Blob blob = Blob.fromFile(masterKey);
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                }
+
+                //文件内容冲突
+                if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey) && !masterKey.equals(otherKey)){
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    Blob blob = Blob.fromFile(masterKey);
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, modified);
+                }
             }
 
             if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)){
-                    parentTracked.put(compareBlib.getFilePath(), masterKey);
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                }
+
+                if (!splitKey.equals(masterKey)){
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    Blob blob = Blob.fromFile(masterKey);
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 }
             }
 
@@ -777,27 +828,63 @@ public class Repository implements Serializable {
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
+
+                if (!splitKey.equals(otherKey)){
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    Blob blob = Blob.fromFile(otherKey);
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                }
             }
 
             if (splitKey != null && masterKey == null && otherKey == null) {
-
-            }
-
-            if (splitKey == null && masterKey != null && otherKey != null) {
-
-            }
-
-            if (splitKey == null && masterKey == null && otherKey != null) {
-
-            }
-
-            if (splitKey == null && masterKey != null && otherKey == null) {
-                parentTracked.put(compareBlib.getFilePath(), masterKey);
                 File cwdFile = join(CWD ,compareBlib.getFileName().getName());
                 if (cwdFile.exists()){
                     NotherUtils.rm(cwdFile);
                 }
-                Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
+            }
+
+            if (splitKey == null && masterKey != null && otherKey != null) {
+                if (!masterKey.equals(otherKey)) {
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    Blob blob = Blob.fromFile(masterKey);
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, modified);
+                }
+
+                if (masterKey.equals(otherKey)) {
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    Blob blob = Blob.fromFile(masterKey);
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                }
+
+            }
+
+            //可以了
+            if (splitKey == null && masterKey == null && otherKey != null) {
+                File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                Blob blob = Blob.fromFile(otherKey);
+                if (cwdFile.exists()){
+                    NotherUtils.rm(cwdFile);
+                }
+                Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+            }
+
+            //可以了
+            if (splitKey == null && masterKey != null && otherKey == null) {
+                File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                Blob blob = Blob.fromFile(masterKey);
+                if (cwdFile.exists()){
+                    NotherUtils.rm(cwdFile);
+                }
+                Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
         }
         return parentTracked;
