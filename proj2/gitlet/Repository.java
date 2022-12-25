@@ -873,7 +873,7 @@ public class Repository implements Serializable {
                 if (cwdFile.exists()){
                     NotherUtils.rm(cwdFile);
                 }
-                Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
 
             //可以了
