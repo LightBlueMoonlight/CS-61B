@@ -826,6 +826,7 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
+                    //删除了Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
 
                 if (!splitKey.equals(otherKey)){
@@ -873,7 +874,7 @@ public class Repository implements Serializable {
                 if (cwdFile.exists()){
                     NotherUtils.rm(cwdFile);
                 }
-                //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
 
             //可以了
@@ -883,7 +884,7 @@ public class Repository implements Serializable {
                 if (cwdFile.exists()){
                     NotherUtils.rm(cwdFile);
                 }
-                Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
         }
         return parentTracked;
