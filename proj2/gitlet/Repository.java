@@ -669,6 +669,12 @@ public class Repository implements Serializable {
         //此时直接将HEAD更新到otherbranch的当前Commit，并且输出Current branch fast-forwarded.
         for (String splitKey: finSplitMap.keySet()) {
             if (commitA.commitId().equals(splitKey)) {
+                String headFileString = Utils.readContentsAsString(HEAD);
+                File masterFile = join(HEADS, headFileString);
+                Utils.writeContents(masterFile, commitB.commitId());
+                if (!masterFile.exists()) {
+                    createNewFile(masterFile);
+                }
                 NotherUtils.message("Current branch fast-forwarded.");
             }
             if (commitB.commitId().equals(splitKey)) {
@@ -802,14 +808,14 @@ public class Repository implements Serializable {
                     createNewFile(removeStageFile);
                 }
             }
-//            List<String> cwdList = Utils.plainFilenamesIn(CWD);
-//            if (splitKey !=null) {
-//                Blob splitKeyBlob = Blob.fromFile(splitKey);
-//                if (cwdList.contains(splitKeyBlob.getFileName().getName())) {
-//                    File cwdFile = join(CWD ,splitKeyBlob.getFileName().getName());
-//                    NotherUtils.rm(cwdFile);
-//                }
-//            }
+            List<String> cwdList = Utils.plainFilenamesIn(CWD);
+            if (splitKey !=null) {
+                Blob splitKeyBlob = Blob.fromFile(splitKey);
+                if (cwdList.contains(splitKeyBlob.getFileName().getName())) {
+                    File cwdFile = join(CWD ,splitKeyBlob.getFileName().getName());
+                    NotherUtils.rm(cwdFile);
+                }
+            }
             //查看添加暂存区下目录
             List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
             List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
