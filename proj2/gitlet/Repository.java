@@ -774,12 +774,20 @@ public class Repository implements Serializable {
                 File addStageFile = join(ADD_STAGE, otherKey);
                 Utils.writeObject(addStageFile, otherKey);
                 createNewFile(addStageFile);
+                Blob blob = Blob.fromFile(otherKey);
+                File newBranch = join(CWD, blob.getFileName().getName());
+                Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
+                createNewFile(newBranch);
             }
 
             if (splitKey == null && masterKey != null && otherKey == null) {
                 File addStageFile = join(ADD_STAGE, masterKey);
                 Utils.writeObject(addStageFile, masterKey);
                 createNewFile(addStageFile);
+                Blob blob = Blob.fromFile(masterKey);
+                File newBranch = join(CWD, blob.getFileName().getName());
+                Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
+                createNewFile(newBranch);
             }
             if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)) {
