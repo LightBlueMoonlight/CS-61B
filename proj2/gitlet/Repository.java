@@ -752,113 +752,57 @@ public class Repository implements Serializable {
             String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
 
             if (splitKey != null && masterKey != null && otherKey != null) {
-                //1.split存在 head存在 other存在 other改变 addother
-                if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)) {
-                    File addStageFile = join(ADD_STAGE, otherKey);
-                    Utils.writeObject(addStageFile, otherKey);
-                    createNewFile(addStageFile);
+                //没改变继续引用
+                if (splitKey.equals(masterKey) && splitKey.equals(otherKey)){
+                    parentTracked.put(compareBlib.getFilePath(), masterKey);
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
+            }
 
-                //3.master 和other都改变 master!=other 写冲突
-                if (!masterKey.equals(otherKey) && !splitKey.equals(masterKey)
-                        && !splitKey.equals(otherKey)) {
-                    Blob masterKeyBlob = Blob.fromFile(masterKey);
-                    Utils.writeContents(masterKeyBlob.getFileName(), modified);
+            if (splitKey != null && masterKey != null && otherKey == null) {
+                if (splitKey.equals(masterKey)){
+                    parentTracked.put(compareBlib.getFilePath(), masterKey);
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
+            }
+
+            if (splitKey != null && masterKey == null && otherKey != null) {
+                if (splitKey.equals(otherKey)){
+                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                    Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
+                }
+            }
+
+            if (splitKey != null && masterKey == null && otherKey == null) {
+
             }
 
             if (splitKey == null && masterKey != null && otherKey != null) {
-                if (!masterKey.equals(otherKey)) {
-                    Blob masterKeyBlob = Blob.fromFile(masterKey);
-                    Utils.writeContents(masterKeyBlob.getFileName(), modified);
-                }
+
             }
 
-            //不改
             if (splitKey == null && masterKey == null && otherKey != null) {
-                File addStageFile = join(ADD_STAGE, otherKey);
-                Utils.writeObject(addStageFile, otherKey);
-                createNewFile(addStageFile);
-                Blob blob = Blob.fromFile(otherKey);
-                if (!headsList.contains(blob.getFileName().getName())){
-                    File cwdFile = join(CWD ,blob.getFileName().getName());
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-                    createNewFile(cwdFile);
-                }
+
             }
 
-            //不改
             if (splitKey == null && masterKey != null && otherKey == null) {
-                File addStageFile = join(ADD_STAGE, masterKey);
-                Utils.writeObject(addStageFile, masterKey);
-                createNewFile(addStageFile);
-                Blob blob = Blob.fromFile(masterKey);
-                if (!headsList.contains(blob.getFileName().getName())){
-                    File cwdFile = join(CWD ,blob.getFileName().getName());
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-                    createNewFile(cwdFile);
-                }
-
-            }
-
-            //不改
-            if (splitKey != null && masterKey != null && otherKey == null) {
-                if (splitKey.equals(masterKey)) {
-                    if (headsList.contains(compareBlib.getFileName().getName())){
-                        File cwdFile = join(CWD ,compareBlib.getFileName().getName());
-                        NotherUtils.rm(cwdFile);
-                    }
-                }
-            }
-
-            //不改
-            if (splitKey != null && masterKey == null && otherKey != null) {
-                if (splitKey.equals(otherKey)) {
-                    File removeStageFile = join(REMOVE_STAGE, otherKey);
-                    Utils.writeObject(removeStageFile, otherKey);
-                    createNewFile(removeStageFile);
-                    if (!headsList.contains(compareBlib.getFileName().getName())){
-                        File cwdFile = join(CWD ,compareBlib.getFileName().getName());
-                        Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
-                        createNewFile(cwdFile);
-                    }
-                }
-            }
-
-            List<String> cwdList = Utils.plainFilenamesIn(CWD);
-            if (splitKey !=null) {
-                Blob splitKeyBlob = Blob.fromFile(splitKey);
-                if (cwdList.contains(splitKeyBlob.getFileName().getName())) {
-                    File cwdFile = join(CWD ,splitKeyBlob.getFileName().getName());
+                parentTracked.put(compareBlib.getFilePath(), masterKey);
+                File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                if (cwdFile.exists()){
                     NotherUtils.rm(cwdFile);
                 }
-            }
-            //查看添加暂存区下目录
-            List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
-            List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
-            if ((ADD_STAGE.exists())) {
-                for (String addStageFile : addStageList) {
-                    //根据blobid直接创建bolb文件
-                    Blob blobFile = Blob.fromFile(addStageFile);
-                    //增加缓存去的blobId添加到tracked
-                    parentTracked.put(blobFile.getFilePath(), blobFile.getId());
-                    File addFile = join(ADD_STAGE, addStageFile);
-                    //删除addStage下的暂存文件
-                    NotherUtils.rm(addFile);
-                }
-            }
-            //如果删除区存在
-            if ((REMOVE_STAGE.exists())) {
-                for (String str : removeStageList) {
-                    File removeFile = join(REMOVE_STAGE, str);
-                    //创建bolb文件
-                    Blob blobFile = Blob.fromFile(str);
-                    if (parentTracked != null) {
-                        parentTracked.remove(blobFile.getFilePath());
-                        //删除removeStage下的暂存文件
-                        NotherUtils.rm(removeFile);
-                    }
-                }
+                Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
             }
         }
         return parentTracked;
