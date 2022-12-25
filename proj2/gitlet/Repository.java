@@ -714,10 +714,11 @@ public class Repository implements Serializable {
         List<String> list = new ArrayList<>();
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
-        String message = "Merged [given branch name] into [current branch name].";
+        String headFileString = Utils.readContentsAsString(HEAD);
+        String message = "Merged " + text + "into " + headFileString;
         Commit newCommit = new Commit(message, list, parentTracked);
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
-        String headFileString = Utils.readContentsAsString(HEAD);
+
         File masterFile = join(HEADS, headFileString);
         Utils.writeContents(masterFile, newCommit.commitId());
         if (!masterFile.exists()) {
@@ -893,8 +894,6 @@ public class Repository implements Serializable {
                     NotherUtils.rm(cwdFile);
                 }
                 Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-                System.out.println("k:"+cwdFile);
-                System.out.println("k:"+NotherUtils.getBytes(blob.getBytes()));
                 NotherUtils.add(blob);
             }
 
