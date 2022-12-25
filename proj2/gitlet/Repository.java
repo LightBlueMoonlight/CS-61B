@@ -326,8 +326,9 @@ public class Repository implements Serializable {
         //对于合并提交（那些有两个父提交的提交），在第一个提交的正下方添加一行
         if (parentCommit.getParent().size() == 2) {
             Commit parentCommit2 = Commit.fromFile(parentCommit.getParent().get(1));
+            Commit parentCommit1 = Commit.fromFile(parentCommit.getParent().get(0));
             //Merge:”后面的两个十六进制数字由第一个和第二个父项的提交 ID 的前七位组成
-            Utils.message("Merge: " + parentCommit.commitId().substring(0, 7) + " "
+            Utils.message("Merge: " + parentCommit1.commitId().substring(0, 7) + " "
                     + parentCommit2.commitId().substring(0, 7));
         }
         Utils.message("Date: " + parentCommit.getDate());
