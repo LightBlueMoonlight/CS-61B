@@ -718,8 +718,6 @@ public class Repository implements Serializable {
         if (!masterFile.exists()) {
             createNewFile(masterFile);
         }
-        printLog(newCommit.commitId());
-        setStatus();
     }
 
     private static Map<String, String> compareFile(Map<String, String> allfileMap
@@ -774,9 +772,15 @@ public class Repository implements Serializable {
                 Utils.writeObject(addStageFile, otherKey);
                 createNewFile(addStageFile);
                 Blob blob = Blob.fromFile(otherKey);
-                File newBranch = join(CWD, blob.getFileName().getName());
-                Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
-                createNewFile(newBranch);
+                List<String> cwdlist = Utils.plainFilenamesIn(CWD);
+                if (cwdlist.contains(blob.getFileName().getName())) {
+                    NotherUtils.message("There is an untracked file in the way; "
+                            + "delete it, or add and commit it first.");
+                } else {
+                    File newBranch = join(CWD, blob.getFileName().getName());
+                    Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
+                    createNewFile(newBranch);
+                }
             }
 
             if (splitKey == null && masterKey != null && otherKey == null) {
@@ -784,9 +788,15 @@ public class Repository implements Serializable {
                 Utils.writeObject(addStageFile, masterKey);
                 createNewFile(addStageFile);
                 Blob blob = Blob.fromFile(masterKey);
-                File newBranch = join(CWD, blob.getFileName().getName());
-                Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
-                createNewFile(newBranch);
+                List<String> cwdlist = Utils.plainFilenamesIn(CWD);
+                if (cwdlist.contains(blob.getFileName().getName())) {
+                    NotherUtils.message("There is an untracked file in the way; "
+                            + "delete it, or add and commit it first.");
+                } else {
+                    File newBranch = join(CWD, blob.getFileName().getName());
+                    Utils.writeContents(newBranch, NotherUtils.getBytes(blob.getBytes()));
+                    createNewFile(newBranch);
+                }
             }
             if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)) {
