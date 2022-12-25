@@ -826,7 +826,6 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
 
                 if (!splitKey.equals(otherKey)){
