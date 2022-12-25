@@ -853,7 +853,7 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
-                    Utils.writeContents(cwdFile, modified);
+                    //Utils.writeContents(cwdFile, modified);
                 }
 
                 if (masterKey.equals(otherKey)) {
@@ -874,7 +874,7 @@ public class Repository implements Serializable {
                 if (cwdFile.exists()){
                     NotherUtils.rm(cwdFile);
                 }
-                //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
 
             //可以了
