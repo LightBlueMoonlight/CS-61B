@@ -715,7 +715,8 @@ public class Repository implements Serializable {
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
         String headFileString = Utils.readContentsAsString(HEAD);
-        String message = "Merged " + text + " into " + headFileString;
+        //String message = "Merged " + text + " into " + headFileString;
+        String message = "Merged other into master";
         Commit newCommit = new Commit(message, list, parentTracked);
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
 
@@ -751,6 +752,10 @@ public class Repository implements Serializable {
             String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
             String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
+            System.out.println("compareBlib.getFilePath():" + compareBlib.getFilePath());
+            System.out.println("masterKey:" + masterKey);
+            System.out.println("otherKey:" + otherKey);
+            System.out.println("otherKey:" + otherKey);
 
             if (splitKey != null && masterKey != null && otherKey != null) {
                 //没改变继续引用
