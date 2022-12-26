@@ -885,7 +885,7 @@ public class Repository implements Serializable {
 
                 if (masterKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    //Blob blob = Blob.fromFile(masterKey);
+                    Blob blob = Blob.fromFile(masterKey);
                     if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
@@ -909,17 +909,27 @@ public class Repository implements Serializable {
 
             //可以了
             if (splitKey == null && masterKey != null && otherKey == null) {
-                File cwdFile = join(CWD, compareBlib.getFileName().getName());
+//                File cwdFile = join(CWD, compareBlib.getFileName().getName());
+//                Blob blob = Blob.fromFile(masterKey);
+//                if (blob.getFileName().exists()) {
+//                    NotherUtils.rm(cwdFile);
+//                }
                 Blob blob = Blob.fromFile(masterKey);
+                List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
+                if (!removeStageList.contains(blob.blobId())) {
+                    File rmAddStageFile2 = join(Repository.REMOVE_STAGE, blob.blobId());
+                    Utils.writeObject(rmAddStageFile2, blob.blobId());
+                    Repository.createNewFile(rmAddStageFile2);
+                }
+                File cwdFile = join(CWD, compareBlib.getFileName().getName());
                 if (cwdFile.exists()) {
                     NotherUtils.rm(cwdFile);
                 }
-                Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
         }
+
         parentTracked = NotherUtils.commit(parentTracked);
-
-
         //String message = "Merged other into master";
         Commit newCommit = new Commit(message, list, parentTracked);
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
