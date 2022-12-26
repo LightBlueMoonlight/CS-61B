@@ -324,7 +324,7 @@ public class Repository implements Serializable {
         Utils.message("===");
         Utils.message("commit " + parentCommit.commitId());
         //对于合并提交（那些有两个父提交的提交），在第一个提交的正下方添加一行
-        if (parentCommit.getParent().size() == 2) {
+        if (parentCommit.getParent().size() > 1) {
             Commit parentCommit2 = Commit.fromFile(parentCommit.getParent().get(1));
             Commit parentCommit1 = Commit.fromFile(parentCommit.getParent().get(0));
             //Merge:”后面的两个十六进制数字由第一个和第二个父项的提交 ID 的前七位组成
@@ -675,12 +675,17 @@ public class Repository implements Serializable {
                 if (!masterFile.exists()) {
                     createNewFile(masterFile);
                 }
+                List<String> cwdList = Utils.plainFilenamesIn(CWD);
+                System.out.println("commita.getTracked():"+ commitA.getTracked());
+                System.out.println("commitb.getTracked():"+commitB.getTracked());
+                System.out.println("cwdList:"+cwdList);
                 NotherUtils.message("Current branch fast-forwarded.");
             }
             if (commitB.commitId().equals(splitKey)) {
                 NotherUtils.message("Given branch is an ancestor of the current branch.");
             }
         }
+
         //id为key filename为value
         Map<String, String> allfileMap = new HashMap<>();
         Map<String, String> masterMap = new HashMap<>();
@@ -711,25 +716,7 @@ public class Repository implements Serializable {
             otherMap.put(mastevalue, otherKey);
         }
         Map<String, String> parentTracked = compareFile(allfileMap, masterMap, otherMap, splitMap, commitA.getTracked());
-        for (String splitKey: finSplitMap.keySet()) {
-            if (commitA.commitId().equals(splitKey)) {
-                String headFileString = Utils.readContentsAsString(HEAD);
-                File masterFile = join(HEADS, headFileString);
-                Utils.writeContents(masterFile, commitB.commitId());
-                if (!masterFile.exists()) {
-                    createNewFile(masterFile);
-                }
-                List<String> cwdList = Utils.plainFilenamesIn(CWD);
-                System.out.println("commita.getTracked():"+ commitA.getTracked());
-                System.out.println("commitb.getTracked():"+commitB.getTracked());
-                System.out.println("cwdList:"+cwdList);
 
-                NotherUtils.message("Current branch fast-forwarded.");
-            }
-            if (commitB.commitId().equals(splitKey)) {
-                NotherUtils.message("Given branch is an ancestor of the current branch.");
-            }
-        }
         List<String> list = new ArrayList<>();
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
