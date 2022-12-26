@@ -130,14 +130,6 @@ public class Repository implements Serializable {
         Commit parentCommit = Commit.fromFile(headBranchText);
         //更据添加文件名创建bolb文件
         Blob blob = new Blob(newFile);
-        if (newFile.getName().equals("k.txt")){
-            System.out.println("kkk");
-            System.out.println("blob.getBlobSaveFileName()"+blob.getBlobSaveFileName());
-            System.out.println("blob.blobId()"+blob.blobId());
-            System.out.println("blob.getBytes()"+blob.getBytes());
-            System.out.println("kkk");
-            System.out.println("内容：" + NotherUtils.getBytes(blob.getBytes()));
-        }
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
         //如果addStage目录不存在就创建
         if (!ADD_STAGE.exists()) {
@@ -723,8 +715,8 @@ public class Repository implements Serializable {
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
         String headFileString = Utils.readContentsAsString(HEAD);
-        //String message = "Merged " + text + " into " + headFileString;
-        String message = "Merged other into master";
+        String message = "Merged " + text + " into " + headFileString;
+        //String message = "Merged other into master";
         Commit newCommit = new Commit(message, list, parentTracked);
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
 
@@ -747,21 +739,14 @@ public class Repository implements Serializable {
             //创建removeStage文件目录
             ADD_STAGE.mkdir();
         }
-        String modified = "<<<<<<< HEAD" +"\r\n"
-                + "contents of file in current branch" +"\r\n"
-                + "=======" +"\r\n"
-                + "contents of file in given branch" +"\r\n"
-                + ">>>>>>>";
         List<String> headsList = Utils.plainFilenamesIn(HEADS);
         Map<String, String> parentTracked = new HashMap<>();
         for (String blobId : allfileMap.keySet()) {
             Blob compareBlib = Blob.fromFile(blobId);
             //根据value获取对应的key
-            String masterKey = null;
-            String splitKey = null;
-            //String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
+            String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
-            //String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
+            String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
             if (splitKey != null && masterKey != null && otherKey != null) {
                 //没改变继续引用
                 if (splitKey.equals(masterKey) && splitKey.equals(otherKey)){
@@ -807,9 +792,15 @@ public class Repository implements Serializable {
                 if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey) && !masterKey.equals(otherKey)){
                     File cwdFile = join(CWD ,compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
+                    Blob blob2 = Blob.fromFile(otherKey);
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
+                    String modified = "<<<<<<< HEAD" +"\r\n"
+                            + NotherUtils.getBytes(blob.getBytes()) +"\r\n"
+                            + "=======" +"\r\n"
+                            + NotherUtils.getBytes(blob2.getBytes()) +"\r\n"
+                            + ">>>>>>>";
                     Utils.writeContents(cwdFile, modified);
                     NotherUtils.message("Encountered a merge conflict.");
                 }
@@ -878,9 +869,16 @@ public class Repository implements Serializable {
                 if (!masterKey.equals(otherKey)) {
                     File cwdFile = join(CWD ,compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
+                    Blob blob2 = Blob.fromFile(otherKey);
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
+                    String modified = "<<<<<<< HEAD" +"\r\n"
+                            + NotherUtils.getBytes(blob.getBytes()) +"\r\n"
+                            + "=======" +"\r\n"
+                            + NotherUtils.getBytes(blob2.getBytes()) +"\r\n"
+                            + ">>>>>>>";
+                    Utils.writeContents(cwdFile, modified);
                     Utils.writeContents(cwdFile, modified);
                     NotherUtils.message("Encountered a merge conflict.");
                 }
@@ -905,9 +903,9 @@ public class Repository implements Serializable {
 //                    System.out.println("NotherUtils.getBytes(blob.getBytes()):"+NotherUtils.getBytes(blob.getBytes()));
 //                }
                 File cwdFile = join(CWD ,blob.getFileName().getName());
-//                if (cwdFile.exists()){
-//                    NotherUtils.rm(cwdFile);
-//                }
+                if (cwdFile.exists()){
+                    NotherUtils.rm(cwdFile);
+                }
                 Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 NotherUtils.add(blob);
             }
