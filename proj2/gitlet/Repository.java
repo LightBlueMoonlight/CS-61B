@@ -853,6 +853,8 @@ public class Repository implements Serializable {
                             + "delete it, or add and commit it first.");
                 } else {
                     Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
+                    NotherUtils.add(blob3B);
+
                 }
             }
             //可以了
