@@ -719,7 +719,7 @@ public class Repository implements Serializable {
                 if (!masterFile.exists()) {
                     createNewFile(masterFile);
                 }
-                Commit commitb = Commit.fromFile(commitB.commitId());
+                Commit commitb = Commit.fromFile(commitA.commitId());
                 for (String blobId : commitb.getTracked().keySet()){
                     File cwdFile = new File(blobId);
                     //List<String> cwdList = Utils.plainFilenamesIn(CWD);
