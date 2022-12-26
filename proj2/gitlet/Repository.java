@@ -506,7 +506,6 @@ public class Repository implements Serializable {
         String commitId1 = Utils.readContentsAsString(newBranch);
         //newbranch
         Commit parentCommit3B = Commit.fromFile(commitId1);
-
         for (String key : parentCommit3A.getTracked().keySet()) {
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
             if (parentCommit3B.getTracked().containsKey(key)) {
@@ -543,8 +542,7 @@ public class Repository implements Serializable {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
-                    Utils.writeContents(blob3B.getFileName()
-                        , NotherUtils.getBytes(blob3B.getBytes()));
+                    Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
         }
@@ -724,7 +722,8 @@ public class Repository implements Serializable {
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
         String headFileString = Utils.readContentsAsString(HEAD);
-        String message = "Merged" + " " + text + " " + "into" + " " + headFileString + ".";
+        String message = "Merged" + " " + text + " "
+                + "into" + " " + headFileString + ".";
         //String message = "Merged other into master";
         Commit newCommit = new Commit(message, list, parentTracked);
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
@@ -737,7 +736,8 @@ public class Repository implements Serializable {
     }
 
     private static Map<String, String> compareFile(Map<String, String> allfileMap
-        , Map<String, String> masterMap, Map<String, String> otherMap,Map<String, String> splitMap, Map<String, String> parentTracked) {
+        , Map<String, String> masterMap, Map<String, String> otherMap
+        , Map<String, String> splitMap, Map<String, String> parentTracked) {
         //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
         //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
         if (!REMOVE_STAGE.exists()) {
@@ -757,8 +757,8 @@ public class Repository implements Serializable {
             String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
             if (splitKey != null && masterKey != null && otherKey != null) {
                 //没改变继续引用
-                if (splitKey.equals(masterKey) && splitKey.equals(otherKey)){
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                if (splitKey.equals(masterKey) && splitKey.equals(otherKey)) {
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
@@ -766,10 +766,10 @@ public class Repository implements Serializable {
                 }
 
                 //文件内容是other的
-                if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)){
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)) {
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(otherKey);
-                    if (cwdFile.exists()){
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
@@ -777,37 +777,39 @@ public class Repository implements Serializable {
                 }
 
                 //文件内容master
-                if (!splitKey.equals(masterKey) && splitKey.equals(otherKey)){
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                if (!splitKey.equals(masterKey) && splitKey.equals(otherKey)) {
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
-                    if (cwdFile.exists()){
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 }
 
                 //文件内容master
-                if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey) && masterKey.equals(otherKey)){
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey)
+                    && masterKey.equals(otherKey)) {
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
-                    if (cwdFile.exists()){
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 }
 
                 //文件内容冲突
-                if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey) && !masterKey.equals(otherKey)){
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey)
+                    && !masterKey.equals(otherKey)) {
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
                     Blob blob2 = Blob.fromFile(otherKey);
-                    if (cwdFile.exists()){
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
-                    String modified = "<<<<<<< HEAD" +"\r\n"
-                            + NotherUtils.getBytes(blob.getBytes()) +"\r\n"
+                    String modified = "<<<<<<< HEAD" + "\r\n"
+                            + NotherUtils.getBytes(blob.getBytes()) + "\r\n"
                             + "=======" +"\r\n"
-                            + NotherUtils.getBytes(blob2.getBytes()) +"\r\n"
+                            + NotherUtils.getBytes(blob2.getBytes()) + "\r\n"
                             + ">>>>>>>";
                     Utils.writeContents(cwdFile, modified);
                     NotherUtils.message("Encountered a merge conflict.");
@@ -815,7 +817,7 @@ public class Repository implements Serializable {
             }
 
             if (splitKey != null && masterKey != null && otherKey == null) {
-                if (splitKey.equals(masterKey)){
+                if (splitKey.equals(masterKey)) {
                     Blob blob = Blob.fromFile(masterKey);
                     List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
                     if (!removeStageList.contains(blob.blobId())) {
@@ -823,17 +825,17 @@ public class Repository implements Serializable {
                         Utils.writeObject(rmAddStageFile2, blob.blobId());
                         Repository.createNewFile(rmAddStageFile2);
                     }
-                    File cwdFile = join(CWD ,blob.getFileName().getName());
-                    if (cwdFile.exists()){
+                    File cwdFile = join(CWD, blob.getFileName().getName());
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
 
                 }
 
-                if (!splitKey.equals(masterKey)){
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                if (!splitKey.equals(masterKey)) {
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
-                    if (cwdFile.exists()){
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
@@ -841,7 +843,7 @@ public class Repository implements Serializable {
             }
 
             if (splitKey != null && masterKey == null && otherKey != null) {
-                if (splitKey.equals(otherKey)){
+                if (splitKey.equals(otherKey)) {
                     Blob blob = Blob.fromFile(otherKey);
                     List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
                     if (!removeStageList.contains(blob.blobId())) {
@@ -849,17 +851,17 @@ public class Repository implements Serializable {
                         Utils.writeObject(rmAddStageFile2, blob.blobId());
                         Repository.createNewFile(rmAddStageFile2);
                     }
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
-                    if (cwdFile.exists()){
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
                     //删除了Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
 
-                if (!splitKey.equals(otherKey)){
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                if (!splitKey.equals(otherKey)) {
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(otherKey);
-                    if (cwdFile.exists()){
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
@@ -867,24 +869,24 @@ public class Repository implements Serializable {
             }
 
             if (splitKey != null && masterKey == null && otherKey == null) {
-                File cwdFile = join(CWD ,compareBlib.getFileName().getName());
-                if (cwdFile.exists()){
+                File cwdFile = join(CWD, compareBlib.getFileName().getName());
+                if (cwdFile.exists()) {
                     NotherUtils.rm(cwdFile);
                 }
             }
 
             if (splitKey == null && masterKey != null && otherKey != null) {
                 if (!masterKey.equals(otherKey)) {
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
                     Blob blob2 = Blob.fromFile(otherKey);
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
                     }
-                    String modified = "<<<<<<< HEAD" +"\r\n"
-                            + NotherUtils.getBytes(blob.getBytes()) +"\r\n"
+                    String modified = "<<<<<<< HEAD" + "\r\n"
+                            + NotherUtils.getBytes(blob.getBytes()) + "\r\n"
                             + "=======" +"\r\n"
-                            + NotherUtils.getBytes(blob2.getBytes()) +"\r\n"
+                            + NotherUtils.getBytes(blob2.getBytes()) + "\r\n"
                             + ">>>>>>>";
                     Utils.writeContents(cwdFile, modified);
                     Utils.writeContents(cwdFile, modified);
@@ -892,7 +894,7 @@ public class Repository implements Serializable {
                 }
 
                 if (masterKey.equals(otherKey)) {
-                    File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
                     if (cwdFile.exists()){
                         NotherUtils.rm(cwdFile);
@@ -917,9 +919,9 @@ public class Repository implements Serializable {
 
             //可以了
             if (splitKey == null && masterKey != null && otherKey == null) {
-                File cwdFile = join(CWD ,compareBlib.getFileName().getName());
+                File cwdFile = join(CWD, compareBlib.getFileName().getName());
                 Blob blob = Blob.fromFile(masterKey);
-                if (cwdFile.exists()){
+                if (cwdFile.exists()) {
                     NotherUtils.rm(cwdFile);
                 }
                 Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
