@@ -876,11 +876,14 @@ public class Repository implements Serializable {
             if (splitKey == null && masterKey != null && otherKey != null) {
                 if (!masterKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
+                    if (cwdFile.exists()) {
+                        NotherUtils.rm(cwdFile);
+                    }
                     String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
                     writeContents(cwdFile, conflictContent);
                     //NotherUtils.add(compareBlib);
-                    System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
-                    System.out.println("conflictContent:" + conflictContent);
+//                    System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
+//                    System.out.println("conflictContent:" + conflictContent);
                 }
 
                 if (masterKey.equals(otherKey)) {
