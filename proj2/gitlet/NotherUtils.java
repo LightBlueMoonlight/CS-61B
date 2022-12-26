@@ -185,6 +185,22 @@ public class NotherUtils {
         return parentTracked;
     }
 
+    public static String getConflictContent(String currentBlobId, String targetBlobId) {
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append("<<<<<<< HEAD").append("\n");
+        if (currentBlobId != null) {
+            Blob currentBlob = Blob.fromFile(currentBlobId);
+            contentBuilder.append(getBytes(currentBlob.getBytes()));
+        }
+        contentBuilder.append("=======").append("\n");
+        if (targetBlobId != null) {
+            Blob targetBlob = Blob.fromFile(targetBlobId);
+            contentBuilder.append(getBytes(targetBlob.getBytes()));
+        }
+        contentBuilder.append(">>>>>>>");
+        return contentBuilder.toString();
+    }
+
 }
 
 
