@@ -710,7 +710,7 @@ public class Repository implements Serializable {
             allfileMap.put(mastevalue, otherKey);
             otherMap.put(mastevalue, otherKey);
         }
-        Map<String, String> parentTracked = compareFile(allfileMap, masterMap, otherMap, splitMap);
+        Map<String, String> parentTracked = compareFile(allfileMap, masterMap, otherMap, splitMap, commitA.getTracked());
         for (String splitKey: finSplitMap.keySet()) {
             if (commitA.commitId().equals(splitKey)) {
                 String headFileString = Utils.readContentsAsString(HEAD);
@@ -719,6 +719,15 @@ public class Repository implements Serializable {
                 if (!masterFile.exists()) {
                     createNewFile(masterFile);
                 }
+                Commit commitb = Commit.fromFile(commitB.commitId());
+                for (String blobId : commitb.getTracked().keySet()){
+                    File cwdFile = new File(blobId);
+                    //List<String> cwdList = Utils.plainFilenamesIn(CWD);
+                    if (cwdFile.exists()){
+                        NotherUtils.rm(cwdFile);
+                    }
+                }
+
                 NotherUtils.message("Current branch fast-forwarded.");
             }
             if (commitB.commitId().equals(splitKey)) {
@@ -742,7 +751,7 @@ public class Repository implements Serializable {
     }
 
     private static Map<String, String> compareFile(Map<String, String> allfileMap
-        , Map<String, String> masterMap, Map<String, String> otherMap,Map<String, String> splitMap) {
+        , Map<String, String> masterMap, Map<String, String> otherMap,Map<String, String> splitMap, Map<String, String> parentTracked) {
         //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
         //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
         if (!REMOVE_STAGE.exists()) {
@@ -754,7 +763,6 @@ public class Repository implements Serializable {
             ADD_STAGE.mkdir();
         }
         List<String> headsList = Utils.plainFilenamesIn(HEADS);
-        Map<String, String> parentTracked = new HashMap<>();
         for (String blobId : allfileMap.keySet()) {
             Blob compareBlib = Blob.fromFile(blobId);
             //根据value获取对应的key
