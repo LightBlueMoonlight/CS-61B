@@ -79,17 +79,11 @@ public class Blob implements Serializable {
     }
 
     public static File getObjectFile(String id) {
-        if (!Repository.BLOB.exists()) {
-            Repository.BLOB.mkdir();
-        }
+//        if (!Repository.BLOB.exists()) {
+//            Repository.BLOB.mkdir();
+//        }
         File fileBlob = join(Repository.BLOB, id);
-        Repository.createNewFile(fileBlob);
+        //Repository.createNewFile(fileBlob);
         return fileBlob;
-    }
-
-    public static Map pathToBlobID(Blob blob) {
-        Map<String, String> pathToBlobID = new HashMap<>();
-        pathToBlobID.put(blob.filePath, blob.id);
-        return pathToBlobID;
     }
 }
