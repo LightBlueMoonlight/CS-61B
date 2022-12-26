@@ -798,12 +798,14 @@ public class Repository implements Serializable {
                 //文件内容冲突
                 if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey)
                     && !masterKey.equals(otherKey)) {
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
+                    //File cwdFile = join(CWD, compareBlib.getFileName().getName());
+                    if (compareBlib.getFileName().exists()) {
+                        NotherUtils.rm(compareBlib.getFileName());
                     }
                     String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
-                    writeContents(cwdFile, conflictContent);
+                    writeContents(compareBlib.getFileName(), conflictContent);
+                    Blob blobId2 = new Blob(compareBlib.getFileName());
+                    NotherUtils.add(blobId2);
                     conflict = true;
                 }
             }
@@ -869,14 +871,14 @@ public class Repository implements Serializable {
 
             if (splitKey == null && masterKey != null && otherKey != null) {
                 if (!masterKey.equals(otherKey)) {
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
+                    if (compareBlib.getFileName().exists()) {
+                        NotherUtils.rm(compareBlib.getFileName());
                     }
                     String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
-                    writeContents(cwdFile, conflictContent);
+                    writeContents(compareBlib.getFileName(), conflictContent);
+                    Blob blobId2 = new Blob(compareBlib.getFileName());
+                    NotherUtils.add(blobId2);
                     conflict = true;
-                    //NotherUtils.add(compareBlib);
 //                    System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
 //                    System.out.println("conflictContent:" + conflictContent);
                 }
