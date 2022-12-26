@@ -753,8 +753,7 @@ public class Repository implements Serializable {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, conflictContent);
-                    Blob blobId2 = new Blob(blob3B.getFileName());
-                    NotherUtils.add(blobId2);
+                    NotherUtils.add(blob3B);
                     conflict = true;
                 }
             }
