@@ -1,5 +1,7 @@
 package gitlet;
 
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -876,8 +878,9 @@ public class Repository implements Serializable {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
                     writeContents(cwdFile, conflictContent);
-                    NotherUtils.add(compareBlib);
-
+                    //NotherUtils.add(compareBlib);
+                    System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
+                    System.out.println("conflictContent:" + conflictContent);
                 }
 
                 if (masterKey.equals(otherKey)) {
