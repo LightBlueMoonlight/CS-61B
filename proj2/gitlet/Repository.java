@@ -799,17 +799,11 @@ public class Repository implements Serializable {
                 if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey)
                     && !masterKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    Blob blob = Blob.fromFile(masterKey);
-                    Blob blob2 = Blob.fromFile(otherKey);
                     if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
-                    String modified = "<<<<<<< HEAD" + "\r\n"
-                            + NotherUtils.getBytes(blob.getBytes()) + "\r\n"
-                            + "=======" + "\r\n"
-                            + NotherUtils.getBytes(blob2.getBytes()) + "\r\n"
-                            + ">>>>>>>";
-                    Utils.writeContents(cwdFile, modified);
+                    String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
+                    writeContents(cwdFile, conflictContent);
                     conflict = true;
                 }
             }
@@ -881,6 +875,7 @@ public class Repository implements Serializable {
                     }
                     String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
                     writeContents(cwdFile, conflictContent);
+                    conflict = true;
                     //NotherUtils.add(compareBlib);
 //                    System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
 //                    System.out.println("conflictContent:" + conflictContent);
