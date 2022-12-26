@@ -719,32 +719,22 @@ public class Repository implements Serializable {
             otherMap.put(mastevalue, otherKey);
         }
         boolean conflict = false;
-        Map<String, String> parentTracked = compareFile(allfileMap, masterMap
-            , otherMap, splitMap, commitA.getTracked(), conflict);
-
         List<String> list = new ArrayList<>();
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
         String headFileString = Utils.readContentsAsString(HEAD);
         String message = "Merged" + " " + text + " "
                 + "into" + " " + headFileString + ".";
-        //String message = "Merged other into master";
-        Commit newCommit = new Commit(message, list, parentTracked);
-        //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
+        compareFile(allfileMap, masterMap, otherMap, splitMap,
+            commitA.getTracked(), conflict, message, list, headFileString);
 
-        File masterFile = join(HEADS, headFileString);
-        Utils.writeContents(masterFile, newCommit.commitId());
-        if (!masterFile.exists()) {
-            createNewFile(masterFile);
-        }
-        if (conflict) {
-            NotherUtils.message("Encountered a merge conflict.");
-        }
+
     }
 
-    private static Map<String, String> compareFile(Map<String, String> allfileMap,
+    private static void compareFile(Map<String, String> allfileMap,
                                                Map<String, String> masterMap, Map<String, String> otherMap,
-                                               Map<String, String> splitMap, Map<String, String> parentTracked,boolean conflict) {
+                                               Map<String, String> splitMap, Map<String, String> parentTracked,
+                                boolean conflict, String message, List<String> list, String headFileString) {
         //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
         //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
         if (!REMOVE_STAGE.exists()) {
@@ -755,7 +745,6 @@ public class Repository implements Serializable {
             //创建removeStage文件目录
             ADD_STAGE.mkdir();
         }
-        List<String> headsList = Utils.plainFilenamesIn(HEADS);
         for (String blobId : allfileMap.keySet()) {
             Blob compareBlib = Blob.fromFile(blobId);
             //根据value获取对应的key
@@ -935,7 +924,20 @@ public class Repository implements Serializable {
             }
         }
         parentTracked = NotherUtils.commit(parentTracked);
-        return parentTracked;
+
+
+        //String message = "Merged other into master";
+        Commit newCommit = new Commit(message, list, parentTracked);
+        //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
+
+        File masterFile = join(HEADS, headFileString);
+        Utils.writeContents(masterFile, newCommit.commitId());
+        if (!masterFile.exists()) {
+            createNewFile(masterFile);
+        }
+        if (conflict) {
+            NotherUtils.message("Encountered a merge conflict.");
+        }
     }
 
     private static void finSplit(Map<String, Integer> finSplitMap,
