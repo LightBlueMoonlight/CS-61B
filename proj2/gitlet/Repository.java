@@ -130,6 +130,14 @@ public class Repository implements Serializable {
         Commit parentCommit = Commit.fromFile(headBranchText);
         //更据添加文件名创建bolb文件
         Blob blob = new Blob(newFile);
+        if (newFile.getName().equals("k.txt")){
+            System.out.println("kkk");
+            System.out.println("blob.getBlobSaveFileName()"+blob.getBlobSaveFileName());
+            System.out.println("blob.blobId()"+blob.blobId());
+            System.out.println("blob.getBytes()"+blob.getBytes());
+            System.out.println("kkk");
+            System.out.println("内容：" + NotherUtils.getBytes(blob.getBytes()));
+        }
         String trackBlobId = parentCommit.getTracked().get(blob.getFilePath());
         //如果addStage目录不存在就创建
         if (!ADD_STAGE.exists()) {
