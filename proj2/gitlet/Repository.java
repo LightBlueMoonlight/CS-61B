@@ -749,9 +749,6 @@ public class Repository implements Serializable {
         for (String blobId : allfileMap.keySet()) {
 
             Blob compareBlib = Blob.fromFile(blobId);
-            System.out.println("compareBlib.getFilePath():"+compareBlib.getFilePath());
-            System.out.println("compareBlib.getFileName().getName():"+compareBlib.getFileName().getName());
-            System.out.println("compareBlib.getFileName():"+compareBlib.getFileName());
             if (blobId.equals("726fe027b720334a0334aa19dd42d41d637a9cb8")){
                 System.out.println("compareBlib.getFilePath():" +compareBlib.getFilePath());
                 System.out.println("compareBlib.blobId():" +compareBlib.blobId());
@@ -760,10 +757,19 @@ public class Repository implements Serializable {
                 System.out.println("compareBlib.getBlobSaveFileName():" +compareBlib.getBlobSaveFileName());
                 System.out.println("NotherUtils.getBytes(compareBlib.getBytes()):" +NotherUtils.getBytes(compareBlib.getBytes()));
             }
-
             //根据value获取对应的key
             String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
+            Blob otherKeyBlib = Blob.fromFile(otherKey);
+
+            if (otherKey.equals("726fe027b720334a0334aa19dd42d41d637a9cb8")){
+                System.out.println("otherKeyBlib.getFilePath():" +otherKeyBlib.getFilePath());
+                System.out.println("otherKeyBlib.blobId():" +otherKeyBlib.blobId());
+                System.out.println("otherKeyBlib.getFileName():" +otherKeyBlib.getFileName());
+                System.out.println("otherKeyBlib.getBytes():" +otherKeyBlib.getBytes());
+                System.out.println("otherKeyBlib.getBlobSaveFileName():" +otherKeyBlib.getBlobSaveFileName());
+                System.out.println("NotherUtils.getBytes(otherKeyBlib.getBytes()):" +NotherUtils.getBytes(otherKeyBlib.getBytes()));
+            }
             String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
             if (splitKey != null && masterKey != null && otherKey != null) {
                 //没改变继续引用
