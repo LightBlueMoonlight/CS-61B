@@ -747,10 +747,16 @@ public class Repository implements Serializable {
                     Blob blob3B = Blob.fromFile(masterKey);
                     List<String> cwdlist = Utils.plainFilenamesIn(CWD);
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
+                    if (cwdFile.exists()){
+                        System.out.println("存在");
+                        String f = Utils.readContentsAsString(cwdFile);
+                        System.out.println("f:" + f);
+                    }
                     String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
-
+                    System.out.println("冲突内容：" + conflictContent);
                     if (cwdlist.contains(compareBlib.getFileName().getName())) {
                         NotherUtils.rm(cwdFile);
+
                     }
                     Utils.writeContents(cwdFile, conflictContent);
                     NotherUtils.add(blob3B);
