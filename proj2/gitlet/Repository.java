@@ -1,45 +1,29 @@
 package gitlet;
-
 import jdk.swing.interop.SwingInterOpUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.*;
-
 import static gitlet.Utils.*;
-
 public class Repository implements Serializable {
-
     /**
      * 当前工作目录
      */
     public static final File CWD = new File(System.getProperty("user.dir"));
-
     /**
      * .gitlet目录
      */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
-
     public static final File OBJECTS = join(GITLET_DIR, "objects");
-
     public static final File COMMIT = join(OBJECTS, "commit");
-
     public static final File BLOB = join(OBJECTS, "blob");
-
     public static final File REFS = join(GITLET_DIR, "refs");
-
     public static final File HEADS = join(REFS, "heads");
-
     public static final File HEAD = join(GITLET_DIR, "HEAD");
-
     public static final File ADD_STAGE = join(GITLET_DIR, "addStage");
-
     public static final File REMOVE_STAGE = join(GITLET_DIR, "removeStage");
-
     private static final String MASTER = "master";
-
     /*
      *   .gitlet
      *      |--objects
@@ -76,7 +60,6 @@ public class Repository implements Serializable {
         //HEAD存储master的分支名
         Utils.writeContents(HEAD, MASTER);
     }
-
     //在heads文件夹内存有多个文件，每个文件的名字即为分支名字
     /*
      *      |--refs
@@ -91,21 +74,18 @@ public class Repository implements Serializable {
             createNewFile(masterFile);
         }
     }
-
     public static void createNewFile(File newFile) {
         try {
             File fileParent = newFile.getParentFile();
             if (!fileParent.exists()) {
                 fileParent.mkdir();
             }
-
             newFile.createNewFile();
         } catch (IOException | ClassCastException excp) {
             throw new IllegalArgumentException(excp.getMessage() + "<<:<<" + excp.toString()
                     + "<<:<<" + excp.getClass().toString() + "<<:<<" + excp.getLocalizedMessage());
         }
     }
-
     /**
      * 添加操作
      * add操作会将所有未存储的文件以blob的形式存起来
@@ -146,7 +126,6 @@ public class Repository implements Serializable {
                     NotherUtils.rm(newFile);
                 }
             }
-
         }
         //查看添加暂存区下目录
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
@@ -172,7 +151,6 @@ public class Repository implements Serializable {
             createNewFile(rmAddStageFile2);
         }
     }
-
     /*
      *   .gitlet
      *      |--objects
@@ -185,7 +163,6 @@ public class Repository implements Serializable {
             NotherUtils.message("Not in an initialized Gitlet directory.");
         }
     }
-
     //comit时的操作
     public static void setCommit(String message) {
         //如果addStage目录不存在就创建
@@ -211,7 +188,6 @@ public class Repository implements Serializable {
         String headBranchText = Utils.readContentsAsString(headBranch);
         //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(headBranchText);
-
         //遍历addStage,将blob的文件名和blobId做出hashMap进行映射
         Map<String, String> parentTracked = parentCommit.getTracked();
         if ((ADD_STAGE.exists())) {
@@ -247,7 +223,6 @@ public class Repository implements Serializable {
         //重新创建
         makeBranch(headFileString, newCommit.getCommitID());
     }
-
     public static void setRM(String removeFile) {
         File newFile = Paths.get(removeFile).isAbsolute()
                 ? new File(removeFile)
@@ -269,7 +244,6 @@ public class Repository implements Serializable {
         //如果文件在stage for add区域，则将其中缓存区删除；
         //如果文件被当前commit跟踪，则将其存入stage for removal区域。如果该文件存在于工作目录
         Blob blob = new Blob(newFile);
-
         //如果file和当前commit中跟踪的文件相同（blob的hashCode相同），则将其添加到removeStaging中
         //Tracked的键值对是相对路径--blobId
         //读取添加暂存区
@@ -309,7 +283,6 @@ public class Repository implements Serializable {
             NotherUtils.message("No reason to remove the file.");
         }
     }
-
     public static void setLog() {
         //读取HEAD下分支名
         String addFileString = Utils.readContentsAsString(HEAD);
@@ -319,7 +292,6 @@ public class Repository implements Serializable {
         String headBranchText = Utils.readContentsAsString(headBranch);
         printLog(headBranchText);
     }
-
     private static void printLog(String addFileString) {
         //根据commitId生成commit文件
         Commit parentCommit = Commit.fromFile(addFileString);
@@ -340,7 +312,6 @@ public class Repository implements Serializable {
             printLog(parentCommit.getParent().get(0));
         }
     }
-
     public static void setGlobalLog() {
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
         //打印所有的Commit而不关心顺序
@@ -348,7 +319,6 @@ public class Repository implements Serializable {
             printLog(str);
         }
     }
-
     public static void setFind(String message) {
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
         //默认存在此信息
@@ -364,11 +334,9 @@ public class Repository implements Serializable {
             NotherUtils.message("Found no commit with that message.");
         }
     }
-
     public static void setBranch(String branch) {
         //如果具有给定名称的分支已经存在，则打印错误消息A branch with that name already exists.
         List<String> branchList = Utils.plainFilenamesIn(HEADS);
-
         if (branchList.contains(branch)) {
             NotherUtils.message("A branch with that name already exists.");
         }
@@ -381,9 +349,7 @@ public class Repository implements Serializable {
         File newBranch = join(HEADS, branch);
         Utils.writeContents(newBranch, headBranchText);
         //createNewFile(newBranch);
-
     }
-
     public static void setStatus() {
         Utils.message("=== Branches ===");
         //读取HEAD下的分支 例如：master
@@ -422,7 +388,6 @@ public class Repository implements Serializable {
         Utils.message("=== Untracked Files ===");
         System.out.println();
     }
-
     public static void setRmBranch(String text) {
         List<String> branchList = Utils.plainFilenamesIn(HEADS);
         if (!branchList.contains(text)) {
@@ -436,7 +401,6 @@ public class Repository implements Serializable {
         createNewFile(headBranch);
         NotherUtils.rm(headBranch);
     }
-
     public static void checkout(String fileName) {
         File newFile = Paths.get(fileName).isAbsolute()
                 ? new File(fileName)
@@ -460,7 +424,6 @@ public class Repository implements Serializable {
             NotherUtils.message("File does not exist in that commit.");
         }
     }
-
     public static void checkout(String commitId, String fileName) {
         File newFile = Paths.get(fileName).isAbsolute()
                 ? new File(fileName)
@@ -487,7 +450,6 @@ public class Repository implements Serializable {
             NotherUtils.message("File does not exist in that commit.");
         }
     }
-
     public static void checkoutBranch(String branch) {
         //如果checked branch不存在，输出错误信息
         List<String> headsList = Utils.plainFilenamesIn(HEADS);
@@ -526,7 +488,6 @@ public class Repository implements Serializable {
                 }
             }
         }
-
         for (String key1 : parentCommit3B.getTracked().keySet()) {
             //被两个commit共同跟踪（用checked branch中的blobs覆写这些文件）
             if (parentCommit3A.getTracked().containsKey(key1)) {
@@ -545,11 +506,10 @@ public class Repository implements Serializable {
                             + "delete it, or add and commit it first.");
                 } else {
                     Utils.writeContents(blob3B.getFileName()
-                        , NotherUtils.getBytes(blob3B.getBytes()));
+                            , NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
         }
-
         //更改HEAD指向Commit3B，最后清空缓存区。
         List<String> addStageList = Utils.plainFilenamesIn(ADD_STAGE);
         List<String> removeStageList = Utils.plainFilenamesIn(REMOVE_STAGE);
@@ -568,7 +528,6 @@ public class Repository implements Serializable {
             }
         }
     }
-
     public static void setReset(String resetCommitId) {
         List<String> commitList = Utils.plainFilenamesIn(COMMIT);
         if (!commitList.contains(resetCommitId)) {
@@ -618,7 +577,7 @@ public class Repository implements Serializable {
                             + "delete it, or add and commit it first.");
                 } else {
                     Utils.writeContents(blob3B.getFileName()
-                        , NotherUtils.getBytes(blob3B.getBytes()));
+                            , NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
         }
@@ -642,7 +601,6 @@ public class Repository implements Serializable {
             }
         }
     }
-
     public static void setMerge(String text) {
         //如果给定的branch不存在，输出错误信息：
         List<String> headsList = Utils.plainFilenamesIn(HEADS);
@@ -690,13 +648,11 @@ public class Repository implements Serializable {
                 NotherUtils.message("Given branch is an ancestor of the current branch.");
             }
         }
-
         //id为key filename为value
         Map<String, String> allfileMap = new HashMap<>();
         Map<String, String> masterMap = new HashMap<>();
         Map<String, String> otherMap = new HashMap<>();
         Map<String, String> splitMap = new HashMap<>();
-
         for (String splitKey : finSplitMap.keySet()) {
             if (!splitKey.equals("0")) {
                 Commit splitCommit = Commit.fromFile(splitKey);
@@ -707,14 +663,11 @@ public class Repository implements Serializable {
                 }
             }
         }
-
         for (String masterKey : commitA.getTracked().keySet()) {
             String mastevalue = commitA.getTracked().get(masterKey);
             allfileMap.put(mastevalue, masterKey);
             masterMap.put(mastevalue, masterKey);
-
         }
-
         for (String otherKey : commitB.getTracked().keySet()) {
             String mastevalue = commitB.getTracked().get(otherKey);
             allfileMap.put(mastevalue, otherKey);
@@ -728,15 +681,12 @@ public class Repository implements Serializable {
         String message = "Merged" + " " + text + " "
                 + "into" + " " + headFileString + ".";
         compareFile(allfileMap, masterMap, otherMap, splitMap,
-            commitA.getTracked(), conflict, message, list, headFileString);
-
-
+                commitA.getTracked(), conflict, message, list, headFileString);
     }
-
     private static void compareFile(Map<String, String> allfileMap,
-                                               Map<String, String> masterMap, Map<String, String> otherMap,
-                                               Map<String, String> splitMap, Map<String, String> parentTracked,
-                                boolean conflict, String message, List<String> list, String headFileString) {
+                                    Map<String, String> masterMap, Map<String, String> otherMap,
+                                    Map<String, String> splitMap, Map<String, String> parentTracked,
+                                    boolean conflict, String message, List<String> list, String headFileString) {
         //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
         //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
         if (!REMOVE_STAGE.exists()) {
@@ -762,7 +712,6 @@ public class Repository implements Serializable {
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
-
                 //文件内容是other的
                 if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
@@ -773,7 +722,6 @@ public class Repository implements Serializable {
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                     NotherUtils.add(blob);
                 }
-
                 //文件内容master
                 if (!splitKey.equals(masterKey) && splitKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
@@ -783,10 +731,9 @@ public class Repository implements Serializable {
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 }
-
                 //文件内容master
                 if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey)
-                    && masterKey.equals(otherKey)) {
+                        && masterKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
                     if (cwdFile.exists()) {
@@ -794,10 +741,9 @@ public class Repository implements Serializable {
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 }
-
                 //文件内容冲突
                 if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey)
-                    && !masterKey.equals(otherKey)) {
+                        && !masterKey.equals(otherKey)) {
                     //File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     if (compareBlib.getFileName().exists()) {
                         NotherUtils.rm(compareBlib.getFileName());
@@ -809,7 +755,6 @@ public class Repository implements Serializable {
                     conflict = true;
                 }
             }
-
             if (splitKey != null && masterKey != null && otherKey == null) {
                 if (splitKey.equals(masterKey)) {
                     Blob blob = Blob.fromFile(masterKey);
@@ -823,9 +768,7 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
-
                 }
-
                 if (!splitKey.equals(masterKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
@@ -855,7 +798,6 @@ public class Repository implements Serializable {
                     }
                     //删除了Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
-
                 if (!splitKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(otherKey);
@@ -863,16 +805,19 @@ public class Repository implements Serializable {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                    String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
+                    writeContents(compareBlib.getFileName(), conflictContent);
+                    Blob blobId2 = new Blob(compareBlib.getFileName());
+                    NotherUtils.add(blobId2);
+                    conflict = true;
                 }
             }
-
             if (splitKey != null && masterKey == null && otherKey == null) {
                 File cwdFile = join(CWD, compareBlib.getFileName().getName());
                 if (cwdFile.exists()) {
                     NotherUtils.rm(cwdFile);
                 }
             }
-
             if (splitKey == null && masterKey != null && otherKey != null) {
                 if (!masterKey.equals(otherKey)) {
                     if (compareBlib.getFileName().exists()) {
@@ -886,7 +831,6 @@ public class Repository implements Serializable {
 //                    System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
 //                    System.out.println("conflictContent:" + conflictContent);
                 }
-
                 if (masterKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
@@ -895,9 +839,7 @@ public class Repository implements Serializable {
                     }
                     //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 }
-
             }
-
             //可以了
             if (splitKey == null && masterKey == null && otherKey != null) {
                 //仅被当前跟踪
@@ -910,7 +852,6 @@ public class Repository implements Serializable {
                     Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
-
             //可以了
             if (splitKey == null && masterKey != null && otherKey == null) {
                 File cwdFile = join(CWD, compareBlib.getFileName().getName());
@@ -926,7 +867,6 @@ public class Repository implements Serializable {
         //String message = "Merged other into master";
         Commit newCommit = new Commit(message, list, parentTracked);
         //如果工作目录存在仅被merge commit跟踪，且将被覆写的文件，输出错误信息：
-
         File masterFile = join(HEADS, headFileString);
         Utils.writeContents(masterFile, newCommit.commitId());
         if (!masterFile.exists()) {
@@ -936,9 +876,8 @@ public class Repository implements Serializable {
             NotherUtils.message("Encountered a merge conflict.");
         }
     }
-
     private static void finSplit(Map<String, Integer> finSplitMap,
-                             Commit commitA, Commit commitB, Map<String, Integer> commAMap, Map<String, Integer> commBMap) {
+                                 Commit commitA, Commit commitB, Map<String, Integer> commAMap, Map<String, Integer> commBMap) {
         int n = 0;
         while (commitA.getParent() != null && !commitA.getParent().isEmpty()) {
             n = n + 1;
