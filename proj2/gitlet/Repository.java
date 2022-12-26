@@ -711,6 +711,20 @@ public class Repository implements Serializable {
             otherMap.put(mastevalue, otherKey);
         }
         Map<String, String> parentTracked = compareFile(allfileMap, masterMap, otherMap, splitMap);
+        for (String splitKey: finSplitMap.keySet()) {
+            if (commitA.commitId().equals(splitKey)) {
+                String headFileString = Utils.readContentsAsString(HEAD);
+                File masterFile = join(HEADS, headFileString);
+                Utils.writeContents(masterFile, commitB.commitId());
+                if (!masterFile.exists()) {
+                    createNewFile(masterFile);
+                }
+                NotherUtils.message("Current branch fast-forwarded.");
+            }
+            if (commitB.commitId().equals(splitKey)) {
+                NotherUtils.message("Given branch is an ancestor of the current branch.");
+            }
+        }
         List<String> list = new ArrayList<>();
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
@@ -907,7 +921,7 @@ public class Repository implements Serializable {
                     NotherUtils.rm(cwdFile);
                 }
                 //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-                Utils.writeContents(cwdFile, blob.getFileName().getName());
+                Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 NotherUtils.add(blob);
             }
 
