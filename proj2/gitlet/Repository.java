@@ -662,7 +662,9 @@ public class Repository implements Serializable {
         //OTHER
         Commit commitB = NotherUtils.getBranch(text);
         System.out.println("commitA.getTracked():" + commitA.getTracked());
+        System.out.println("commitA.commitId():" + commitA.commitId());
         System.out.println("commitB.getTracked():" + commitB.getTracked());
+        System.out.println("commitB.commitId():" + commitB.commitId());
 
 
         Map<String, Integer> commAMap = new HashMap<>();
@@ -675,6 +677,8 @@ public class Repository implements Serializable {
         //如果split point和HEAD分支的Commit相同，意味着otherbranch与HEAD在一个分支上并且超前于HEAD
         //此时直接将HEAD更新到otherbranch的当前Commit，并且输出Current branch fast-forwarded.
         for (String splitKey: finSplitMap.keySet()) {
+            Commit splitCommit = Commit.fromFile(splitKey);
+            System.out.println("splitCommit.getTracked():" + splitCommit.getTracked());
             if (commitA.commitId().equals(splitKey)) {
                 String headFileString = Utils.readContentsAsString(HEAD);
                 File masterFile = join(HEADS, headFileString);
@@ -717,6 +721,7 @@ public class Repository implements Serializable {
             allfileMap.put(mastevalue, otherKey);
             otherMap.put(mastevalue, otherKey);
         }
+        System.out.println("allfileMap.keySet():" + allfileMap.keySet());
         System.out.println("splitMap.keySet():" + splitMap.keySet());
         System.out.println("masterMap.keySet():" + masterMap.keySet());
         System.out.println("otherMap.keySet():" + otherMap.keySet());
