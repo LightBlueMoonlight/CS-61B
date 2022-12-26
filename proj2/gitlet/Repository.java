@@ -854,13 +854,6 @@ public class Repository implements Serializable {
             }
             //可以了
             if (splitKey == null && masterKey != null && otherKey == null) {
-//                File cwdFile = join(CWD, compareBlib.getFileName().getName());
-//                Blob blob = Blob.fromFile(masterKey);
-//                if (blob.getFileName().exists()) {
-//                    NotherUtils.rm(cwdFile);
-//                }
-//                //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-//            }
                 Blob blob3B = Blob.fromFile(masterKey);
                 List<String> cwdlist = Utils.plainFilenamesIn(CWD);
                 if (cwdlist.contains(blob3B.getFileName().getName())) {
@@ -869,6 +862,13 @@ public class Repository implements Serializable {
                 } else {
                     Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
+//                File cwdFile = join(CWD, compareBlib.getFileName().getName());
+//                Blob blob = Blob.fromFile(masterKey);
+//                if (blob.getFileName().exists()) {
+//                    NotherUtils.rm(cwdFile);
+//                }
+                //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+            }
         }
 
         parentTracked = NotherUtils.commit(parentTracked);
