@@ -904,19 +904,15 @@ public class Repository implements Serializable {
 
             //可以了
             if (splitKey == null && masterKey == null && otherKey != null) {
-                Blob blob = Blob.fromFile(otherKey);
-//                if (blob.getFileName().getName().equals("k.txt")){
-//                    System.out.println("otherKey: " + otherKey);
-//                    System.out.println("blob.getFileName().getName():" + blob.getFileName().getName());
-//                    System.out.println("NotherUtils.getBytes(blob.getBytes()):"+NotherUtils.getBytes(blob.getBytes()));
-//                }
-                File cwdFile = join(CWD ,blob.getFileName().getName());
-                if (cwdFile.exists()){
-                    NotherUtils.rm(cwdFile);
+                //仅被当前跟踪
+                Blob blob3B = Blob.fromFile(otherKey);
+                List<String> cwdlist = Utils.plainFilenamesIn(CWD);
+                if (cwdlist.contains(blob3B.getFileName().getName())) {
+                    NotherUtils.message("There is an untracked file in the way; "
+                            + "delete it, or add and commit it first.");
+                } else {
+                    Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
-                //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-                Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-                NotherUtils.add(blob);
             }
 
             //可以了
