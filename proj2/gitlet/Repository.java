@@ -885,7 +885,6 @@ public class Repository implements Serializable {
                             + NotherUtils.getBytes(blob2.getBytes()) + "\r\n"
                             + ">>>>>>>";
                     Utils.writeContents(cwdFile, modified);
-                    Utils.writeContents(cwdFile, modified);
                     conflict = true;
                 }
 
