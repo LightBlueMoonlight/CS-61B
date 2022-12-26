@@ -542,7 +542,8 @@ public class Repository implements Serializable {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
-                    Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
+                    Utils.writeContents(blob3B.getFileName()
+                        , NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
         }
@@ -614,7 +615,8 @@ public class Repository implements Serializable {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
-                    Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
+                    Utils.writeContents(blob3B.getFileName()
+                        , NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
         }
@@ -716,7 +718,8 @@ public class Repository implements Serializable {
             allfileMap.put(mastevalue, otherKey);
             otherMap.put(mastevalue, otherKey);
         }
-        Map<String, String> parentTracked = compareFile(allfileMap, masterMap, otherMap, splitMap, commitA.getTracked());
+        Map<String, String> parentTracked = compareFile(allfileMap, masterMap
+            , otherMap, splitMap, commitA.getTracked());
 
         List<String> list = new ArrayList<>();
         list.add(commitA.getCommitID());
@@ -759,7 +762,7 @@ public class Repository implements Serializable {
                 //没改变继续引用
                 if (splitKey.equals(masterKey) && splitKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    if (cwdFile.exists()){
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
@@ -808,7 +811,7 @@ public class Repository implements Serializable {
                     }
                     String modified = "<<<<<<< HEAD" + "\r\n"
                             + NotherUtils.getBytes(blob.getBytes()) + "\r\n"
-                            + "=======" +"\r\n"
+                            + "=======" + "\r\n"
                             + NotherUtils.getBytes(blob2.getBytes()) + "\r\n"
                             + ">>>>>>>";
                     Utils.writeContents(cwdFile, modified);
@@ -880,12 +883,12 @@ public class Repository implements Serializable {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
                     Blob blob2 = Blob.fromFile(otherKey);
-                    if (cwdFile.exists()){
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
                     String modified = "<<<<<<< HEAD" + "\r\n"
                             + NotherUtils.getBytes(blob.getBytes()) + "\r\n"
-                            + "=======" +"\r\n"
+                            + "=======" + "\r\n"
                             + NotherUtils.getBytes(blob2.getBytes()) + "\r\n"
                             + ">>>>>>>";
                     Utils.writeContents(cwdFile, modified);
@@ -896,7 +899,7 @@ public class Repository implements Serializable {
                 if (masterKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     Blob blob = Blob.fromFile(masterKey);
-                    if (cwdFile.exists()){
+                    if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
                     Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
@@ -931,8 +934,8 @@ public class Repository implements Serializable {
         return parentTracked;
     }
 
-    private static void finSplit(Map<String, Integer> finSplitMap
-        , Commit commitA, Commit commitB, Map<String, Integer> commAMap, Map<String, Integer> commBMap) {
+    private static void finSplit(Map<String, Integer> finSplitMap,
+                             Commit commitA, Commit commitB, Map<String, Integer> commAMap, Map<String, Integer> commBMap) {
         int n = 0;
         while (commitA.getParent() != null && !commitA.getParent().isEmpty()) {
             n = n + 1;
