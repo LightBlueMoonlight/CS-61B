@@ -719,18 +719,10 @@ public class Repository implements Serializable {
                 if (!masterFile.exists()) {
                     createNewFile(masterFile);
                 }
-                Commit commita = Commit.fromFile(commitA.commitId());
-                Commit commitb = Commit.fromFile(commitB.commitId());
                 List<String> cwdList = Utils.plainFilenamesIn(CWD);
-                System.out.println("commita.getTracked():"+ commita.getTracked());
-                System.out.println("commitb.getTracked():"+commitb.getTracked());
+                System.out.println("commita.getTracked():"+ commitA.getTracked());
+                System.out.println("commitb.getTracked():"+commitB.getTracked());
                 System.out.println("cwdList:"+cwdList);
-                for (String blobId : commitb.getTracked().keySet()){
-                    File cwdFile = new File(blobId);
-                    if (cwdFile.exists()){
-                        NotherUtils.rm(cwdFile);
-                    }
-                }
 
                 NotherUtils.message("Current branch fast-forwarded.");
             }
