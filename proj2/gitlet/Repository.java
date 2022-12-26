@@ -747,7 +747,11 @@ public class Repository implements Serializable {
         List<String> headsList = Utils.plainFilenamesIn(HEADS);
         Map<String, String> parentTracked = new HashMap<>();
         for (String blobId : allfileMap.keySet()) {
+
             Blob compareBlib = Blob.fromFile(blobId);
+            System.out.println("compareBlib.getFilePath():"+compareBlib.getFilePath());
+            System.out.println("compareBlib.getFileName().getName():"+compareBlib.getFileName().getName());
+            System.out.println("compareBlib.getFileName():"+compareBlib.getFileName());
             if (blobId.equals("726fe027b720334a0334aa19dd42d41d637a9cb8")){
                 System.out.println("compareBlib.getFilePath():" +compareBlib.getFilePath());
                 System.out.println("compareBlib.blobId():" +compareBlib.blobId());
@@ -899,7 +903,9 @@ public class Repository implements Serializable {
             if (splitKey == null && masterKey == null && otherKey != null) {
                 Blob blob = Blob.fromFile(otherKey);
                 if (blob.getFileName().getName().equals("k.txt")){
-                    System.out.println(NotherUtils.getBytes(blob.getBytes()));
+                    System.out.println("otherKey: " + otherKey);
+                    System.out.println("blob.getFileName().getName():" + blob.getFileName().getName());
+                    System.out.println("NotherUtils.getBytes(blob.getBytes()):"+NotherUtils.getBytes(blob.getBytes()));
                 }
                 File cwdFile = join(CWD ,blob.getFileName().getName());
 //                if (cwdFile.exists()){
