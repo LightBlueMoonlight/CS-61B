@@ -749,9 +749,11 @@ public class Repository implements Serializable {
         for (String blobId : allfileMap.keySet()) {
             Blob compareBlib = Blob.fromFile(blobId);
             //根据value获取对应的key
-            String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
+            String masterKey = null;
+            String splitKey = null;
+            //String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
-            String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
+            //String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
             if (splitKey != null && masterKey != null && otherKey != null) {
                 //没改变继续引用
                 if (splitKey.equals(masterKey) && splitKey.equals(otherKey)){

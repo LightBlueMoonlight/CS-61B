@@ -94,10 +94,13 @@ public class NotherUtils {
         List<String> list = new ArrayList<>();
         for (String key : map.keySet()) {
             if (key.equals("726fe027b720334a0334aa19dd42d41d637a9cb8")){
+                List<String> cwdList = Utils.plainFilenamesIn(Repository.CWD);
+                System.out.println("cwdList:" + cwdList);
                 Blob otherKeyBlib = Blob.fromFile(key);
                 System.out.println("otherKeyBlib.getFilePath():" +otherKeyBlib.getFilePath());
                 System.out.println("otherKeyBlib.blobId():" +otherKeyBlib.blobId());
                 System.out.println("otherKeyBlib.getFileName():" +otherKeyBlib.getFileName());
+                System.out.println("otherKeyBlib.getFileName():" +otherKeyBlib.getFileName().getName());
                 System.out.println("otherKeyBlib.getBytes():" +otherKeyBlib.getBytes());
                 System.out.println("otherKeyBlib.getBlobSaveFileName():" +otherKeyBlib.getBlobSaveFileName());
                 System.out.println("NotherUtils.getBytes(otherKeyBlib.getBytes()):" +NotherUtils.getBytes(otherKeyBlib.getBytes()));
