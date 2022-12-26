@@ -746,6 +746,8 @@ public class Repository implements Serializable {
                 + ">>>>>>>";
         List<String> headsList = Utils.plainFilenamesIn(HEADS);
         Map<String, String> parentTracked = new HashMap<>();
+        System.out.println("allfileMap.keySet():" + allfileMap.keySet());
+
         for (String blobId : allfileMap.keySet()) {
 
             Blob compareBlib = Blob.fromFile(blobId);
@@ -761,6 +763,7 @@ public class Repository implements Serializable {
             String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
             Blob otherKeyBlib = Blob.fromFile(otherKey);
+            System.out.println("otherMap.keySet():" + otherMap.keySet());
 
             if (otherKey.equals("726fe027b720334a0334aa19dd42d41d637a9cb8")){
                 System.out.println("otherKeyBlib.getFilePath():" +otherKeyBlib.getFilePath());
