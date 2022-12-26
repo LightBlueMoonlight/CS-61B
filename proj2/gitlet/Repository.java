@@ -832,7 +832,11 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                    String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
+                    writeContents(compareBlib.getFileName(), conflictContent);
+                    Blob blobId2 = new Blob(compareBlib.getFileName());
+                    NotherUtils.add(blobId2);
+                    conflict = true;
                 }
             }
 
@@ -914,20 +918,6 @@ public class Repository implements Serializable {
                 if (blob.getFileName().exists()) {
                     NotherUtils.rm(cwdFile);
                 }
-
-
-                //Blob blob = Blob.fromFile(masterKey);
-                List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
-                if (!removeStageList.contains(blob.blobId())) {
-                    File rmAddStageFile2 = join(Repository.REMOVE_STAGE, blob.blobId());
-                    Utils.writeObject(rmAddStageFile2, blob.blobId());
-                    Repository.createNewFile(rmAddStageFile2);
-                }
-//                File cwdFile = join(CWD, compareBlib.getFileName().getName());
-//                if (cwdFile.exists()) {
-//                    NotherUtils.rm(cwdFile);
-//                }
-                
                 //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
         }
