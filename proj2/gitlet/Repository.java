@@ -857,8 +857,8 @@ public class Repository implements Serializable {
                 Blob blob3B = Blob.fromFile(masterKey);
                 List<String> cwdlist = Utils.plainFilenamesIn(CWD);
                 if (cwdlist.contains(blob3B.getFileName().getName())) {
-                    NotherUtils.message("There is an untracked file in the way; "
-                            + "delete it, or add and commit it first.");
+//                    NotherUtils.message("There is an untracked file in the way; "
+//                            + "delete it, or add and commit it first.");
                 } else {
                     Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
