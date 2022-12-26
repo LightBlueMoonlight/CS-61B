@@ -93,6 +93,15 @@ public class NotherUtils {
     public static String getKey(Map<String, String> map, String value) {
         List<String> list = new ArrayList<>();
         for (String key : map.keySet()) {
+            if (key.equals("726fe027b720334a0334aa19dd42d41d637a9cb8")){
+                Blob otherKeyBlib = Blob.fromFile(key);
+                System.out.println("otherKeyBlib.getFilePath():" +otherKeyBlib.getFilePath());
+                System.out.println("otherKeyBlib.blobId():" +otherKeyBlib.blobId());
+                System.out.println("otherKeyBlib.getFileName():" +otherKeyBlib.getFileName());
+                System.out.println("otherKeyBlib.getBytes():" +otherKeyBlib.getBytes());
+                System.out.println("otherKeyBlib.getBlobSaveFileName():" +otherKeyBlib.getBlobSaveFileName());
+                System.out.println("NotherUtils.getBytes(otherKeyBlib.getBytes()):" +NotherUtils.getBytes(otherKeyBlib.getBytes()));
+            }
             if (map.get(key).equals(value)) {
                 list.add(key);
             }
