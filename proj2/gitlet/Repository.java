@@ -718,8 +718,9 @@ public class Repository implements Serializable {
             allfileMap.put(mastevalue, otherKey);
             otherMap.put(mastevalue, otherKey);
         }
+        boolean conflict = false;
         Map<String, String> parentTracked = compareFile(allfileMap, masterMap
-            , otherMap, splitMap, commitA.getTracked());
+            , otherMap, splitMap, commitA.getTracked(), conflict);
 
         List<String> list = new ArrayList<>();
         list.add(commitA.getCommitID());
@@ -736,11 +737,14 @@ public class Repository implements Serializable {
         if (!masterFile.exists()) {
             createNewFile(masterFile);
         }
+        if (conflict) {
+            NotherUtils.message("Encountered a merge conflict.");
+        }
     }
 
-    private static Map<String, String> compareFile(Map<String, String> allfileMap
-        , Map<String, String> masterMap, Map<String, String> otherMap
-        , Map<String, String> splitMap, Map<String, String> parentTracked) {
+    private static Map<String, String> compareFile(Map<String, String> allfileMap,
+                                               Map<String, String> masterMap, Map<String, String> otherMap,
+                                               Map<String, String> splitMap, Map<String, String> parentTracked,boolean conflict) {
         //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
         //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
         if (!REMOVE_STAGE.exists()) {
@@ -815,7 +819,7 @@ public class Repository implements Serializable {
                             + NotherUtils.getBytes(blob2.getBytes()) + "\r\n"
                             + ">>>>>>>";
                     Utils.writeContents(cwdFile, modified);
-                    NotherUtils.message("Encountered a merge conflict.");
+                    conflict = true;
                 }
             }
 
@@ -893,7 +897,7 @@ public class Repository implements Serializable {
                             + ">>>>>>>";
                     Utils.writeContents(cwdFile, modified);
                     Utils.writeContents(cwdFile, modified);
-                    NotherUtils.message("Encountered a merge conflict.");
+                    conflict = true;
                 }
 
                 if (masterKey.equals(otherKey)) {
