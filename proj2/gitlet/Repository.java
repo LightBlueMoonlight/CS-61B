@@ -909,22 +909,25 @@ public class Repository implements Serializable {
 
             //可以了
             if (splitKey == null && masterKey != null && otherKey == null) {
-//                File cwdFile = join(CWD, compareBlib.getFileName().getName());
-//                Blob blob = Blob.fromFile(masterKey);
-//                if (blob.getFileName().exists()) {
-//                    NotherUtils.rm(cwdFile);
-//                }
+                File cwdFile = join(CWD, compareBlib.getFileName().getName());
                 Blob blob = Blob.fromFile(masterKey);
+                if (blob.getFileName().exists()) {
+                    NotherUtils.rm(cwdFile);
+                }
+
+
+                //Blob blob = Blob.fromFile(masterKey);
                 List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
                 if (!removeStageList.contains(blob.blobId())) {
                     File rmAddStageFile2 = join(Repository.REMOVE_STAGE, blob.blobId());
                     Utils.writeObject(rmAddStageFile2, blob.blobId());
                     Repository.createNewFile(rmAddStageFile2);
                 }
-                File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                if (cwdFile.exists()) {
-                    NotherUtils.rm(cwdFile);
-                }
+//                File cwdFile = join(CWD, compareBlib.getFileName().getName());
+//                if (cwdFile.exists()) {
+//                    NotherUtils.rm(cwdFile);
+//                }
+                
                 //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
         }
