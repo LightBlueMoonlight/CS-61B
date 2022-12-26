@@ -748,6 +748,15 @@ public class Repository implements Serializable {
         Map<String, String> parentTracked = new HashMap<>();
         for (String blobId : allfileMap.keySet()) {
             Blob compareBlib = Blob.fromFile(blobId);
+            if (blobId.equals("726fe027b720334a0334aa19dd42d41d637a9cb8")){
+                System.out.println("compareBlib.getFilePath():" +compareBlib.getFilePath());
+                System.out.println("compareBlib.blobId():" +compareBlib.blobId());
+                System.out.println("compareBlib.getFileName():" +compareBlib.getFileName());
+                System.out.println("compareBlib.getBytes():" +compareBlib.getBytes());
+                System.out.println("compareBlib.getBlobSaveFileName():" +compareBlib.getBlobSaveFileName());
+                System.out.println("NotherUtils.getBytes(compareBlib.getBytes()):" +NotherUtils.getBytes(compareBlib.getBytes()));
+            }
+
             //根据value获取对应的key
             String masterKey = NotherUtils.getKey(masterMap, compareBlib.getFilePath());
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
