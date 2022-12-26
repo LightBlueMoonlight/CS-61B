@@ -891,11 +891,11 @@ public class Repository implements Serializable {
 
                 if (masterKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    Blob blob = Blob.fromFile(masterKey);
+                    //Blob blob = Blob.fromFile(masterKey);
                     if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+                    //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 }
 
             }
