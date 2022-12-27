@@ -861,8 +861,8 @@ public class Repository implements Serializable {
                 Blob blob3B = Blob.fromFile(masterKey);
                 List<String> cwdlist = Utils.plainFilenamesIn(CWD);
                 List<String> removeList = Utils.plainFilenamesIn(REMOVE_STAGE);
+                List<String> merge = Utils.plainFilenamesIn(MERGE);
                 if (blob3B.getFileName().getName().equals("f.txt")){
-                    List<String> merge = Utils.plainFilenamesIn(REMOVE_STAGE);
                     System.out.println("----------");
                     System.out.println(cwdlist);
                     System.out.println(removeList);
