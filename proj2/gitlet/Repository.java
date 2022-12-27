@@ -755,6 +755,9 @@ public class Repository implements Serializable {
                     Utils.writeContents(targetBranchHeadCommitFile, conflictContent);
                     NotherUtils.add(blob3B);
                     conflict = true;
+                    String S = Utils.readContentsAsString(targetBranchHeadCommitFile);
+                    System.out.println("FENGEXIAN");
+                    System.out.println(S);
                 }
             }
             if (splitKey != null && masterKey != null && otherKey == null) {
@@ -829,9 +832,7 @@ public class Repository implements Serializable {
                     String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
                     writeContents(compareBlib.getFileName(), conflictContent);
                     Blob blobId2 = new Blob(compareBlib.getFileName());
-                    String S = Utils.readContentsAsString(compareBlib.getFileName());
-                    System.out.println("FENGEXIAN");
-                    System.out.println(S);
+
 
                     NotherUtils.add(blobId2);
                     conflict = true;
