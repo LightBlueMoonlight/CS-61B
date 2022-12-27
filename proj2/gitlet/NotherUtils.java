@@ -197,7 +197,7 @@ public class NotherUtils {
             Blob targetBlob = Blob.fromFile(targetBlobId);
             contentBuilder.append(getBytes(targetBlob.getBytes()));
         }
-        contentBuilder.append(">>>>>>>");
+        contentBuilder.append(">>>>>>>").append("\n");
         return contentBuilder.toString();
     }
 
