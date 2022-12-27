@@ -277,7 +277,8 @@ public class Repository implements Serializable {
                     //创建removeStage文件目录
                     MERGE.mkdir();
                 }
-                Utils.writeObject(MERGE, blob.blobId());
+                File mergeFile = join(MERGE, blob.blobId());
+                Utils.writeObject(mergeFile, blob.blobId());
                 Utils.writeObject(rmAddStageFile2, blob.blobId());
                 createNewFile(rmAddStageFile2);
                 NotherUtils.rm(newFile);
@@ -866,6 +867,12 @@ public class Repository implements Serializable {
                     System.out.println(cwdlist);
                     System.out.println(removeList);
                     System.out.println(merge);
+                    for (String str : merge) {
+                        Blob blob = Blob.fromFile(str);
+                        System.out.println("+++++++++++");
+                        System.out.println(blob.getFileName());
+                        System.out.println(blob.getFileName().getName());
+                    }
                 }
                 if (cwdlist.contains(blob3B.getFileName().getName())) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
