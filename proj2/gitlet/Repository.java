@@ -710,13 +710,13 @@ public class Repository implements Serializable {
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
             String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
             if (splitKey != null && masterKey != null && otherKey != null) {
-                allNotNull(splitKey, masterKey, otherKey, compareBlib, conflict);
+                conflict = allNotNull(splitKey, masterKey, otherKey, compareBlib, conflict);
             }
             if (splitKey != null && masterKey != null && otherKey == null) {
-                onlyOtherNull(splitKey, masterKey, compareBlib, conflict, otherKey);
+                conflict = onlyOtherNull(splitKey, masterKey, compareBlib, conflict, otherKey);
             }
             if (splitKey != null && masterKey == null && otherKey != null) {
-                onlyMasterNull(splitKey, masterKey, otherKey, compareBlib, conflict);
+                conflict = onlyMasterNull(splitKey, masterKey, otherKey, compareBlib, conflict);
             }
             if (splitKey != null && masterKey == null && otherKey == null) {
                 File cwdFile = join(CWD, compareBlib.getFileName().getName());
@@ -725,7 +725,7 @@ public class Repository implements Serializable {
                 }
             }
             if (splitKey == null && masterKey != null && otherKey != null) {
-                onlySplitNull(splitKey, masterKey, otherKey, compareBlib, conflict);
+                conflict = onlySplitNull(splitKey, masterKey, otherKey, compareBlib, conflict);
             }
             //可以了
             if (splitKey == null && masterKey == null && otherKey != null) {
@@ -784,7 +784,7 @@ public class Repository implements Serializable {
         }
     }
 
-    private static void onlySplitNull(String splitKey, String masterKey,
+    private static boolean onlySplitNull(String splitKey, String masterKey,
                                   String otherKey, Blob compareBlib, boolean conflict) {
         if (!masterKey.equals(otherKey)) {
             if (compareBlib.getFileName().exists()) {
@@ -802,9 +802,10 @@ public class Repository implements Serializable {
                 NotherUtils.rm(cwdFile);
             }
         }
+        return conflict;
     }
 
-    private static void onlyMasterNull(String splitKey, String masterKey,
+    private static boolean onlyMasterNull(String splitKey, String masterKey,
                                    String otherKey, Blob compareBlib, boolean conflict) {
         if (splitKey.equals(otherKey)) {
             Blob blob = Blob.fromFile(otherKey);
@@ -832,9 +833,10 @@ public class Repository implements Serializable {
             NotherUtils.add(blobId2);
             conflict = true;
         }
+        return conflict;
     }
 
-    private static void onlyOtherNull(String splitKey, String masterKey,
+    private static boolean onlyOtherNull(String splitKey, String masterKey,
                                   Blob compareBlib, boolean conflict, String otherKey) {
         if (splitKey.equals(masterKey)) {
             Blob blob = Blob.fromFile(masterKey);
@@ -861,9 +863,10 @@ public class Repository implements Serializable {
             NotherUtils.add(blobId2);
             conflict = true;
         }
+        return conflict;
     }
 
-    private static void allNotNull(String splitKey, String masterKey,
+    private static boolean allNotNull(String splitKey, String masterKey,
                                String otherKey, Blob compareBlib, boolean conflict) {
         //没改变继续引用
         if (splitKey.equals(masterKey) && splitKey.equals(otherKey)) {
@@ -917,6 +920,7 @@ public class Repository implements Serializable {
             NotherUtils.add(blob3B);
             conflict = true;
         }
+        return conflict;
     }
 
     private static void finSplit(Map<String, Integer> finSplitMap,
