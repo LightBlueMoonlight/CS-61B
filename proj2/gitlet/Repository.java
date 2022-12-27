@@ -865,12 +865,23 @@ public class Repository implements Serializable {
                 Blob blob3B = Blob.fromFile(masterKey);
                 List<String> cwdlist = Utils.plainFilenamesIn(CWD);
                 if (cwdlist.contains(blob3B.getFileName().getName())) {
+                    List<String> removeList = Utils.plainFilenamesIn(REMOVE_STAGE);
+                    for (String str : removeList) {
+                        Blob removeBlob = Blob.fromFile(str);
+                        if (blob3B.getFileName().getName().equals(removeBlob.getFileName().getName())) {
+                            if (blob3B.getFileName().exists()) {
+                                NotherUtils.rm(blob3B.getFileName());
+                            }
+                        }
+
+                    }
+
 //                    NotherUtils.message("There is an untracked file in the way; "
 //                            + "delete it, or add and commit it first.");
                 } else {
                     Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
-                
+
 //                File cwdFile = join(CWD, compareBlib.getFileName().getName());
 //                Blob blob = Blob.fromFile(masterKey);
 //                if (blob.getFileName().exists()) {
