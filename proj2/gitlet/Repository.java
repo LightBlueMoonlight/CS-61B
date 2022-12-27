@@ -854,10 +854,12 @@ public class Repository implements Serializable {
             if (splitKey == null && masterKey != null && otherKey == null) {
                 Blob blob3B = Blob.fromFile(masterKey);
                 List<String> cwdlist = Utils.plainFilenamesIn(CWD);
-                System.out.println("blob3B.getFileName().getName():" + blob3B.getFileName().getName());
-                System.out.println("cwdlist:"+cwdlist);
                 List<String> removeList = Utils.plainFilenamesIn(REMOVE_STAGE);
-                System.out.println(removeList);
+                if (blob3B.getFileName().getName().equals("f.txt")){
+                    System.out.println("----------");
+                    System.out.println(cwdlist);
+                    System.out.println(removeList);
+                }
                 if (cwdlist.contains(blob3B.getFileName().getName())) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     for (String str : removeList) {
