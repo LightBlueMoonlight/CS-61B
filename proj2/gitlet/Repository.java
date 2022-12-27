@@ -856,7 +856,6 @@ public class Repository implements Serializable {
                     NotherUtils.add(blob3B);
                 }
             }
-            //可以了
             if (splitKey == null && masterKey != null && otherKey == null) {
                 Blob blob3B = Blob.fromFile(masterKey);
                 List<String> cwdlist = Utils.plainFilenamesIn(CWD);
