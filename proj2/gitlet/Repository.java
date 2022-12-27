@@ -15,6 +15,7 @@ public class Repository implements Serializable {
      */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
     public static final File OBJECTS = join(GITLET_DIR, "objects");
+    public static final File MERGE = join(GITLET_DIR, "merge");
     public static final File COMMIT = join(OBJECTS, "commit");
     public static final File BLOB = join(OBJECTS, "blob");
     public static final File REFS = join(GITLET_DIR, "refs");
@@ -209,7 +210,7 @@ public class Repository implements Serializable {
                 if (parentTracked != null) {
                     parentTracked.remove(blobFile.getFilePath());
                     //删除removeStage下的暂存文件
-                    //NotherUtils.rm(removeFile);
+                    NotherUtils.rm(removeFile);
                 }
             }
         }
@@ -272,6 +273,11 @@ public class Repository implements Serializable {
             //removeStage不包含直接添加
             if (!removeStageList.contains(blob.blobId())) {
                 File rmAddStageFile2 = join(REMOVE_STAGE, blob.blobId());
+                if (!MERGE.exists()) {
+                    //创建removeStage文件目录
+                    MERGE.mkdir();
+                }
+                Utils.writeObject(MERGE, blob.blobId());
                 Utils.writeObject(rmAddStageFile2, blob.blobId());
                 createNewFile(rmAddStageFile2);
                 NotherUtils.rm(newFile);
@@ -856,9 +862,11 @@ public class Repository implements Serializable {
                 List<String> cwdlist = Utils.plainFilenamesIn(CWD);
                 List<String> removeList = Utils.plainFilenamesIn(REMOVE_STAGE);
                 if (blob3B.getFileName().getName().equals("f.txt")){
+                    List<String> merge = Utils.plainFilenamesIn(REMOVE_STAGE);
                     System.out.println("----------");
                     System.out.println(cwdlist);
                     System.out.println(removeList);
+                    System.out.println(merge);
                 }
                 if (cwdlist.contains(blob3B.getFileName().getName())) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
