@@ -786,6 +786,9 @@ public class Repository implements Serializable {
                     Blob blobId2 = new Blob(compareBlib.getFileName());
                     NotherUtils.add(blobId2);
                     conflict = true;
+                    String S = Utils.readContentsAsString(compareBlib.getFileName());
+                    System.out.println("FENGEXIAN");
+                    System.out.println(S);
                 }
             }
 
