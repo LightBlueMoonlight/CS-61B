@@ -1,5 +1,4 @@
 package gitlet;
-import jdk.swing.interop.SwingInterOpUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -505,8 +504,8 @@ public class Repository implements Serializable {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
-                    Utils.writeContents(blob3B.getFileName()
-                            , NotherUtils.getBytes(blob3B.getBytes()));
+                    Utils.writeContents(blob3B.getFileName(),
+                        NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
         }
@@ -576,8 +575,8 @@ public class Repository implements Serializable {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
-                    Utils.writeContents(blob3B.getFileName()
-                            , NotherUtils.getBytes(blob3B.getBytes()));
+                    Utils.writeContents(blob3B.getFileName(),
+                        NotherUtils.getBytes(blob3B.getBytes()));
                 }
             }
         }
@@ -612,8 +611,7 @@ public class Repository implements Serializable {
         if (head.equals(text)) {
             NotherUtils.message("Cannot merge a branch with itself.");
         }
-        ////如果缓存区还有blob（文件存在），输出错误信息：
-        //暂存区为空
+        ////如果缓存区还有blob（文件存在），输出错误信息：暂存区为空
         if (!NotherUtils.isHeadBranch()) {
             NotherUtils.message("You have uncommitted changes.");
         }
@@ -799,7 +797,6 @@ public class Repository implements Serializable {
                     if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
-                    //删除了Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
                 }
                 if (!splitKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
@@ -829,20 +826,14 @@ public class Repository implements Serializable {
                     String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
                     writeContents(compareBlib.getFileName(), conflictContent);
                     Blob blobId2 = new Blob(compareBlib.getFileName());
-
-
                     NotherUtils.add(blobId2);
                     conflict = true;
-//                    System.out.println("compareBlib.getFileName().getName():" + compareBlib.getFileName().getName());
-//                    System.out.println("conflictContent:" + conflictContent);
                 }
                 if (masterKey.equals(otherKey)) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    Blob blob = Blob.fromFile(masterKey);
                     if (cwdFile.exists()) {
                         NotherUtils.rm(cwdFile);
                     }
-                    //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
                 }
             }
             //可以了
@@ -854,10 +845,9 @@ public class Repository implements Serializable {
                     NotherUtils.message("There is an untracked file in the way; "
                             + "delete it, or add and commit it first.");
                 } else {
-                    Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
-
+                    Utils.writeContents(blob3B.getFileName(),
+                        NotherUtils.getBytes(blob3B.getBytes()));
                     NotherUtils.add(blob3B);
-
                 }
             }
             //可以了
@@ -866,28 +856,19 @@ public class Repository implements Serializable {
                 List<String> cwdlist = Utils.plainFilenamesIn(CWD);
                 if (cwdlist.contains(blob3B.getFileName().getName())) {
                     List<String> removeList = Utils.plainFilenamesIn(REMOVE_STAGE);
+                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
                     for (String str : removeList) {
                         Blob removeBlob = Blob.fromFile(str);
-                        if (blob3B.getFileName().getName().equals(removeBlob.getFileName().getName())) {
-                            if (blob3B.getFileName().exists()) {
-                                NotherUtils.rm(blob3B.getFileName());
+                        if (blob3B.getFileName().getName().
+                            equals(removeBlob.getFileName().getName())) {
+                            if (cwdFile.exists()) {
+                                NotherUtils.rm(cwdFile);
                             }
                         }
-
                     }
-
-//                    NotherUtils.message("There is an untracked file in the way; "
-//                            + "delete it, or add and commit it first.");
                 } else {
                     Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
-
-//                File cwdFile = join(CWD, compareBlib.getFileName().getName());
-//                Blob blob = Blob.fromFile(masterKey);
-//                if (blob.getFileName().exists()) {
-//                    NotherUtils.rm(cwdFile);
-//                }
-                //Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
             }
         }
 
