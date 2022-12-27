@@ -209,7 +209,7 @@ public class Repository implements Serializable {
                 if (parentTracked != null) {
                     parentTracked.remove(blobFile.getFilePath());
                     //删除removeStage下的暂存文件
-                    NotherUtils.rm(removeFile);
+                    //NotherUtils.rm(removeFile);
                 }
             }
         }
