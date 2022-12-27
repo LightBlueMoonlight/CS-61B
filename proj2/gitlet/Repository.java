@@ -871,7 +871,7 @@ public class Repository implements Serializable {
                     Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
                 }
                 File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                Blob blob = Blob.fromFile(otherKey);
+                Blob blob = Blob.fromFile(masterKey);
                 if (cwdFile.exists()) {
                     NotherUtils.rm(cwdFile);
                 }
