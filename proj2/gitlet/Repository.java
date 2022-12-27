@@ -624,7 +624,7 @@ public class Repository implements Serializable {
         }
         //HEAD
         Commit commitA = NotherUtils.getHeadBranchCommitId();
-        //OTHER
+        //other
         Commit commitB = NotherUtils.getBranch(text);
         Map<String, Integer> commAMap = new HashMap<>();
         Map<String, Integer> commBMap = new HashMap<>();
@@ -678,7 +678,6 @@ public class Repository implements Serializable {
             allfileMap.put(mastevalue, otherKey);
             otherMap.put(mastevalue, otherKey);
         }
-        boolean conflict = false;
         List<String> list = new ArrayList<>();
         list.add(commitA.getCommitID());
         list.add(commitB.getCommitID());
@@ -686,13 +685,15 @@ public class Repository implements Serializable {
         String message = "Merged" + " " + text + " "
                 + "into" + " " + headFileString + ".";
         compareFile(allfileMap, masterMap, otherMap, splitMap,
-                commitA.getTracked(), conflict, message, list, headFileString);
+                commitA.getTracked(), message, list, headFileString);
     }
     private static void compareFile(Map<String, String> allfileMap,
                                     Map<String, String> masterMap, Map<String, String> otherMap,
                                     Map<String, String> splitMap, Map<String, String> parentTracked,
-                                    boolean conflict, String message, List<String> list, String headFileString) {
-        //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，就能够判断出上述7种不同情况
+                                    String message, List<String> list, String headFileString) {
+        boolean conflict = false;
+        //遍历allfileMap中的keyset，判断其余三个Map中的文件存在以及修改情况，
+        // 就能够判断出上述7种不同情况
         //然后对每个文件进行删除、覆写、直接写入等操作，这样就完成了merge操作。
         if (!REMOVE_STAGE.exists()) {
             //创建removeStage文件目录
@@ -709,115 +710,13 @@ public class Repository implements Serializable {
             String otherKey = NotherUtils.getKey(otherMap, compareBlib.getFilePath());
             String splitKey = NotherUtils.getKey(splitMap, compareBlib.getFilePath());
             if (splitKey != null && masterKey != null && otherKey != null) {
-                //没改变继续引用
-                if (splitKey.equals(masterKey) && splitKey.equals(otherKey)) {
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
-                    }
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
-                }
-                //文件内容是other的
-                if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)) {
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    Blob blob = Blob.fromFile(otherKey);
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
-                    }
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-                    NotherUtils.add(blob);
-                }
-                //文件内容master
-                if (!splitKey.equals(masterKey) && splitKey.equals(otherKey)) {
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    Blob blob = Blob.fromFile(masterKey);
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
-                    }
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-                }
-                //文件内容master
-                if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey)
-                        && masterKey.equals(otherKey)) {
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    Blob blob = Blob.fromFile(masterKey);
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
-                    }
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-                }
-                //文件内容冲突
-                if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey)
-                        && !masterKey.equals(otherKey)) {
-                    Blob blob3B = Blob.fromFile(masterKey);
-                    List<String> cwdlist = Utils.plainFilenamesIn(CWD);
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
-                    if (cwdlist.contains(compareBlib.getFileName().getName())) {
-                        NotherUtils.rm(cwdFile);
-                    }
-                    File targetBranchHeadCommitFile = new File(compareBlib.getFilePath());
-                    Utils.writeContents(targetBranchHeadCommitFile, conflictContent);
-                    NotherUtils.add(blob3B);
-                    conflict = true;
-                }
+                allNotNull(splitKey, masterKey, otherKey, compareBlib, conflict);
             }
             if (splitKey != null && masterKey != null && otherKey == null) {
-                if (splitKey.equals(masterKey)) {
-                    Blob blob = Blob.fromFile(masterKey);
-                    List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
-                    if (!removeStageList.contains(blob.blobId())) {
-                        File rmAddStageFile2 = join(Repository.REMOVE_STAGE, blob.blobId());
-                        Utils.writeObject(rmAddStageFile2, blob.blobId());
-                        Repository.createNewFile(rmAddStageFile2);
-                    }
-                    File cwdFile = join(CWD, blob.getFileName().getName());
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
-                    }
-                }
-                if (!splitKey.equals(masterKey)) {
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    Blob blob = Blob.fromFile(masterKey);
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
-                    }
-                    String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
-                    writeContents(compareBlib.getFileName(), conflictContent);
-
-                    Blob blobId2 = new Blob(compareBlib.getFileName());
-                    NotherUtils.add(blobId2);
-                    conflict = true;
-                }
+                onlyOtherNull(splitKey, masterKey, compareBlib, conflict, otherKey);
             }
-
             if (splitKey != null && masterKey == null && otherKey != null) {
-                if (splitKey.equals(otherKey)) {
-                    Blob blob = Blob.fromFile(otherKey);
-                    List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
-                    if (!removeStageList.contains(blob.blobId())) {
-                        File rmAddStageFile2 = join(Repository.REMOVE_STAGE, blob.blobId());
-                        Utils.writeObject(rmAddStageFile2, blob.blobId());
-                        Repository.createNewFile(rmAddStageFile2);
-                    }
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
-                    }
-                }
-                if (!splitKey.equals(otherKey)) {
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    Blob blob = Blob.fromFile(otherKey);
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
-                    }
-                    Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
-                    String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
-                    writeContents(compareBlib.getFileName(), conflictContent);
-                    Blob blobId2 = new Blob(compareBlib.getFileName());
-                    NotherUtils.add(blobId2);
-                    conflict = true;
-                }
+                onlyMasterNull(splitKey, masterKey, otherKey, compareBlib, conflict);
             }
             if (splitKey != null && masterKey == null && otherKey == null) {
                 File cwdFile = join(CWD, compareBlib.getFileName().getName());
@@ -826,58 +725,16 @@ public class Repository implements Serializable {
                 }
             }
             if (splitKey == null && masterKey != null && otherKey != null) {
-                if (!masterKey.equals(otherKey)) {
-                    if (compareBlib.getFileName().exists()) {
-                        NotherUtils.rm(compareBlib.getFileName());
-                    }
-                    String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
-                    writeContents(compareBlib.getFileName(), conflictContent);
-                    Blob blobId2 = new Blob(compareBlib.getFileName());
-                    NotherUtils.add(blobId2);
-                    conflict = true;
-                }
-                if (masterKey.equals(otherKey)) {
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    if (cwdFile.exists()) {
-                        NotherUtils.rm(cwdFile);
-                    }
-                }
+                onlySplitNull(splitKey, masterKey, otherKey, compareBlib, conflict);
             }
             //可以了
             if (splitKey == null && masterKey == null && otherKey != null) {
-                //仅被当前跟踪
-                Blob blob3B = Blob.fromFile(otherKey);
-                List<String> cwdlist = Utils.plainFilenamesIn(CWD);
-                if (cwdlist.contains(blob3B.getFileName().getName())) {
-                    NotherUtils.message("There is an untracked file in the way; "
-                            + "delete it, or add and commit it first.");
-                } else {
-                    Utils.writeContents(blob3B.getFileName(),
-                        NotherUtils.getBytes(blob3B.getBytes()));
-                    NotherUtils.add(blob3B);
-                }
+                onlyOther(otherKey);
             }
             if (splitKey == null && masterKey != null && otherKey == null) {
-                Blob blob3B = Blob.fromFile(masterKey);
-                List<String> cwdlist = Utils.plainFilenamesIn(CWD);
-                List<String> merge = Utils.plainFilenamesIn(MERGE);
-                if (cwdlist.contains(blob3B.getFileName().getName())) {
-                    File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    for (String str : merge) {
-                        Blob removeBlob = Blob.fromFile(str);
-                        if (blob3B.getFileName().getName().
-                            equals(removeBlob.getFileName().getName())) {
-                            if (cwdFile.exists()) {
-                                NotherUtils.rm(cwdFile);
-                            }
-                        }
-                    }
-                } else {
-                    Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
-                }
+                onlyMaster(masterKey, compareBlib);
             }
         }
-
         parentTracked = NotherUtils.commit(parentTracked);
         //String message = "Merged other into master";
         Commit newCommit = new Commit(message, list, parentTracked);
@@ -891,8 +748,180 @@ public class Repository implements Serializable {
             NotherUtils.message("Encountered a merge conflict.");
         }
     }
+
+    private static void onlyMaster(String masterKey, Blob compareBlib) {
+        Blob blob3B = Blob.fromFile(masterKey);
+        List<String> cwdlist = Utils.plainFilenamesIn(CWD);
+        List<String> merge = Utils.plainFilenamesIn(MERGE);
+        if (cwdlist.contains(blob3B.getFileName().getName())) {
+            File cwdFile = join(CWD, compareBlib.getFileName().getName());
+            for (String str : merge) {
+                Blob removeBlob = Blob.fromFile(str);
+                if (blob3B.getFileName().getName().
+                        equals(removeBlob.getFileName().getName())) {
+                    if (cwdFile.exists()) {
+                        NotherUtils.rm(cwdFile);
+                    }
+                }
+            }
+        } else {
+            Utils.writeContents(blob3B.getFileName(),
+                    NotherUtils.getBytes(blob3B.getBytes()));
+        }
+    }
+
+    private static void onlyOther(String otherKey) {
+        //仅被当前跟踪
+        Blob blob3B = Blob.fromFile(otherKey);
+        List<String> cwdlist = Utils.plainFilenamesIn(CWD);
+        if (cwdlist.contains(blob3B.getFileName().getName())) {
+            NotherUtils.message("There is an untracked file in the way; "
+                    + "delete it, or add and commit it first.");
+        } else {
+            Utils.writeContents(blob3B.getFileName(),
+                    NotherUtils.getBytes(blob3B.getBytes()));
+            NotherUtils.add(blob3B);
+        }
+    }
+
+    private static void onlySplitNull(String splitKey, String masterKey,
+                                  String otherKey, Blob compareBlib, boolean conflict) {
+        if (!masterKey.equals(otherKey)) {
+            if (compareBlib.getFileName().exists()) {
+                NotherUtils.rm(compareBlib.getFileName());
+            }
+            String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
+            writeContents(compareBlib.getFileName(), conflictContent);
+            Blob blobId2 = new Blob(compareBlib.getFileName());
+            NotherUtils.add(blobId2);
+            conflict = true;
+        }
+        if (masterKey.equals(otherKey)) {
+            File cwdFile = join(CWD, compareBlib.getFileName().getName());
+            if (cwdFile.exists()) {
+                NotherUtils.rm(cwdFile);
+            }
+        }
+    }
+
+    private static void onlyMasterNull(String splitKey, String masterKey,
+                                   String otherKey, Blob compareBlib, boolean conflict) {
+        if (splitKey.equals(otherKey)) {
+            Blob blob = Blob.fromFile(otherKey);
+            List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
+            if (!removeStageList.contains(blob.blobId())) {
+                File rmAddStageFile2 = join(Repository.REMOVE_STAGE, blob.blobId());
+                Utils.writeObject(rmAddStageFile2, blob.blobId());
+                Repository.createNewFile(rmAddStageFile2);
+            }
+            File cwdFile = join(CWD, compareBlib.getFileName().getName());
+            if (cwdFile.exists()) {
+                NotherUtils.rm(cwdFile);
+            }
+        }
+        if (!splitKey.equals(otherKey)) {
+            File cwdFile = join(CWD, compareBlib.getFileName().getName());
+            Blob blob = Blob.fromFile(otherKey);
+            if (cwdFile.exists()) {
+                NotherUtils.rm(cwdFile);
+            }
+            Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+            String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
+            writeContents(compareBlib.getFileName(), conflictContent);
+            Blob blobId2 = new Blob(compareBlib.getFileName());
+            NotherUtils.add(blobId2);
+            conflict = true;
+        }
+    }
+
+    private static void onlyOtherNull(String splitKey, String masterKey,
+                                  Blob compareBlib, boolean conflict, String otherKey) {
+        if (splitKey.equals(masterKey)) {
+            Blob blob = Blob.fromFile(masterKey);
+            List<String> removeStageList = Utils.plainFilenamesIn(Repository.REMOVE_STAGE);
+            if (!removeStageList.contains(blob.blobId())) {
+                File rmAddStageFile2 = join(Repository.REMOVE_STAGE, blob.blobId());
+                Utils.writeObject(rmAddStageFile2, blob.blobId());
+                Repository.createNewFile(rmAddStageFile2);
+            }
+            File cwdFile = join(CWD, blob.getFileName().getName());
+            if (cwdFile.exists()) {
+                NotherUtils.rm(cwdFile);
+            }
+        }
+        if (!splitKey.equals(masterKey)) {
+            File cwdFile = join(CWD, compareBlib.getFileName().getName());
+            Blob blob = Blob.fromFile(masterKey);
+            if (cwdFile.exists()) {
+                NotherUtils.rm(cwdFile);
+            }
+            String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
+            writeContents(compareBlib.getFileName(), conflictContent);
+            Blob blobId2 = new Blob(compareBlib.getFileName());
+            NotherUtils.add(blobId2);
+            conflict = true;
+        }
+    }
+
+    private static void allNotNull(String splitKey, String masterKey,
+                               String otherKey, Blob compareBlib, boolean conflict) {
+        //没改变继续引用
+        if (splitKey.equals(masterKey) && splitKey.equals(otherKey)) {
+            File cwdFile = join(CWD, compareBlib.getFileName().getName());
+            if (cwdFile.exists()) {
+                NotherUtils.rm(cwdFile);
+            }
+            Utils.writeContents(cwdFile, NotherUtils.getBytes(compareBlib.getBytes()));
+        }
+        //文件内容是other的
+        if (splitKey.equals(masterKey) && !splitKey.equals(otherKey)) {
+            File cwdFile = join(CWD, compareBlib.getFileName().getName());
+            Blob blob = Blob.fromFile(otherKey);
+            if (cwdFile.exists()) {
+                NotherUtils.rm(cwdFile);
+            }
+            Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+            NotherUtils.add(blob);
+        }
+        //文件内容master
+        if (!splitKey.equals(masterKey) && splitKey.equals(otherKey)) {
+            File cwdFile = join(CWD, compareBlib.getFileName().getName());
+            Blob blob = Blob.fromFile(masterKey);
+            if (cwdFile.exists()) {
+                NotherUtils.rm(cwdFile);
+            }
+            Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+        }
+        //文件内容master
+        if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey)
+                && masterKey.equals(otherKey)) {
+            File cwdFile = join(CWD, compareBlib.getFileName().getName());
+            Blob blob = Blob.fromFile(masterKey);
+            if (cwdFile.exists()) {
+                NotherUtils.rm(cwdFile);
+            }
+            Utils.writeContents(cwdFile, NotherUtils.getBytes(blob.getBytes()));
+        }
+        //文件内容冲突
+        if (!splitKey.equals(masterKey) && !splitKey.equals(otherKey)
+                && !masterKey.equals(otherKey)) {
+            Blob blob3B = Blob.fromFile(masterKey);
+            List<String> cwdlist = Utils.plainFilenamesIn(CWD);
+            File cwdFile = join(CWD, compareBlib.getFileName().getName());
+            String conflictContent = NotherUtils.getConflictContent(masterKey, otherKey);
+            if (cwdlist.contains(compareBlib.getFileName().getName())) {
+                NotherUtils.rm(cwdFile);
+            }
+            File targetBranchHeadCommitFile = new File(compareBlib.getFilePath());
+            Utils.writeContents(targetBranchHeadCommitFile, conflictContent);
+            NotherUtils.add(blob3B);
+            conflict = true;
+        }
+    }
+
     private static void finSplit(Map<String, Integer> finSplitMap,
-                                 Commit commitA, Commit commitB, Map<String, Integer> commAMap, Map<String, Integer> commBMap) {
+                                 Commit commitA, Commit commitB, Map<String, Integer> commAMap,
+                                 Map<String, Integer> commBMap) {
         int n = 0;
         while (commitA.getParent() != null && !commitA.getParent().isEmpty()) {
             n = n + 1;
