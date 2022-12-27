@@ -860,23 +860,10 @@ public class Repository implements Serializable {
             if (splitKey == null && masterKey != null && otherKey == null) {
                 Blob blob3B = Blob.fromFile(masterKey);
                 List<String> cwdlist = Utils.plainFilenamesIn(CWD);
-                List<String> removeList = Utils.plainFilenamesIn(REMOVE_STAGE);
                 List<String> merge = Utils.plainFilenamesIn(MERGE);
-                if (blob3B.getFileName().getName().equals("f.txt")){
-                    System.out.println("----------");
-                    System.out.println(cwdlist);
-                    System.out.println(removeList);
-                    System.out.println(merge);
-                    for (String str : merge) {
-                        Blob blob = Blob.fromFile(str);
-                        System.out.println("+++++++++++");
-                        System.out.println(blob.getFileName());
-                        System.out.println(blob.getFileName().getName());
-                    }
-                }
                 if (cwdlist.contains(blob3B.getFileName().getName())) {
                     File cwdFile = join(CWD, compareBlib.getFileName().getName());
-                    for (String str : removeList) {
+                    for (String str : merge) {
                         Blob removeBlob = Blob.fromFile(str);
                         if (blob3B.getFileName().getName().
                             equals(removeBlob.getFileName().getName())) {
