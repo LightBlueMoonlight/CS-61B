@@ -755,9 +755,6 @@ public class Repository implements Serializable {
                     Utils.writeContents(targetBranchHeadCommitFile, conflictContent);
                     NotherUtils.add(blob3B);
                     conflict = true;
-//                    String S = Utils.readContentsAsString(targetBranchHeadCommitFile);
-//                    System.out.println("FENGEXIAN");
-//                    System.out.println(S);
                 }
             }
             if (splitKey != null && masterKey != null && otherKey == null) {
@@ -786,9 +783,6 @@ public class Repository implements Serializable {
                     Blob blobId2 = new Blob(compareBlib.getFileName());
                     NotherUtils.add(blobId2);
                     conflict = true;
-//                    String S = Utils.readContentsAsString(compareBlib.getFileName());
-//                    System.out.println("FENGEXIAN");
-//                    System.out.println(S);
                 }
             }
 
@@ -875,6 +869,11 @@ public class Repository implements Serializable {
 //                            + "delete it, or add and commit it first.");
                 } else {
                     Utils.writeContents(blob3B.getFileName(), NotherUtils.getBytes(blob3B.getBytes()));
+                }
+                File cwdFile = join(CWD, compareBlib.getFileName().getName());
+                Blob blob = Blob.fromFile(otherKey);
+                if (cwdFile.exists()) {
+                    NotherUtils.rm(cwdFile);
                 }
 //                File cwdFile = join(CWD, compareBlib.getFileName().getName());
 //                Blob blob = Blob.fromFile(masterKey);
